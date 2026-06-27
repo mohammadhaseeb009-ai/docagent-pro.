@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ICDS Anganwadi Data Entry | Peddapally District</title>
+
+  <!-- Bootstrap 5 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <!-- Select2 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
+  <style>
+    /* ================================================
+       CSS VARIABLES & RESET
+    ================================================ */
+    :root {
+      --primary:      #1B4F72;
+      --primary-dark: #154360;
+      --secondary:    #F39C12;
+      --accent:       #E67E22;
+      --success-gov:  #1E8449;
+      --danger-gov:   #C0392B;
+      --text-dark:    #2C3E50;
+      --text-muted:   #7F8C8D;
+      --border-color: #D5D8DC;
+      --card-shadow:  0 20px 60px rgba(0,0,0,0.25);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      color: var(--text-dark);
+    }
+
+    /* ================================================
+       HEADER
+    ================================================ */
+    .gov-header {
+      background: linear-gradient(135deg, #1B4F72 0%, #154360 60%, #0D2137 100%);
+      padding: 0;
+      border-bottom: 4px solid var(--secondary);
+      position: relative;
+      overflow: hidden;
+    }
+    .gov-header::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 120px,
+        rgba(255,255,255,0.02) 120px,
+        rgba(255,255,255,0.02) 121px
+      );
+      pointer-events: none;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 16px 32px;
+    }
+    .gov-logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #F39C12, #E67E22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 3px solid rgba(255,255,255,0.3);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .gov-logo i { font-size: 32px; color: #fff; }
+    .gov-titles { flex: 1; }
+    .gov-titles .dept-main {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+      line-height: 1.3;
+    }
+    .gov-titles .dept-sub {
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.75);
+      margin-top: 2px;
+      font-weight: 400;
+    }
+    .header-badge {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      padding: 8px 16px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .header-badge .badge-label { font-size: 0.7rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px; }
+    .header-badge .badge-value { font-size: 0.95rem; color: var(--secondary); font-weight: 700; }
+    .header-stripe {
+      display: flex;
+      height: 6px;
+    }
+    .header-stripe .s1 { flex: 1; background: #FF9933; }
+    .header-stripe .s2 { flex: 1; background: #FFFFFF; }
+    .header-stripe .s3 { flex: 1; background: #138808; }
+
+    /* ================================================
+       HERO BANNER
+    ================================================ */
+    .hero-banner {
+      background: linear-gradient(90deg, #0D2137 0%, #1B4F72 50%, #0D2137 100%);
+      padding: 22px 32px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .hero-banner h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .hero-banner h1 i { color: var(--secondary); }
+    .hero-banner .breadcrumb {
+      margin: 0;
+      font-size: 0.82rem;
+    }
+    .hero-banner .breadcrumb-item, .hero-banner .breadcrumb-item a {
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+    }
+    .hero-banner .breadcrumb-item.active { color: var(--secondary); }
+    .hero-banner .breadcrumb-item + .breadcrumb-item::before { color: rgba(255,255,255,0.35); }
+
+    /* ================================================
+       MAIN CONTENT
+    ================================================ */
+    .main-content {
+      padding: 32px 16px 48px;
+    }
+
+    /* ================================================
+       STAT BAR
+    ================================================ */
+    .stat-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .stat-chip {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 50px;
+      padding: 8px 20px;
+      color: #fff;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(10px);
+    }
+    .stat-chip i { color: var(--secondary); font-size: 1rem; }
+    .stat-chip strong { color: var(--secondary); }
+
+    /* ================================================
+       FORM CARD (GLASSMORPHISM)
+    ================================================ */
+    .form-card {
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 20px;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      animation: cardSlideUp 0.6s ease forwards;
+    }
+    @keyframes cardSlideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .form-card-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      padding: 20px 28px;
+      color: #fff;
+    }
+    .form-card-header h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .form-card-header p {
+      margin: 4px 0 0;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.65);
+    }
+    .form-card-body { padding: 28px; }
+
+    /* ================================================
+       SECTION DIVIDERS
+    ================================================ */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 28px 0 20px;
+    }
+    .section-divider:first-child { margin-top: 0; }
+    .section-divider .divider-bar {
+      width: 4px;
+      height: 22px;
+      border-radius: 2px;
+      background: linear-gradient(180deg, var(--secondary), var(--accent));
+    }
+    .section-divider .divider-label {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    .section-divider .divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border-color);
+    }
+
+    /* ================================================
+       FORM CONTROLS
+    ================================================ */
+    .form-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .form-label i { color: var(--primary); font-size: 0.8rem; }
+    .form-label .req { color: var(--danger-gov); margin-left: 2px; }
+
+    .form-control, .form-select {
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 0.9rem;
+      padding: 10px 14px;
+      transition: all 0.25s ease;
+      background: #FAFBFC;
+      color: var(--text-dark);
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(27,79,114,0.12);
+      background: #fff;
+      outline: none;
+    }
+    .form-control.is-invalid, .form-select.is-invalid {
+      border-color: var(--danger-gov);
+      box-shadow: none;
+    }
+    .form-control.is-invalid:focus {
+      box-shadow: 0 0 0 3px rgba(192,57,43,0.12);
+    }
+    .invalid-feedback {
+      font-size: 0.78rem;
+      color: var(--danger-gov);
+      display: none;
+      margin-top: 4px;
+    }
+    .invalid-feedback.show { display: block; }
+
+    /* Read-only auto-fill inputs */
+    .form-control-autofill {
+      border: 1.5px solid #D0D3D4;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      padding: 10px 14px;
+      background: #F2F3F4;
+      color: #5D6D7E;
+      font-style: italic;
+      cursor: default;
+      width: 100%;
+      pointer-events: none;
+    }
+    .autofill-wrap { position: relative; }
+    .autofill-wrap .lock-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #A9B0B8;
+      font-size: 0.75rem;
+    }
+
+    /* ================================================
+       SELECT2 OVERRIDES
+    ================================================ */
+    .select2-container--bootstrap-5 .select2-selection {
+      border: 1.5px solid var(--border-color) !important;
+      border-radius: 10px !important;
+      min-height: 42px !important;
+      font-size: 0.9rem !important;
+      background: #FAFBFC !important;
+    }
+    .select2-container--bootstrap-5.select2-container--focus .select2-selection,
+    .select2-container--bootstrap-5.select2-container--open .select2-selection {
+      border-color: var(--primary) !important;
+      box-shadow: 0 0 0 3px rgba(27,79,114,0.12) !important;
+    }
+    .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
+      padding: 6px 10px !important;
+      color: var(--text-dark) !important;
+    }
+    .select2-container--bootstrap-5 .select2-dropdown {
+      border: 1.5px solid var(--border-color) !important;
+      border-radius: 10px !important;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12) !important;
+      overflow: hidden;
+    }
+    .select2-container--bootstrap-5 .select2-search--dropdown .select2-search__field {
+      border-radius: 6px !important;
+      border: 1px solid var(--border-color) !important;
+      font-size: 0.85rem !important;
+    }
+    .select2-container--bootstrap-5 .select2-results__option--highlighted {
+      background-color: var(--primary) !important;
+      color: #fff !important;
+    }
+    .select2-container--bootstrap-5 .select2-results__option {
+      font-size: 0.87rem !important;
+      padding: 8px 12px !important;
+    }
+    .select2-invalid .select2-selection {
+      border-color: var(--danger-gov) !important;
+    }
+
+    /* ================================================
+       BUTTONS
+    ================================================ */
+    .btn-submit {
+      background: linear-gradient(135deg, #1E8449 0%, #27AE60 100%);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 36px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 15px rgba(30,132,73,0.35);
+    }
+    .btn-submit:hover {
+      background: linear-gradient(135deg, #196F3D 0%, #1E8449 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(30,132,73,0.45);
+      color: #fff;
+    }
+    .btn-submit:active { transform: translateY(0); }
+
+    .btn-reset {
+      background: linear-gradient(135deg, #717D7E 0%, #808B96 100%);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 36px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 15px rgba(113,125,126,0.3);
+    }
+    .btn-reset:hover {
+      background: linear-gradient(135deg, #616A6B 0%, #717D7E 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(113,125,126,0.4);
+      color: #fff;
+    }
+    .btn-action-row {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
+    }
+    .btn-action-row .btn i { margin-right: 7px; }
+
+    /* ================================================
+       LOADING OVERLAY
+    ================================================ */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .loading-overlay.active { display: flex; }
+    .spinner-wrap {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px 40px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .spinner-wrap .spinner-border {
+      width: 3rem;
+      height: 3rem;
+      border-width: 0.3em;
+      color: var(--primary);
+    }
+    .spinner-wrap p {
+      margin-top: 14px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* ================================================
+       TOAST NOTIFICATIONS
+    ================================================ */
+    .toast-container {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .gov-toast {
+      min-width: 300px;
+      max-width: 380px;
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      animation: toastSlideIn 0.35s ease forwards;
+      color: #fff;
+    }
+    @keyframes toastSlideIn {
+      from { opacity: 0; transform: translateX(100px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .toast-fade-out {
+      animation: toastFadeOut 0.3s ease forwards;
+    }
+    @keyframes toastFadeOut {
+      to { opacity: 0; transform: translateX(100px); }
+    }
+    .gov-toast.success { background: linear-gradient(135deg, #1E8449, #27AE60); }
+    .gov-toast.error   { background: linear-gradient(135deg, #C0392B, #E74C3C); }
+    .gov-toast .toast-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
+    .gov-toast .toast-body { flex: 1; }
+    .gov-toast .toast-title { font-weight: 700; font-size: 0.9rem; }
+    .gov-toast .toast-msg   { font-size: 0.82rem; margin-top: 2px; opacity: 0.85; }
+    .gov-toast .toast-close {
+      background: none; border: none; color: #fff; cursor: pointer;
+      font-size: 1rem; opacity: 0.7; padding: 0; flex-shrink: 0;
+    }
+    .gov-toast .toast-close:hover { opacity: 1; }
+
+    /* ================================================
+       FOOTER
+    ================================================ */
+    .gov-footer {
+      background: linear-gradient(135deg, #0D2137 0%, #1B4F72 100%);
+      color: rgba(255,255,255,0.65);
+      text-align: center;
+      padding: 24px 16px;
+      font-size: 0.8rem;
+      border-top: 3px solid var(--secondary);
+    }
+    .gov-footer .footer-main {
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.85);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .gov-footer a { color: var(--secondary); text-decoration: none; }
+
+    /* ================================================
+       RESPONSIVE TWEAKS
+    ================================================ */
+    @media (max-width: 768px) {
+      .header-inner { padding: 12px 16px; gap: 12px; }
+      .gov-titles .dept-main { font-size: 1.05rem; }
+      .header-badge { display: none; }
+      .hero-banner { padding: 16px; }
+      .hero-banner h1 { font-size: 1.15rem; }
+      .form-card-body { padding: 18px; }
+      .stat-bar { gap: 8px; }
+      .stat-chip { font-size: 0.78rem; padding: 6px 14px; }
+      .btn-submit, .btn-reset { padding: 11px 24px; font-size: 0.88rem; }
+    }
+
+    /* Textarea */
+    textarea.form-control { resize: vertical; min-height: 100px; }
+
+    /* Date input */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      opacity: 0.6;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================================================
+       HEADER
+  ================================================ -->
+  <header class="gov-header">
+    <div class="header-inner">
+      <div class="gov-logo">
+        <i class="fas fa-child"></i>
+      </div>
+      <div class="gov-titles">
+        <div class="dept-main">
+          <i class="fas fa-landmark" style="color:var(--secondary);margin-right:6px;font-size:0.9em;"></i>
+          Government of Telangana
+        </div>
+        <div class="dept-sub">Women Development &amp; Child Welfare Department &nbsp;|&nbsp; ICDS Programme</div>
+        <div class="dept-sub" style="margin-top:3px;">Peddapally District &nbsp;|&nbsp; Integrated Child Development Services</div>
+      </div>
+      <div class="header-badge">
+        <div class="badge-label">MIS Portal</div>
+        <div class="badge-value">ICDS 2024-25</div>
+      </div>
+    </div>
+    <div class="header-stripe">
+      <div class="s1"></div>
+      <div class="s2"></div>
+      <div class="s3"></div>
+    </div>
+  </header>
+
+  <!-- ================================================
+       HERO BANNER
+  ================================================ -->
+  <div class="hero-banner">
+    <div class="container-xl">
+      <h1>
+        <i class="fas fa-clipboard-list"></i>
+        Anganwadi Data Entry Form
+      </h1>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#"><i class="fas fa-home me-1"></i>Home</a></li>
+          <li class="breadcrumb-item"><a href="#">MIS Portal</a></li>
+          <li class="breadcrumb-item active">AWC Data Entry</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ================================================
+       MAIN CONTENT
+  ================================================ -->
+  <div class="main-content">
+    <div class="container-xl">
+
+      <!-- STAT BAR -->
+      <div class="stat-bar">
+        <div class="stat-chip">
+          <i class="fas fa-folder-open"></i>
+          Projects: <strong>3</strong>
+        </div>
+        <div class="stat-chip">
+          <i class="fas fa-map-marker-alt"></i>
+          Mandals: <strong>12</strong>
+        </div>
+        <div class="stat-chip">
+          <i class="fas fa-th-large"></i>
+          Sectors: <strong>23</strong>
+        </div>
+        <div class="stat-chip">
+          <i class="fas fa-home"></i>
+          AWC Centres: <strong>706</strong>
+        </div>
+      </div>
+
+      <!-- FORM CARD -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <h2><i class="fas fa-edit"></i> AWC Data Entry — Peddapally District</h2>
+          <p>All fields marked with <span style="color:#F39C12;">*</span> are mandatory. Fill in all details carefully.</p>
+        </div>
+        <div class="form-card-body">
+          <form id="awcForm" novalidate autocomplete="off">
+
+            <!-- ---- SECTION A: PERSONAL DETAILS ---- -->
+            <div class="section-divider">
+              <div class="divider-bar"></div>
+              <div class="divider-label"><i class="fas fa-user me-1"></i>Personal Details</div>
+              <div class="divider-line"></div>
+            </div>
+
+            <div class="row g-3">
+              <!-- Employee Name -->
+              <div class="col-md-6">
+                <label class="form-label" for="empName">
+                  <i class="fas fa-user-tie"></i> Employee Name <span class="req">*</span>
+                </label>
+                <input type="text" class="form-control" id="empName"
+                       placeholder="Enter full name" maxlength="100" />
+                <div class="invalid-feedback" id="err-empName">Employee Name is required.</div>
+              </div>
+
+              <!-- Designation -->
+              <div class="col-md-6">
+                <label class="form-label" for="designation">
+                  <i class="fas fa-id-badge"></i> Designation <span class="req">*</span>
+                </label>
+                <input type="text" class="form-control" id="designation"
+                       placeholder="e.g. Anganwadi Worker / Supervisor" maxlength="100" />
+                <div class="invalid-feedback" id="err-designation">Designation is required.</div>
+              </div>
+
+              <!-- Mobile Number -->
+              <div class="col-md-6">
+                <label class="form-label" for="mobile">
+                  <i class="fas fa-mobile-alt"></i> Mobile Number <span class="req">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text" style="border-radius:10px 0 0 10px;border:1.5px solid var(--border-color);background:#F2F3F4;font-size:0.85rem;color:#5D6D7E;">+91</span>
+                  <input type="tel" class="form-control" id="mobile"
+                         placeholder="10-digit mobile number" maxlength="10"
+                         style="border-radius:0 10px 10px 0;" />
+                </div>
+                <div class="invalid-feedback" id="err-mobile">Please enter a valid 10-digit mobile number.</div>
+              </div>
+
+              <!-- Date -->
+              <div class="col-md-6">
+                <label class="form-label" for="dateField">
+                  <i class="fas fa-calendar-alt"></i> Date <span class="req">*</span>
+                </label>
+                <input type="date" class="form-control" id="dateField" />
+                <div class="invalid-feedback" id="err-dateField">Date is required.</div>
+              </div>
+            </div>
+
+            <!-- ---- SECTION B: LOCATION DETAILS ---- -->
+            <div class="section-divider">
+              <div class="divider-bar"></div>
+              <div class="divider-label"><i class="fas fa-map-marked-alt me-1"></i>Location Details</div>
+              <div class="divider-line"></div>
+            </div>
+
+            <div class="row g-3">
+              <!-- Project -->
+              <div class="col-md-6">
+                <label class="form-label" for="selProject">
+                  <i class="fas fa-folder"></i> Project <span class="req">*</span>
+                </label>
+                <select id="selProject" class="form-select select2-field">
+                  <option value=""></option>
+                </select>
+                <div class="invalid-feedback" id="err-selProject">Please select a Project.</div>
+              </div>
+
+              <!-- Mandal -->
+              <div class="col-md-6">
+                <label class="form-label" for="selMandal">
+                  <i class="fas fa-map-marker-alt"></i> Mandal <span class="req">*</span>
+                </label>
+                <select id="selMandal" class="form-select select2-field" disabled>
+                  <option value=""></option>
+                </select>
+                <div class="invalid-feedback" id="err-selMandal">Please select a Mandal.</div>
+              </div>
+
+              <!-- Sector -->
+              <div class="col-md-6">
+                <label class="form-label" for="selSector">
+                  <i class="fas fa-th-large"></i> Sector <span class="req">*</span>
+                </label>
+                <select id="selSector" class="form-select select2-field" disabled>
+                  <option value=""></option>
+                </select>
+                <div class="invalid-feedback" id="err-selSector">Please select a Sector.</div>
+              </div>
+
+              <!-- Anganwadi Centre -->
+              <div class="col-md-6">
+                <label class="form-label" for="selAWC">
+                  <i class="fas fa-home"></i> Anganwadi Centre <span class="req">*</span>
+                </label>
+                <select id="selAWC" class="form-select select2-field" disabled>
+                  <option value=""></option>
+                </select>
+                <div class="invalid-feedback" id="err-selAWC">Please select an Anganwadi Centre.</div>
+              </div>
+            </div>
+
+            <!-- ---- SECTION C: AUTO-FILLED INFO ---- -->
+            <div class="section-divider">
+              <div class="divider-bar"></div>
+              <div class="divider-label"><i class="fas fa-lock me-1"></i>Auto-filled Information</div>
+              <div class="divider-line"></div>
+            </div>
+
+            <div class="row g-3">
+              <!-- AWC ID -->
+              <div class="col-md-3 col-sm-6">
+                <label class="form-label">
+                  <i class="fas fa-barcode"></i> AWC ID
+                </label>
+                <div class="autofill-wrap">
+                  <input type="text" class="form-control-autofill" id="autoAwcId"
+                         readonly placeholder="Auto-filled" />
+                  <i class="fas fa-lock lock-icon"></i>
+                </div>
+              </div>
+
+              <!-- Auto Project Name -->
+              <div class="col-md-3 col-sm-6">
+                <label class="form-label">
+                  <i class="fas fa-folder-open"></i> Project Name
+                </label>
+                <div class="autofill-wrap">
+                  <input type="text" class="form-control-autofill" id="autoProject"
+                         readonly placeholder="Auto-filled" />
+                  <i class="fas fa-lock lock-icon"></i>
+                </div>
+              </div>
+
+              <!-- Auto Mandal Name -->
+              <div class="col-md-3 col-sm-6">
+                <label class="form-label">
+                  <i class="fas fa-map-pin"></i> Mandal Name
+                </label>
+                <div class="autofill-wrap">
+                  <input type="text" class="form-control-autofill" id="autoMandal"
+                         readonly placeholder="Auto-filled" />
+                  <i class="fas fa-lock lock-icon"></i>
+                </div>
+              </div>
+
+              <!-- Auto Sector Name -->
+              <div class="col-md-3 col-sm-6">
+                <label class="form-label">
+                  <i class="fas fa-th"></i> Sector Name
+                </label>
+                <div class="autofill-wrap">
+                  <input type="text" class="form-control-autofill" id="autoSector"
+                         readonly placeholder="Auto-filled" />
+                  <i class="fas fa-lock lock-icon"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- ---- SECTION D: REMARKS ---- -->
+            <div class="section-divider">
+              <div class="divider-bar"></div>
+              <div class="divider-label"><i class="fas fa-comment-alt me-1"></i>Remarks</div>
+              <div class="divider-line"></div>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label" for="remarks">
+                  <i class="fas fa-pen"></i> Remarks <span class="req">*</span>
+                </label>
+                <textarea class="form-control" id="remarks" rows="3"
+                          placeholder="Enter any relevant remarks or observations..." maxlength="500"></textarea>
+                <div class="invalid-feedback" id="err-remarks">Remarks field is required.</div>
+              </div>
+            </div>
+
+            <!-- ---- ACTION BUTTONS ---- -->
+            <div class="btn-action-row">
+              <button type="button" class="btn btn-submit" id="btnSubmit">
+                <i class="fas fa-paper-plane"></i> Submit
+              </button>
+              <button type="button" class="btn btn-reset" id="btnReset">
+                <i class="fas fa-redo-alt"></i> Reset
+              </button>
+            </div>
+
+          </form>
+        </div><!-- /.form-card-body -->
+      </div><!-- /.form-card -->
+
+    </div><!-- /.container-xl -->
+  </div><!-- /.main-content -->
+
+  <!-- ================================================
+       FOOTER
+  ================================================ -->
+  <footer class="gov-footer">
+    <div class="footer-main">
+      Women Development &amp; Child Welfare Department — Government of Telangana
+    </div>
+    <div>
+      ICDS MIS Portal &nbsp;|&nbsp; Peddapally District &nbsp;|&nbsp;
+      &copy; 2024-25 All Rights Reserved
+    </div>
+    <div style="margin-top:8px;font-size:0.72rem;opacity:0.5;">
+      For technical support contact your District ICDS Office
+    </div>
+  </footer>
+
+  <!-- ================================================
+       LOADING OVERLAY
+  ================================================ -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner-wrap">
+      <div class="spinner-border" role="status"></div>
+      <p>Submitting data... Please wait</p>
+    </div>
+  </div>
+
+  <!-- ================================================
+       TOAST CONTAINER
+  ================================================ -->
+  <div class="toast-container" id="toastContainer"></div>
+
+
+  <!-- ================================================
+       SCRIPTS
+  ================================================ -->
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Select2 -->
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+  <script>
+  /* ================================================
+     MASTER DATA — 706 AWC Records
+     Source: ICDS Master Data (Peddapally District)
+  ================================================ */
+  const AWC_DATA = [{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Akkepally","AWC_ID":"2010018"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Chinna Odela","AWC_ID":"2010095"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Chinna Odela 11","AWC_ID":"2010213"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Eklashpoor-1","AWC_ID":"2010067"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Eklashpoor-2","AWC_ID":"2010068"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Eklashpoor-3","AWC_ID":"2010135"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Eklashpoor-4","AWC_ID":"2010136"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Gopal Poor","AWC_ID":"2010096"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Gumnoor-1","AWC_ID":"2010031"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Gumnoor-2","AWC_ID":"2010188"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Kakarlapally","AWC_ID":"2010076"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Khanapur","AWC_ID":"2010071"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Lakkepoor-1","AWC_ID":"2010078"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Lakkepoor-2","AWC_ID":"2010229"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Mahaboobpally","AWC_ID":"2010208"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Pedda Odela","AWC_ID":"2010144"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Puttapaka-1","AWC_ID":"2010081"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Puttapaka-2","AWC_ID":"2010164"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Siddapally","AWC_ID":"2010196"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Suraiahpally-1","AWC_ID":"2010069"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"EGLASPOOR","AWC_NAME":"Suraiahpally-2","AWC_ID":"2010195"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Bhimmraopet","AWC_ID":"2010194"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Chillapally","AWC_ID":"2010117"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Dhubbapally","AWC_ID":"2010118"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Gollapalli","AWC_ID":"2010203"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Gunjapadugu -1","AWC_ID":"2010002"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Gunjapadugu -2","AWC_ID":"2010003"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Gunjapadugu -3","AWC_ID":"2010116"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Gunjapadugu -4","AWC_ID":"2010172"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Gunjapadugu -5","AWC_ID":"2010218"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Kannala-1-1","AWC_ID":"2010007"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Kannala-2-2","AWC_ID":"2010151"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"MALLEPALLY","AWC_ID":"2010006"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Nagaram -2","AWC_ID":"2010150"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Nagaram-1","AWC_ID":"2010004"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Potharam-1","AWC_ID":"2010011"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Rachapally-1","AWC_ID":"2010019"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Rachapally-2","AWC_ID":"2010210"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Siripuram -1","AWC_ID":"2010008"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"siripuram -2","AWC_ID":"2010181"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Uppatla-1","AWC_ID":"2010001"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Uppatla-2","AWC_ID":"2010129"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Vempadu","AWC_ID":"2010179"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Vilochavaram-1","AWC_ID":"2010005"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"GUNJAPADUGU","AWC_NAME":"Vilochavaram-2","AWC_ID":"2010223"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"ADARSHNAGAR","AWC_ID":"2010200"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"DASARI PALLY","AWC_ID":"2010201"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"GUNDARAM-1","AWC_ID":"2010051"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"GUNDARAM-2","AWC_ID":"2010202"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"JULAPALLY-1","AWC_ID":"2010042"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"JULAPALLY-2","AWC_ID":"2010057"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"JULAPALLY-3","AWC_ID":"2010184"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"KAMANPOOR-1","AWC_ID":"2010041"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"KAMANPOOR-2","AWC_ID":"2010054"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"KAMANPOOR-3","AWC_ID":"2010055"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"KAMANPOOR-4","AWC_ID":"2010056"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"KAMANPOOR-5","AWC_ID":"2010148"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"Kamanpur-6","AWC_ID":"2010244"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"Lingala","AWC_ID":"2010113"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"Mulkalapally","AWC_ID":"2010234"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"Nagaram","AWC_ID":"2010060"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"Penchikalpeta-1","AWC_ID":"2010097"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"Penchikalpeta-2","AWC_ID":"2010166"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"Perapally-1","AWC_ID":"2010043"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"Perapally-2","AWC_ID":"2010044"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"Perapally-3","AWC_ID":"2010149"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"Rajapoor","AWC_ID":"2010111"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"Rajendernagar","AWC_ID":"2010233"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"Rompikunta","AWC_ID":"2010059"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"Rompikunta-2","AWC_ID":"2010112"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"Rompikunta-3","AWC_ID":"2010142"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"SIDDIPALLY","AWC_ID":"2010192"},{"PROJ_NAME":"MANTHANI","MName":"Kamanpur","SEC_NAME":"KAMANPUR","AWC_NAME":"Venkatraopally-4","AWC_ID":"2010122"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Boinipet","AWC_ID":"2010079"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Gangapuri","AWC_ID":"2010107"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Gangapuri-2","AWC_ID":"2010222"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Kuchirajpally","AWC_ID":"2010108"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Manthani -1","AWC_ID":"2010061"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Manthani -16","AWC_ID":"2010110"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Manthani -2","AWC_ID":"2010062"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Manthani -3","AWC_ID":"2010063"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Manthani -4","AWC_ID":"2010064"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Manthani -5","AWC_ID":"2010065"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Manthani-10","AWC_ID":"2010132"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Manthani-11","AWC_ID":"2010133"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Manthani-12","AWC_ID":"2010134"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Manthani-13","AWC_ID":"2010153"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Manthani-14","AWC_ID":"2010154"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Manthani-15","AWC_ID":"2010193"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Manthani-6","AWC_ID":"2010066"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Manthani-7","AWC_ID":"2010101"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Manthani-8","AWC_ID":"2010102"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Manthani-9","AWC_ID":"2010131"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"MANTHANI","AWC_NAME":"Sriramnagar","AWC_ID":"2010165"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"ADAVI SRI RAMPOOR","AWC_ID":"2010027"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"ADAVI SRI RAMPOOR2","AWC_ID":"2010028"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"ADAVI SRI RAMPOOR3","AWC_ID":"2010126"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"ADAVI SRI RAMPOOR4","AWC_ID":"2010143"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"DHARYAPOOR","AWC_ID":"2010025"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"HARIPURAM","AWC_ID":"2010176"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"IPPALAPALLY","AWC_ID":"2010072"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"JILLELLAPALLY","AWC_ID":"2010209"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"Kajazpally","AWC_ID":"2010241"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"KESHANAPALLY 1","AWC_ID":"2010026"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"KESHANAPALLY 2","AWC_ID":"2010145"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"KHAMMAMPALLY-1","AWC_ID":"2010036"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"KHAMMAMPALLY-2","AWC_ID":"2010037"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"KHAMMAMPALLY-3","AWC_ID":"2010139"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"KHAMMAMPALLY-4","AWC_ID":"2010175"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"LAKKARAM 1","AWC_ID":"2010040"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"LAKKARAM 2","AWC_ID":"2010173"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"MACHUPETA","AWC_ID":"2010099"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"MAIDAMBANDA","AWC_ID":"2010032"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"Maydambanda","AWC_ID":"2010239"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"MUTHARAM- 1","AWC_ID":"2010022"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"MUTHARAM- 2","AWC_ID":"2010023"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"MUTHARAM- 3","AWC_ID":"2010024"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"MUTHARAM- 4","AWC_ID":"2010186"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"ODEDU-1","AWC_ID":"2010029"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"ODEDU-2","AWC_ID":"2010030"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"ODEDU-3","AWC_ID":"2010125"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"PARUPALLY-1","AWC_ID":"2010038"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"PARUPALLY-2","AWC_ID":"2010174"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"POTHARAM-2","AWC_ID":"2010124"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"SARVARAM","AWC_ID":"2010177"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"SEETHAMPETA","AWC_ID":"2010104"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"SHALAGUNDLAPALLY","AWC_ID":"2010020"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"SUKRAVARAMPETA","AWC_ID":"2010187"},{"PROJ_NAME":"MANTHANI","MName":"Mutharam_manthani","SEC_NAME":"MUTTARAM","AWC_NAME":"TEUNGUPALLY","AWC_ID":"2010204"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"ADIVARAMPETA - 1","AWC_ID":"2010077"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"ADIVARAMPETA - 2","AWC_ID":"2010167"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"Begumpeta","AWC_ID":"2010230"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"BEGUMPETA-1","AWC_ID":"2010045"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"BEGUMPETA-2","AWC_ID":"2010046"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"BEGUMPETA-3","AWC_ID":"2010047"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"BEGUMPETA-4","AWC_ID":"2010170"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"BEGUMPETA-5","AWC_ID":"2010183"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"BUDHARAVARAMPET","AWC_ID":"2010074"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"BUDHARAVARAMPET2","AWC_ID":"2010168"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"KALVACHERLA-1","AWC_ID":"2010050"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"KALVACHERLA-2","AWC_ID":"2010052"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"KALVACHERLA-3","AWC_ID":"2010127"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"KALVACHERLA-4","AWC_ID":"2010199"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"Kalwacherla -5","AWC_ID":"2010231"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"LADNAPOOR 1","AWC_ID":"2010100"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"LADNAPOOR 2","AWC_ID":"2010109"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"LADNAPOOR 3","AWC_ID":"2010147"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"LONKAKASARAM","AWC_ID":"2010049"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"Nagepally -3","AWC_ID":"2010232"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"NAGEPALLY-1","AWC_ID":"2010053"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"NAGEPALLY-2","AWC_ID":"2010169"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"Pannur","AWC_ID":"2010058"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"Rajapoor","AWC_ID":"2010240"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"Rathanapoor -1","AWC_ID":"2010048"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"Rathanapoor -2","AWC_ID":"2010156"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"RAMAGIRI","AWC_NAME":"Rathanapoor -3","AWC_ID":"2010157"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"VENKATAPOOR","AWC_NAME":"ADAVISOMANPALLY-1","AWC_ID":"2010084"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"VENKATAPOOR","AWC_NAME":"ADAVISOMANPALLY-2","AWC_ID":"2010189"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"VENKATAPOOR","AWC_NAME":"Arenda - 2","AWC_ID":"2010123"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"VENKATAPOOR","AWC_NAME":"Arenda - 3","AWC_ID":"2010152"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"VENKATAPOOR","AWC_NAME":"Arenda - I","AWC_ID":"2010073"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"VENKATAPOOR","AWC_NAME":"Arenda Mallaram-1","AWC_ID":"2010070"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"VENKATAPOOR","AWC_NAME":"Arenda Mallaram-2","AWC_ID":"2010197"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"VENKATAPOOR","AWC_NAME":"Bathupally","AWC_ID":"2010075"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"VENKATAPOOR","AWC_NAME":"Bittupally","AWC_ID":"2010161"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"VENKATAPOOR","AWC_NAME":"Gaddalapally","AWC_ID":"2010035"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"VENKATAPOOR","AWC_NAME":"Gaddalapally-2","AWC_ID":"2010140"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"VENKATAPOOR","AWC_NAME":"Gajulapally-1","AWC_ID":"2010114"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"VENKATAPOOR","AWC_NAME":"Gajulapally-2","AWC_ID":"2010115"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"VENKATAPOOR","AWC_NAME":"Kansaipeta","AWC_ID":"2010092"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"VENKATAPOOR","AWC_NAME":"Kansaipeta-2","AWC_ID":"2010178"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"VENKATAPOOR","AWC_NAME":"Nagaiahpally","AWC_ID":"2010085"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"VENKATAPOOR","AWC_NAME":"Swarnapally","AWC_ID":"2010160"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"VENKATAPOOR","AWC_NAME":"Venkatapoor -1","AWC_ID":"2010080"},{"PROJ_NAME":"MANTHANI","MName":"Manthani","SEC_NAME":"VENKATAPOOR","AWC_NAME":"Venkatapoor -2","AWC_ID":"2010190"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Chandanpoor-1","AWC_ID":"2010021"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Chandanpoor-2","AWC_ID":"2010155"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Mustyala -1","AWC_ID":"2010016"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Mustyala -2","AWC_ID":"2010128"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Peddampeta-1","AWC_ID":"2010012"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Peddampeta-2","AWC_ID":"2010162"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Peddampeta-3","AWC_ID":"2010212"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Singireddypally","AWC_ID":"2010009"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Singireddypally-2","AWC_ID":"2010146"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Sundilla-1","AWC_ID":"2010013"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Sundilla-2","AWC_ID":"2010014"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Sundilla-3","AWC_ID":"2010182"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Sundilla-4","AWC_ID":"2010198"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Sundilla-5","AWC_ID":"2010211"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Upparala Kesaram -1","AWC_ID":"2010010"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Upparala Kesaram -2","AWC_ID":"2010191"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Venkatraopally-1","AWC_ID":"2010119"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Venkatraopally-2","AWC_ID":"2010120"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Venkatraopally-3","AWC_ID":"2010121"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Venkatraopally-5","AWC_ID":"2010141"},{"PROJ_NAME":"MANTHANI","MName":"Ramagiri","SEC_NAME":"VENKATRAOPALLY","AWC_NAME":"Venkatraopally-6","AWC_ID":"2010163"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"ANDUGULAPALLY","AWC_ID":"2012165"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"APPANNAPETA 3","AWC_ID":"2012162"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"APPANNAPETA -I","AWC_ID":"2012025"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"APPANNAPETA -II","AWC_ID":"2012026"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"BANDAMPALLY -2","AWC_ID":"2012167"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"BOJANNAPET","AWC_ID":"2012033"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"BRAHAMANAPALLI","AWC_ID":"2012027"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"CHEEKURAI","AWC_ID":"2012032"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"DEVUNIPALLY","AWC_ID":"2012166"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"GOPAIAHPALLY","AWC_ID":"2012100"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"GOWREDDYPETA","AWC_ID":"2012035"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"KASULAPALLY","AWC_ID":"2012099"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"KOTHAPALLY 1","AWC_ID":"2012163"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"KOTHAPALLY-2","AWC_ID":"2012126"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"MULASALA-I","AWC_ID":"2012124"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"MULASALA-II","AWC_ID":"2012125"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"MUTHARAM","AWC_ID":"2012034"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"NIMMANAPALLI","AWC_ID":"2012036"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"NITTURU","AWC_ID":"2012043"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"PALITHAM","AWC_ID":"2012072"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"PEDDABONKUR","AWC_ID":"2012031"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"RAGHAVAPOOR 3","AWC_ID":"2012161"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"RAGHAVAPURI -I","AWC_ID":"2012040"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"RAGHAVAPURI-II","AWC_ID":"2012041"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"RANGAPUR- I","AWC_ID":"2012038"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"RANGAPUR- II","AWC_ID":"2012039"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"SABHITHAM","AWC_ID":"2012037"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"T M KUNTA","AWC_ID":"2012042"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Appannapeta","AWC_NAME":"TURKALA MADDIKUNTA -2","AWC_ID":"2012168"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Banjerupalli","AWC_ID":"2015168"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Bommareddypalli-2","AWC_ID":"2015075"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Bommareddypalli-I","AWC_ID":"2015074"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Dharmaram-3","AWC_ID":"2015161"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Dharmaram-4","AWC_ID":"2015162"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Dharmaram-I","AWC_ID":"2015072"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Dharmaram-II","AWC_ID":"2015073"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"DNT Thanda","AWC_ID":"2015170"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Erraguntapalli","AWC_ID":"2015163"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Kammarkhanpet -1","AWC_ID":"2015077"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Kammarkhanpet -2","AWC_ID":"2015166"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Katikanapalli-I","AWC_ID":"2015080"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Katikanapalli-II","AWC_ID":"2015081"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Kothapalli-I","AWC_ID":"2015164"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Kothapalli-II","AWC_ID":"2015216"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Lambadithanda (Mini)","AWC_ID":"2015206"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Mallapur","AWC_ID":"2015084"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Narsingapur-1","AWC_ID":"2015085"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Narsingapur-2","AWC_ID":"2015086"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Nayakampalli H/o Pathipaka(mini)","AWC_ID":"2015205"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"NETAJINAGAR","AWC_ID":"2015217"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Pathipaka-1","AWC_ID":"2015082"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"pathipaka-2","AWC_ID":"2015083"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Perkapalli","AWC_ID":"2015169"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Dharmaram","AWC_NAME":"Prakashnagar","AWC_ID":"2015171"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Buramiyapet","AWC_ID":"2015049"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"DHOOLIKATTA-3","AWC_ID":"2015215"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Dhoolikatta-I","AWC_ID":"2015044"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Dhoolikatta-II","AWC_ID":"2015045"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Eligaid-I","AWC_ID":"2015039"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Eligaid-II","AWC_ID":"2015040"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Eligaid-III","AWC_ID":"2015041"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Lalapalli","AWC_ID":"2015042"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"LALAPALLY-2","AWC_ID":"2015214"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Lalithapalli","AWC_ID":"2015147"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Lokapeta","AWC_ID":"2015053"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Mallaiahpalli","AWC_ID":"2015151"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Muppirithota","AWC_ID":"2015046"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Narayanpalli","AWC_ID":"2015043"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Narsapur -1","AWC_ID":"2015051"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Narsapur -2","AWC_ID":"2015152"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Narsapur -3","AWC_ID":"2015198"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Nyathakanipalli","AWC_ID":"2015149"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Ryakaldevpalli -1","AWC_ID":"2015052"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Ryakaldevpalli -2","AWC_ID":"2015148"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Shivapalli -1","AWC_ID":"2015050"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Shivapalli -2","AWC_ID":"2015199"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Sultanpur-I","AWC_ID":"2015047"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Sultanpur-II","AWC_ID":"2015048"},{"PROJ_NAME":"PEDDAPALLY","MName":"Elgaid","SEC_NAME":"Eligaid","AWC_NAME":"Sulthanpur-III","AWC_ID":"2015150"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"AITHRAJPALLY-2","AWC_ID":"2015208"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Bhoopathipur-2","AWC_ID":"2015203"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Bhupathipur-I","AWC_ID":"2015033"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Bonthakuntapalli","AWC_ID":"2015034"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Dubbapalli","AWC_ID":"2015031"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Gandhinagar","AWC_ID":"2015143"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Garrepalli-I","AWC_ID":"2015026"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Garrepalli-II","AWC_ID":"2015027"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Garrepelli-III","AWC_ID":"2015145"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Gattepalli-2","AWC_ID":"2015134"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Gattepalli-I","AWC_ID":"2015015"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Gollapalli","AWC_ID":"2015028"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Itherajpalli-I","AWC_ID":"2015032"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Jawaharnagar","AWC_ID":"2015144"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Kadambapur","AWC_ID":"2015016"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Katnapalli-I","AWC_ID":"2015035"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"KATNAPALLY-2","AWC_ID":"2015209"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Komandlapalli","AWC_ID":"2015135"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Markandeyanagar","AWC_ID":"2015136"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Narayanraopalli","AWC_ID":"2015030"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Narsaiahpalli","AWC_ID":"2015146"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Neerukulla","AWC_ID":"2015017"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Poosala-I","AWC_ID":"2015036"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Poosala-II","AWC_ID":"2015037"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Sambaiahpalli","AWC_ID":"2015029"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Shastrinagar","AWC_ID":"2015038"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Sultanabad-III","AWC_ID":"2015003"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Sultanabad-IV","AWC_ID":"2015004"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"SULTHANABAD-11","AWC_ID":"2015212"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"SULTHANABAD-12","AWC_ID":"2015213"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Garrepalli","AWC_NAME":"Swapnacolony","AWC_ID":"2015142"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"ABBIDIPALLY","AWC_ID":"2012118"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"BAYAMMAPALLY","AWC_ID":"2012129"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"Bhagathsingnagar (Mini)","AWC_ID":"2012188"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"GOPARAPALLY","AWC_ID":"2012175"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"GUDEM","AWC_ID":"2012113"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"GUMPULA","AWC_ID":"2012114"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"GUMPULA 2","AWC_ID":"2012185"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"GUNDLAPALLI","AWC_ID":"2012123"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"HARIPURAM","AWC_ID":"2012176"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"INDURTHI","AWC_ID":"2012112"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"KOLANOOR","AWC_ID":"2012119"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"KOLANOOR -1","AWC_ID":"2012120"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"KOLANOOR -2","AWC_ID":"2012121"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"KOLANOOR 4","AWC_ID":"2012174"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"KOMERA (CHINNA)","AWC_ID":"2012115"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"KOMERA (Pedda)","AWC_ID":"2012116"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"Lambadithanda (Mini)","AWC_ID":"2012189"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"NAMSANPALLY","AWC_ID":"2012117"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"Pittalayallapalli","AWC_ID":"2012127"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Indurthi","AWC_NAME":"UPPARAPALLY","AWC_ID":"2012122"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Abbapur -1","AWC_ID":"2015076"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Abbapur -2","AWC_ID":"2015165"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Balrajpalli","AWC_ID":"2015160"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Cheemalapeta","AWC_ID":"2015061"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Julapalli-I","AWC_ID":"2015054"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Julapalli-II","AWC_ID":"2015055"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Julapalli-III","AWC_ID":"2015056"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Julapalli-IV","AWC_ID":"2015153"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Kachapur-I","AWC_ID":"2015065"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Kachapur-II","AWC_ID":"2015066"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Kachapur-III","AWC_ID":"2015158"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Keechulatapalli","AWC_ID":"2015159"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Konaraopeta","AWC_ID":"2015064"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Kummarikunta-I","AWC_ID":"2015063"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Kummarikunta-II","AWC_ID":"2015156"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Kummarikunta-III","AWC_ID":"2015157"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"KURMAPALLY","AWC_ID":"2015218"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Nagulapalli","AWC_ID":"2015062"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Peddapur","AWC_ID":"2015154"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Peddapur-I","AWC_ID":"2015057"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Peddapur-II","AWC_ID":"2015058"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Telukunta-1","AWC_ID":"2015059"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Telukunta-II","AWC_ID":"2015060"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Thelukunta","AWC_ID":"2015155"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Venkatraopalli-I","AWC_ID":"2015067"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Venkatraopalli-II","AWC_ID":"2015068"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Wadkapur-I","AWC_ID":"2015069"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Wadkapur-II","AWC_ID":"2015070"},{"PROJ_NAME":"PEDDAPALLY","MName":"Julapalle","SEC_NAME":"Julapalli","AWC_NAME":"Wadkapur-III","AWC_ID":"2015071"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Botlavanaparthi-III","AWC_ID":"2015176"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Botlavanaparthy-I","AWC_ID":"2015092"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Botlavanaparthy-II","AWC_ID":"2015093"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Chamanapalli-I","AWC_ID":"2015098"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Chamanapalli-II","AWC_ID":"2015099"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Chinthalapalli","AWC_ID":"2015181"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Dongathurthy-I","AWC_ID":"2015094"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Dongathurthy-II","AWC_ID":"2015095"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Gopalraopet -1","AWC_ID":"2015174"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Gopalraopet -2","AWC_ID":"2015202"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Khanampalli","AWC_ID":"2015178"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Khilavanaparthi-I","AWC_ID":"2015091"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Khilavanaparthi-II","AWC_ID":"2015175"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Kothur-3","AWC_ID":"2015167"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Kothur-I","AWC_ID":"2015078"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Kothur-II","AWC_ID":"2015079"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Marripelli","AWC_ID":"2015177"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Medaram-4","AWC_ID":"2015172"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Medaram-5","AWC_ID":"2015173"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Medaram-I","AWC_ID":"2015087"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Medaram-II","AWC_ID":"2015088"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Medaram-III","AWC_ID":"2015089"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Narsimhulapalli","AWC_ID":"2015179"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Paidichintalapalli","AWC_ID":"2015097"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Rachapalli","AWC_ID":"2015096"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Ramaiahpalli","AWC_ID":"2015180"},{"PROJ_NAME":"PEDDAPALLY","MName":"Dharmaram","SEC_NAME":"Medaram","AWC_NAME":"Sayampet","AWC_ID":"2015090"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Odela","AWC_NAME":"JEELAKUNTA 1","AWC_ID":"2012183"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Odela","AWC_NAME":"JEELAKUNTA 2","AWC_ID":"2012184"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Odela","AWC_NAME":"KANAGARTHI -1","AWC_ID":"2012104"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Odela","AWC_NAME":"KANAGARTHI -2","AWC_ID":"2012105"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Odela","AWC_NAME":"KANAGARTHI 4","AWC_ID":"2012181"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Odela","AWC_NAME":"KANAGARTHI-2","AWC_ID":"2012106"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Odela","AWC_NAME":"MADAKA","AWC_ID":"2012107"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Odela","AWC_NAME":"MADAKA 2","AWC_ID":"2012182"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Odela","AWC_NAME":"ODELA -1","AWC_ID":"2012102"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Odela","AWC_NAME":"ODELA -2","AWC_ID":"2012103"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Odela","AWC_NAME":"ODELA 3","AWC_ID":"2012177"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Odela","AWC_NAME":"ODELA 4","AWC_ID":"2012178"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Odela","AWC_NAME":"ODELA 5","AWC_ID":"2012179"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Odela","AWC_NAME":"ODELA 6","AWC_ID":"2012180"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Odela","AWC_NAME":"POTHKAPALLY -1","AWC_ID":"2012108"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Odela","AWC_NAME":"POTHKAPALLY -2","AWC_ID":"2012109"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Odela","AWC_NAME":"POTHKAPALLY -3","AWC_ID":"2012110"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Odela","AWC_NAME":"R NARAYANPETA","AWC_ID":"2012128"},{"PROJ_NAME":"PEDDAPALLY","MName":"Odela","SEC_NAME":"Odela","AWC_NAME":"SHANAGONDA","AWC_ID":"2012111"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"Boompally","AWC_ID":"2012009"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"Chandapally","AWC_ID":"2012008"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"CHANDAPALLY 2","AWC_ID":"2012160"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"GURRAMPALLI","AWC_ID":"2012014"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"HANMANTHUNIPETA 3","AWC_ID":"2012164"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"KANAGARTHI-1","AWC_ID":"2012075"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"MAREDUGUNDA","AWC_ID":"2012013"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"Merapally","AWC_ID":"2012010"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"Nayakpalli (Kanagarathi)","AWC_ID":"2012101"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"PEDDAKALVALA-I","AWC_ID":"2012029"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"PEDDAKALVALA-II","AWC_ID":"2012030"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"PEDDAPALLI-I","AWC_ID":"2012001"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"PEDDAPALLI-II","AWC_ID":"2012002"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"PEDDAPALLI-III","AWC_ID":"2012003"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"PEDDAPALLI-IV","AWC_ID":"2012004"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"PEDDAPALLI-V","AWC_ID":"2012005"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"PEDDAPALLY 10","AWC_ID":"2012159"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"PEDDAPALLY 8","AWC_ID":"2012157"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"PEDDAPALLY 9","AWC_ID":"2012158"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"Peddapally- VI","AWC_ID":"2012006"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"Peddapally- VII","AWC_ID":"2012007"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"RAGINEDHU-I","AWC_ID":"2012073"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"RAGINEDHU-II","AWC_ID":"2012074"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"RAMPALLY -I","AWC_ID":"2012011"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"RAMPALLY-II","AWC_ID":"2012012"},{"PROJ_NAME":"PEDDAPALLY","MName":"Peddapalle","SEC_NAME":"Peddapalli","AWC_NAME":"RANGAMPALLY","AWC_ID":"2012028"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"CHINARATHPALLY","AWC_ID":"2012141"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"EADULAPURAM","AWC_ID":"2012171"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"IPPALAPALLY","AWC_ID":"2012172"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"KISTAMPETA-1","AWC_ID":"2012143"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"KISTAMPETA-2","AWC_ID":"2012144"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"MALLYALA","AWC_ID":"2012147"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"MALYALA - II","AWC_ID":"2012148"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"MIRJAMPET","AWC_ID":"2012145"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"MIRZAMPETA","AWC_ID":"2012146"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"MOTLAPALLY","AWC_ID":"2012139"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"MOTLAPALLY - II","AWC_ID":"2012140"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"PANDILLA -1","AWC_ID":"2012151"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"PANDILLA -2","AWC_ID":"2012152"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"Peddampeta","AWC_ID":"2012134"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"PEDDRATHPALLY","AWC_ID":"2012142"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"SREERAMPUR - I","AWC_ID":"2012130"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"SREERAMPUR - II","AWC_ID":"2012131"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"SRIMPOOR 5","AWC_ID":"2012173"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"SRIRAMPUR-III","AWC_ID":"2012132"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"SRIRAMPUR-IV","AWC_ID":"2012133"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"Tarupally - I","AWC_ID":"2012149"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Srirampur","AWC_NAME":"Tarupally - II","AWC_ID":"2012150"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Allipur","AWC_ID":"2015141"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Chinakalvala","AWC_ID":"2015007"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Chinnabonkuru","AWC_ID":"2015012"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Devunipalli","AWC_ID":"2015133"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Jendapalli","AWC_ID":"2015138"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"KANDUNURPALLY","AWC_ID":"2015211"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Kanukula-3(Mini)","AWC_ID":"2015207"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Kanukula-I","AWC_ID":"2015021"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Kanukula-II","AWC_ID":"2015022"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Kodurupaka","AWC_ID":"2015008"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Kothapeta","AWC_ID":"2015010"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Mallaiahpalli","AWC_ID":"2015023"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Mancharami","AWC_ID":"2015020"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Maruthinagar","AWC_ID":"2015139"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Miyapur","AWC_ID":"2015013"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Narayanpur-I","AWC_ID":"2015009"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Narayanpur-II","AWC_ID":"2015210"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Perkapalli-1","AWC_ID":"2015014"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Rajaknagar","AWC_ID":"2015132"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Ramunipalli","AWC_ID":"2015025"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Rebbaldevpalli","AWC_ID":"2015011"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Regadi Maddikunta -2","AWC_ID":"2015140"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Regadimaddikunta-I","AWC_ID":"2015024"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Suddala-I","AWC_ID":"2015018"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Suddala-II","AWC_ID":"2015137"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Suglampalli -1","AWC_ID":"2015006"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Sultanabad-I","AWC_ID":"2015001"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Sultanabad-II","AWC_ID":"2015002"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Sultanabad-V","AWC_ID":"2015005"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Thogarrai-2","AWC_ID":"2015200"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"Togarrai-I","AWC_ID":"2015019"},{"PROJ_NAME":"PEDDAPALLY","MName":"Sultanabad","SEC_NAME":"Sulthanabad","AWC_NAME":"SREERAMULAPALLI","AWC_ID":"2015204"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"ANKAMPALLY","AWC_ID":"2012169"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"ASHANNAPELLY","AWC_ID":"2012170"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"BURGUPALLY","AWC_ID":"2012018"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"GANGARAM - I","AWC_ID":"2012135"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"GANGARAM - II","AWC_ID":"2012136"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"GANGARAM - III","AWC_ID":"2012137"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"JAFARKHANPETA","AWC_ID":"2012024"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"KUNARAM - III","AWC_ID":"2012023"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"KUNARAM-I","AWC_ID":"2012021"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"KUNARAM-II","AWC_ID":"2012022"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"MADIPALLY -1","AWC_ID":"2012138"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"MADIPALLY -2","AWC_ID":"2012153"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"MANGAPETA","AWC_ID":"2012019"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"PEGADAPALLY -1","AWC_ID":"2012154"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"PEGADAPALLY -2","AWC_ID":"2012155"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"PEGADAPALLY -3","AWC_ID":"2012156"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"TEHNUGUPALLY","AWC_ID":"2012020"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"VENNAMPALLY - I","AWC_ID":"2012015"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"VENNAMPALLY - II","AWC_ID":"2012016"},{"PROJ_NAME":"PEDDAPALLY","MName":"Srirampur","SEC_NAME":"Vennampally","AWC_NAME":"VENNAMPALLY - III","AWC_ID":"2012017"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Allur ST colony -1","AWC_ID":"2013120"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Allur ST Colony -2","AWC_ID":"2013123"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Aloor","AWC_ID":"2013124"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Chaitanyapuri Colony -1","AWC_ID":"2013128"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Chandrababu Colony-5","AWC_ID":"2013134"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru D Type Quarters NTPC","AWC_ID":"2013135"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Elakalapalli Gatah","AWC_ID":"2013127"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Indiranagar -2","AWC_ID":"2013125"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Indiranagar-1","AWC_ID":"2013130"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Indiranagar-2","AWC_ID":"2013131"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Kashaipalli-3","AWC_ID":"2013132"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru KCR colony","AWC_ID":"2013139"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Laxmipuram","AWC_ID":"2013126"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Maredupaka SC Colony","AWC_ID":"2013122"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Mathangi Colony-4","AWC_ID":"2013133"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Sanjeevnagar-2","AWC_ID":"2013129"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Tarakaramnagar","AWC_ID":"2013121"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Tilakanagar-3","AWC_ID":"2013111"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Tilaknagar-1","AWC_ID":"2013109"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Tilaknagar-2","AWC_ID":"2013110"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Verlapalli -1","AWC_ID":"2013118"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Verlapalli -2","AWC_ID":"2013119"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Vittalnagar -5 (iv)","AWC_ID":"2013115"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Vittalnagar -5 (vi)","AWC_ID":"2013117"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Vittalnagar-4 (i)","AWC_ID":"2013112"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Vittalnagar-4(ii)","AWC_ID":"2013113"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Vittalnagar-4(iii)","AWC_ID":"2013114"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Alluru Vittalnagar-5 (v)","AWC_ID":"2013116"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam Akbarnagar","AWC_ID":"2012064"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam AKINAPALLY","AWC_ID":"2012052"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam ANTHARGAON (V)","AWC_ID":"2012048"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam ANTHARGAON TTS","AWC_ID":"2012049"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam BRAMANAPALLY","AWC_ID":"2012046"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam EGLASPUR","AWC_ID":"2012058"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam ELLAMPALLY","AWC_ID":"2012053"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam GOILWADA","AWC_ID":"2012047"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam KUNDANNAPALLY","AWC_ID":"2012044"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam LAMBADITHANDA (Brahmhanapalli)","AWC_ID":"2012066"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam LINGAPUR","AWC_ID":"2012045"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam MADDIRYALA","AWC_ID":"2012061"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam MARRIPALLY","AWC_ID":"2012065"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam MOGULPAHAD","AWC_ID":"2012057"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam MURMOOR","AWC_ID":"2012054"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam MURMUR-1","AWC_ID":"2012055"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam MURMUR-2","AWC_ID":"2012056"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam PEDDAMPETA","AWC_ID":"2012050"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam PEDDAMPETA 2","AWC_ID":"2012187"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam POTYALA-i","AWC_ID":"2012059"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam POTYALA-II","AWC_ID":"2012060"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam RAIDANDI","AWC_ID":"2012051"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam SOMANPALLY","AWC_ID":"2012063"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Antargoan","AWC_NAME":"Anthargam VISSAMPETA","AWC_ID":"2012062"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar BASANTHANAGAR","AWC_ID":"2012067"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar BASANTHANAGAR -1","AWC_ID":"2012068"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar BASANTHANAGAR -2","AWC_ID":"2012069"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar BASANTHANAGAR -3","AWC_ID":"2012070"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar BASANTHANAGAR -4","AWC_ID":"2012071"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar Bodaguttapally","AWC_ID":"2010237"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar Devanapally","AWC_ID":"2010238"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar ELKALAPALLY - I","AWC_ID":"2012095"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar ELKALAPALLY - II","AWC_ID":"2012096"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar ELKALAPALLY - III","AWC_ID":"2012097"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar ELKALAPALLY - IV","AWC_ID":"2012098"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar G.D.Nagar","AWC_ID":"2010224"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar Kannala-1-2","AWC_ID":"2010015"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar Kannala-2-1","AWC_ID":"2010017"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar lambadithanda","AWC_ID":"2010225"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar Nikkireddy Pally","AWC_ID":"2010235"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar PALAKURTHI","AWC_ID":"2012084"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar PALAKURTHY","AWC_ID":"2012083"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar Ranapoor","AWC_ID":"2010227"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Basanth nagar Shalapally","AWC_ID":"2010236"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Bus stand colony -1","AWC_ID":"2013038"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam C S P Colony -1","AWC_ID":"2013034"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam C S P Colony -2","AWC_ID":"2013035"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Gandhinagar -2","AWC_ID":"2013037"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Gandhinagar -I","AWC_ID":"2013036"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Ganeshnagar -3","AWC_ID":"2013033"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Ganeshnagar-2","AWC_ID":"2013032"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Ganeshnagar-I","AWC_ID":"2013031"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam I B Colony","AWC_ID":"2013026"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Jai Bheem Nagar","AWC_ID":"2013039"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Janagam-1","AWC_ID":"2013029"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Janagam-2","AWC_ID":"2013030"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Janagam-3","AWC_ID":"2013137"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Leninagar","AWC_ID":"2013043"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Ramanagar -2","AWC_ID":"2013047"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Ramanagar -2 (I)","AWC_ID":"2013048"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Ramnagar","AWC_ID":"2013046"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Ramnagar -3 (I)","AWC_ID":"2013049"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Ramnagar -4 (I)","AWC_ID":"2013052"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Sanjeevnagar","AWC_ID":"2013050"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Sector -1","AWC_ID":"2013040"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Seethanagar","AWC_ID":"2013051"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Tarakanamangar-2","AWC_ID":"2013028"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Tarakaramanger-I","AWC_ID":"2013027"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Vidhyanagar -2","AWC_ID":"2013042"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Vidhyanagar -I","AWC_ID":"2013041"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Vinobhanagar ( Seetanagar)","AWC_ID":"2013045"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Janagam Vinobhanagar -1","AWC_ID":"2013044"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Barasthnagar-5","AWC_ID":"2013094"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Barathnagar-4","AWC_ID":"2013093"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Dwarakanagar-3","AWC_ID":"2013087"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Hanmannagar-3","AWC_ID":"2013097"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Indiranagar -5","AWC_ID":"2013089"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Jawaharnagar (5 Incline)-4","AWC_ID":"2013105"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Jawaharnagar (Ambedkernagar-3)","AWC_ID":"2013104"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Jawaharnagar (Parsharam-II)","AWC_ID":"2013103"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Jawaharnagar (Vittalnagar)-5","AWC_ID":"2013106"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Jawaharnagar- 1","AWC_ID":"2013102"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Jawaharnagar-5","AWC_ID":"2013099"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Jawasharnagar-1","AWC_ID":"2013096"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Kakateeyanagar-1","AWC_ID":"2013085"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Mahaveer youth -4","AWC_ID":"2013098"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar N T R Nagar-2","AWC_ID":"2013086"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Parsharamnagr-1","AWC_ID":"2013095"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Rameshnagar -4","AWC_ID":"2013083"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Rameshnagasr-5","AWC_ID":"2013084"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Santhoshnagar-3","AWC_ID":"2013092"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Santhoshnagasr-2","AWC_ID":"2013091"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Shakernagar-1","AWC_ID":"2013090"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Sub Center Area -7","AWC_ID":"2013101"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Sub Center Area-6","AWC_ID":"2013100"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Vidhyanagasr-4","AWC_ID":"2013088"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Vidyanagar(ACPI)-3","AWC_ID":"2013082"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Vittalnagar -1(I)","AWC_ID":"2013107"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Vittalnagar -2","AWC_ID":"2013108"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Jawaharnagar Vudyanagar (ACPI)-2","AWC_ID":"2013081"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur E T PALLY - I","AWC_ID":"2012090"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur E T PALLY - II","AWC_ID":"2012091"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur E T PALLY - III","AWC_ID":"2012092"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur GUDIPALLY","AWC_ID":"2012079"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur JAYYARAM","AWC_ID":"2012093"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur JAYYARAM - I I","AWC_ID":"2012094"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur K K GUDUR -II","AWC_ID":"2012081"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur K K Gugur- III","AWC_ID":"2012082"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur KOTHAPALLY- II","AWC_ID":"2012089"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur KOTHAPALLY-1","AWC_ID":"2012088"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur KUKKALAGUDOOR -4","AWC_ID":"2012186"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur KUKKALAGUDUR-I","AWC_ID":"2012080"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur Maredupalli","AWC_ID":"2015110"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur Munjampalli","AWC_ID":"2015109"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur PUTNOOR - I","AWC_ID":"2012076"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur PUTNOOR - Ii","AWC_ID":"2012077"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur RAMARAOPALLY- 1","AWC_ID":"2012085"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur RAMARAOPALLY- II","AWC_ID":"2012086"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur RAMARAOPALLY- III","AWC_ID":"2012087"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur Undeda","AWC_ID":"2015187"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Palakurthy","AWC_NAME":"Kukkala gudur VEMUNUR","AWC_ID":"2012078"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Ambadkar Nagar","AWC_ID":"2013005"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Ambedkernagar","AWC_ID":"2013012"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Annapurna Colony","AWC_ID":"2013015"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Auto Nagar","AWC_ID":"2013016"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Bharathnagar","AWC_ID":"2013002"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Bheemunipatnam","AWC_ID":"2013013"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Hanuman Nagar","AWC_ID":"2013007"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Housing Board Colony Ramagundam","AWC_ID":"2013010"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Indiranagar- -1","AWC_ID":"2013009"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Kakateeyanagar","AWC_ID":"2013018"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Malkapoor & Ramaiahpalli-I","AWC_ID":"2013021"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Mallaiahpally","AWC_ID":"2013003"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Medipalli","AWC_ID":"2013011"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Mubaraknagar","AWC_ID":"2013006"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Mubaraknagar-2","AWC_ID":"2013136"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Narrashalapalli","AWC_ID":"2013022"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Narsingapoor","AWC_ID":"2013019"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam New Poretpalli","AWC_ID":"2013140"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam P H Colony","AWC_ID":"2013023"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Rajeevnagar","AWC_ID":"2013025"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Ramagundam","AWC_ID":"2013008"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Ramagundam STcolony","AWC_ID":"2013138"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Ramaiahpalli-2","AWC_ID":"2013020"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Rehmathnagar","AWC_ID":"2013001"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Srinagar","AWC_ID":"2013024"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam ST colony Ramagundam","AWC_ID":"2013004"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam Subhashnagar","AWC_ID":"2013017"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Ramagundam T K Ramaiah Colony","AWC_ID":"2013014"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Addaguntapalli -1","AWC_ID":"2013068"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Addaguntapalli Sadhanagar-2","AWC_ID":"2013069"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Addaguntapalli-3","AWC_ID":"2013067"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Ashoknagar-1","AWC_ID":"2013061"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Basanthanagar","AWC_ID":"2013056"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Ganeshnagar -2","AWC_ID":"2013066"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Kakateeyanagar-2","AWC_ID":"2013076"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Kakateeyanagar-5","AWC_ID":"2013079"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Kalyananagar-2","AWC_ID":"2013073"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Kasturbhanagar-2","AWC_ID":"2013062"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Krishnagar-2","AWC_ID":"2013058"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir LB Nagar -2 (ACPI)-1","AWC_ID":"2013080"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir LB Nagar-1","AWC_ID":"2013075"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Mandhir Area","AWC_ID":"2013055"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Markandeya Colony -3","AWC_ID":"2013063"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Markandeya Colony -4","AWC_ID":"2013064"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Maruthinagar(Kalyananagasr-2)","AWC_ID":"2013071"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Maruthinagar-3","AWC_ID":"2013070"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Myadaribasti-3","AWC_ID":"2013074"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Rameshanagar-3","AWC_ID":"2013077"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Ramnagar -4 (III)","AWC_ID":"2013054"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Ramnagar -4(II)","AWC_ID":"2013053"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Shivajinagar-1","AWC_ID":"2013072"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Swathanthra Chowk Area -1","AWC_ID":"2013065"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Thirumalanagar-4","AWC_ID":"2013078"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Vittalnagar -4","AWC_ID":"2013060"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Vittalnagar -I","AWC_ID":"2013057"},{"PROJ_NAME":"RAMAGUNDAM","MName":"(U)","SEC_NAME":"Ramagundam","AWC_NAME":"Rammandir Vittalnagar-3","AWC_ID":"2013059"}];
+
+  /* ================================================
+     UTILITY: get unique values from array
+  ================================================ */
+  const unique = arr => [...new Set(arr)];
+
+  /* ================================================
+     STATE — track current cascading selections
+  ================================================ */
+  let currentProject = null;
+  let currentMandal  = null;
+  let currentSector  = null;
+
+  /* ================================================
+     SELECT2 INITIALISATION
+  ================================================ */
+  const S2_OPTS = {
+    theme: 'bootstrap-5',
+    allowClear: true,
+    width: '100%'
+  };
+
+  function initSelect2(selector, placeholder) {
+    $(selector).select2({ ...S2_OPTS, placeholder });
+  }
+
+  function destroySelect2(selector) {
+    if ($(selector).data('select2')) $(selector).select2('destroy');
+  }
+
+  /* ================================================
+     POPULATE HELPERS
+  ================================================ */
+  function populateSelect(selector, values, placeholder, labelFn) {
+    const $el = $(selector);
+    destroySelect2(selector);
+    $el.empty().append(`<option value=""></option>`);
+    values.forEach(v => {
+      const label = labelFn ? labelFn(v) : v;
+      $el.append(`<option value="${v}">${label}</option>`);
+    });
+    $el.prop('disabled', values.length === 0);
+    initSelect2(selector, placeholder);
+  }
+
+  function populateProjectDropdown() {
+    const projects = unique(AWC_DATA.map(r => r.PROJ_NAME)).sort();
+    populateSelect('#selProject', projects, 'Select Project');
+  }
+
+  function populateMandalDropdown(project) {
+    const mandals = unique(
+      AWC_DATA.filter(r => r.PROJ_NAME === project).map(r => r.MName)
+    ).sort();
+    populateSelect('#selMandal', mandals, 'Select Mandal');
+  }
+
+  function populateSectorDropdown(project, mandal) {
+    const sectors = unique(
+      AWC_DATA.filter(r => r.PROJ_NAME === project && r.MName === mandal)
+              .map(r => r.SEC_NAME)
+    ).sort();
+    populateSelect('#selSector', sectors, 'Select Sector');
+  }
+
+  function populateAWCDropdown(project, mandal, sector) {
+    const awcs = AWC_DATA
+      .filter(r => r.PROJ_NAME === project && r.MName === mandal && r.SEC_NAME === sector)
+      .sort((a, b) => a.AWC_NAME.localeCompare(b.AWC_NAME));
+    populateSelect('#selAWC', awcs.map(r => r.AWC_ID), 'Search Anganwadi Centre',
+      id => {
+        const rec = awcs.find(r => r.AWC_ID === id);
+        return rec ? `${rec.AWC_NAME} (${rec.AWC_ID})` : id;
+      }
+    );
+  }
+
+  /* ================================================
+     AUTO-FILL READ-ONLY FIELDS
+  ================================================ */
+  function autoFill(record) {
+    $('#autoAwcId').val(record.AWC_ID);
+    $('#autoProject').val(record.PROJ_NAME);
+    $('#autoMandal').val(record.MName);
+    $('#autoSector').val(record.SEC_NAME);
+  }
+
+  function clearAutoFill() {
+    $('#autoAwcId, #autoProject, #autoMandal, #autoSector').val('');
+  }
+
+  /* ================================================
+     CASCADING CHANGE HANDLERS
+  ================================================ */
+  $('#selProject').on('change', function () {
+    const proj = $(this).val();
+    currentProject = proj || null;
+    currentMandal  = null;
+    currentSector  = null;
+    clearAutoFill();
+    clearFieldError('selProject');
+
+    if (proj) {
+      populateMandalDropdown(proj);
+    } else {
+      destroySelect2('#selMandal');
+      $('#selMandal').empty().append('<option value=""></option>').prop('disabled', true);
+      initSelect2('#selMandal', 'Select Mandal');
+    }
+    destroySelect2('#selSector');
+    $('#selSector').empty().append('<option value=""></option>').prop('disabled', true);
+    initSelect2('#selSector', 'Select Sector');
+
+    destroySelect2('#selAWC');
+    $('#selAWC').empty().append('<option value=""></option>').prop('disabled', true);
+    initSelect2('#selAWC', 'Search Anganwadi Centre');
+  });
+
+  $('#selMandal').on('change', function () {
+    const mandal = $(this).val();
+    currentMandal = mandal || null;
+    currentSector = null;
+    clearAutoFill();
+    clearFieldError('selMandal');
+
+    if (mandal && currentProject) {
+      populateSectorDropdown(currentProject, mandal);
+    } else {
+      destroySelect2('#selSector');
+      $('#selSector').empty().append('<option value=""></option>').prop('disabled', true);
+      initSelect2('#selSector', 'Select Sector');
+    }
+    destroySelect2('#selAWC');
+    $('#selAWC').empty().append('<option value=""></option>').prop('disabled', true);
+    initSelect2('#selAWC', 'Search Anganwadi Centre');
+  });
+
+  $('#selSector').on('change', function () {
+    const sector = $(this).val();
+    currentSector = sector || null;
+    clearAutoFill();
+    clearFieldError('selSector');
+
+    if (sector && currentProject && currentMandal) {
+      populateAWCDropdown(currentProject, currentMandal, sector);
+    } else {
+      destroySelect2('#selAWC');
+      $('#selAWC').empty().append('<option value=""></option>').prop('disabled', true);
+      initSelect2('#selAWC', 'Search Anganwadi Centre');
+    }
+  });
+
+  $('#selAWC').on('change', function () {
+    const awcId = $(this).val();
+    clearFieldError('selAWC');
+    if (awcId) {
+      const record = AWC_DATA.find(r => r.AWC_ID === awcId);
+      if (record) autoFill(record);
+    } else {
+      clearAutoFill();
+    }
+  });
+
+  /* ================================================
+     VALIDATION
+  ================================================ */
+  function setFieldError(fieldId, msg) {
+    const $field = $('#' + fieldId);
+    $field.addClass('is-invalid');
+    // For Select2 containers
+    $field.next('.select2-container').find('.select2-selection').css('border-color', 'var(--danger-gov)');
+    $('#err-' + fieldId).text(msg).addClass('show');
+  }
+
+  function clearFieldError(fieldId) {
+    const $field = $('#' + fieldId);
+    $field.removeClass('is-invalid');
+    $field.next('.select2-container').find('.select2-selection').css('border-color', '');
+    $('#err-' + fieldId).removeClass('show');
+  }
+
+  function validateForm() {
+    let valid = true;
+    let firstErrorId = null;
+
+    function check(fieldId, condition, msg) {
+      if (!condition) {
+        setFieldError(fieldId, msg);
+        if (!firstErrorId) firstErrorId = fieldId;
+        valid = false;
+      } else {
+        clearFieldError(fieldId);
+      }
+    }
+
+    const empName     = $('#empName').val().trim();
+    const designation = $('#designation').val().trim();
+    const mobile      = $('#mobile').val().trim();
+    const dateField   = $('#dateField').val();
+    const project     = $('#selProject').val();
+    const mandal      = $('#selMandal').val();
+    const sector      = $('#selSector').val();
+    const awc         = $('#selAWC').val();
+    const remarks     = $('#remarks').val().trim();
+
+    check('empName',     empName.length > 0,              'Employee Name is required.');
+    check('designation', designation.length > 0,           'Designation is required.');
+    check('mobile',      /^\d{10}$/.test(mobile),        'Please enter a valid 10-digit mobile number.');
+    check('dateField',   dateField !== '',                 'Date is required.');
+    check('selProject',  project !== null && project !== '', 'Please select a Project.');
+    check('selMandal',   mandal  !== null && mandal !== '',  'Please select a Mandal.');
+    check('selSector',   sector  !== null && sector !== '',  'Please select a Sector.');
+    check('selAWC',      awc     !== null && awc !== '',     'Please select an Anganwadi Centre.');
+    check('remarks',     remarks.length > 0,               'Remarks are required.');
+
+    if (!valid && firstErrorId) {
+      const $el = $('#' + firstErrorId);
+      $('html, body').animate({ scrollTop: $el.offset().top - 120 }, 400);
+    }
+
+    return valid;
+  }
+
+  /* ================================================
+     TOAST NOTIFICATIONS
+  ================================================ */
+  function showToast(type, title, msg) {
+    const icon = type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark';
+    const id = 'toast-' + Date.now();
+    const html = `
+      <div class="gov-toast ${type}" id="${id}">
+        <div class="toast-icon"><i class="fas ${icon}"></i></div>
+        <div class="toast-body">
+          <div class="toast-title">${title}</div>
+          <div class="toast-msg">${msg}</div>
+        </div>
+        <button class="toast-close" onclick="removeToast('${id}')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>`;
+    $('#toastContainer').append(html);
+    setTimeout(() => removeToast(id), 5000);
+  }
+
+  function removeToast(id) {
+    const $t = $('#' + id);
+    $t.addClass('toast-fade-out');
+    setTimeout(() => $t.remove(), 300);
+  }
+
+  /* ================================================
+     LOADING OVERLAY
+  ================================================ */
+  function showLoading()  { $('#loadingOverlay').addClass('active'); }
+  function hideLoading()  { $('#loadingOverlay').removeClass('active'); }
+
+  /* ================================================
+     SUBMIT HANDLER
+  ================================================ */
+  $('#btnSubmit').on('click', function () {
+    if (!validateForm()) {
+      showToast('error', 'Validation Failed', 'Please fix the highlighted errors before submitting.');
+      return;
+    }
+
+    showLoading();
+
+    // Simulate async submission (replace with actual API call if needed)
+    setTimeout(() => {
+      hideLoading();
+      showToast('success', 'Submitted Successfully',
+        'Anganwadi data has been recorded. AWC ID: ' + $('#autoAwcId').val());
+      resetForm();
+    }, 1200);
+  });
+
+  /* ================================================
+     RESET HANDLER
+  ================================================ */
+  function resetForm() {
+    $('#awcForm')[0].reset();
+    clearAutoFill();
+    currentProject = null;
+    currentMandal  = null;
+    currentSector  = null;
+
+    // Clear all errors
+    ['empName','designation','mobile','dateField',
+     'selProject','selMandal','selSector','selAWC','remarks']
+      .forEach(id => clearFieldError(id));
+
+    // Re-init dropdowns to empty disabled state
+    destroySelect2('#selMandal');
+    $('#selMandal').empty().append('<option value=""></option>').prop('disabled', true);
+    initSelect2('#selMandal', 'Select Mandal');
+
+    destroySelect2('#selSector');
+    $('#selSector').empty().append('<option value=""></option>').prop('disabled', true);
+    initSelect2('#selSector', 'Select Sector');
+
+    destroySelect2('#selAWC');
+    $('#selAWC').empty().append('<option value=""></option>').prop('disabled', true);
+    initSelect2('#selAWC', 'Search Anganwadi Centre');
+
+    // Reset project (re-populate options)
+    destroySelect2('#selProject');
+    populateProjectDropdown();
+
+    $('html, body').animate({ scrollTop: 0 }, 400);
+  }
+
+  $('#btnReset').on('click', function () {
+    resetForm();
+    showToast('success', 'Form Cleared', 'All fields have been reset.');
+  });
+
+  /* ================================================
+     INLINE VALIDATION ON INPUT CHANGE
+  ================================================ */
+  $('#empName').on('input', () => clearFieldError('empName'));
+  $('#designation').on('input', () => clearFieldError('designation'));
+  $('#remarks').on('input', () => clearFieldError('remarks'));
+  $('#dateField').on('change', () => clearFieldError('dateField'));
+  $('#mobile').on('input', function () {
+    this.value = this.value.replace(/\D/g, '').slice(0, 10);
+    clearFieldError('mobile');
+  });
+
+  /* ================================================
+     INITIALISE ON DOM READY
+  ================================================ */
+  $(document).ready(function () {
+    // Init Project dropdown with all options
+    populateProjectDropdown();
+
+    // Init disabled placeholder dropdowns
+    initSelect2('#selMandal', 'Select Mandal');
+    initSelect2('#selSector', 'Select Sector');
+    initSelect2('#selAWC',    'Search Anganwadi Centre');
+
+    // Set today's date as default
+    const today = new Date().toISOString().split('T')[0];
+    $('#dateField').val(today);
+  });
+
+  </script>
+</body>
+</html>
