@@ -532,16 +532,22 @@
   ================================================ -->
   <header class="gov-header">
     <div class="header-inner">
-      <div class="gov-logo">
-        <i class="fas fa-child"></i>
+      <div class="gov-logo" style="background:none;border:none;box-shadow:none;width:80px;height:80px;padding:0;flex-shrink:0;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Seal_of_Telangana.svg/240px-Seal_of_Telangana.svg.png"
+             alt="WCD Telangana"
+             style="width:78px;height:78px;object-fit:contain;border-radius:4px;"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div style="display:none;width:78px;height:78px;background:linear-gradient(135deg,#F39C12,#E67E22);border-radius:50%;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:1rem;letter-spacing:1px;flex-direction:column;">
+          <span>WCD</span><span style="font-size:0.6rem;font-weight:600;">&amp;SC</span>
+        </div>
       </div>
       <div class="gov-titles">
         <div class="dept-main">
           <i class="fas fa-landmark" style="color:var(--secondary);margin-right:6px;font-size:0.9em;"></i>
-          Government of Telangana
+          WCD &amp; SC Peddapalli
         </div>
-        <div class="dept-sub">Women Development &amp; Child Welfare Department &nbsp;|&nbsp; ICDS Programme</div>
-        <div class="dept-sub" style="margin-top:3px;">Peddapally District &nbsp;|&nbsp; Integrated Child Development Services</div>
+        <div class="dept-sub">Women, Children, Disabled &amp; Senior Citizens &nbsp;|&nbsp; Peddapalli District</div>
+        <div class="dept-sub" style="margin-top:3px;">Government of Telangana &nbsp;|&nbsp; ICDS Programme 2024-25</div>
       </div>
       <div class="header-badge">
         <div class="badge-label">MIS Portal</div>
@@ -608,58 +614,6 @@
         </div>
         <div class="form-card-body">
           <form id="awcForm" novalidate autocomplete="off">
-
-            <!-- ---- SECTION A: PERSONAL DETAILS ---- -->
-            <div class="section-divider">
-              <div class="divider-bar"></div>
-              <div class="divider-label"><i class="fas fa-user me-1"></i>Personal Details</div>
-              <div class="divider-line"></div>
-            </div>
-
-            <div class="row g-3">
-              <!-- Employee Name -->
-              <div class="col-md-6">
-                <label class="form-label" for="empName">
-                  <i class="fas fa-user-tie"></i> Employee Name <span class="req">*</span>
-                </label>
-                <input type="text" class="form-control" id="empName"
-                       placeholder="Enter full name" maxlength="100" />
-                <div class="invalid-feedback" id="err-empName">Employee Name is required.</div>
-              </div>
-
-              <!-- Designation -->
-              <div class="col-md-6">
-                <label class="form-label" for="designation">
-                  <i class="fas fa-id-badge"></i> Designation <span class="req">*</span>
-                </label>
-                <input type="text" class="form-control" id="designation"
-                       placeholder="e.g. Anganwadi Worker / Supervisor" maxlength="100" />
-                <div class="invalid-feedback" id="err-designation">Designation is required.</div>
-              </div>
-
-              <!-- Mobile Number -->
-              <div class="col-md-6">
-                <label class="form-label" for="mobile">
-                  <i class="fas fa-mobile-alt"></i> Mobile Number <span class="req">*</span>
-                </label>
-                <div class="input-group">
-                  <span class="input-group-text" style="border-radius:10px 0 0 10px;border:1.5px solid var(--border-color);background:#F2F3F4;font-size:0.85rem;color:#5D6D7E;">+91</span>
-                  <input type="tel" class="form-control" id="mobile"
-                         placeholder="10-digit mobile number" maxlength="10"
-                         style="border-radius:0 10px 10px 0;" />
-                </div>
-                <div class="invalid-feedback" id="err-mobile">Please enter a valid 10-digit mobile number.</div>
-              </div>
-
-              <!-- Date -->
-              <div class="col-md-6">
-                <label class="form-label" for="dateField">
-                  <i class="fas fa-calendar-alt"></i> Date <span class="req">*</span>
-                </label>
-                <input type="date" class="form-control" id="dateField" />
-                <div class="invalid-feedback" id="err-dateField">Date is required.</div>
-              </div>
-            </div>
 
             <!-- ---- SECTION B: LOCATION DETAILS ---- -->
             <div class="section-divider">
@@ -811,7 +765,7 @@
   ================================================ -->
   <footer class="gov-footer">
     <div class="footer-main">
-      Women Development &amp; Child Welfare Department — Government of Telangana
+      WCD &amp; SC Peddapalli — Women, Children, Disabled &amp; Senior Citizens
     </div>
     <div>
       ICDS MIS Portal &nbsp;|&nbsp; Peddapally District &nbsp;|&nbsp;
@@ -849,6 +803,30 @@
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
   <script>
+  /* ================================================
+     GOOGLE SHEET CONFIG
+     ─────────────────────────────────────────────────
+     మీ Google Apps Script Web App URL ఇక్కడ paste చేయండి.
+     Step 1: Google Sheet తెరవండి
+     Step 2: Extensions → Apps Script
+     Step 3: కింది script paste చేయండి → Deploy as Web App → URL copy చేయండి
+     Step 4: ఆ URL ని GOOGLE_SHEET_URL లో paste చేయండి
+
+     ---- Google Apps Script code ----
+     function doPost(e) {
+       var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+       var data  = JSON.parse(e.postData.contents);
+       var row   = [
+         data.timestamp, data.project, data.mandal,
+         data.sector, data.awcName, data.awcId, data.remarks
+       ];
+       sheet.appendRow(row);
+       return ContentService.createTextOutput('OK');
+     }
+     ---------------------------------
+  ================================================ */
+  const GOOGLE_SHEET_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+
   /* ================================================
      MASTER DATA — 706 AWC Records
      Source: ICDS Master Data (Peddapally District)
@@ -908,7 +886,9 @@
     const mandals = unique(
       AWC_DATA.filter(r => r.PROJ_NAME === project).map(r => r.MName)
     ).sort();
-    populateSelect('#selMandal', mandals, 'Select Mandal');
+    populateSelect('#selMandal', mandals, 'Select Mandal',
+      m => m === '(U)' ? 'Urban (U)' : m.replace(/_/g, ' ')
+    );
   }
 
   function populateSectorDropdown(project, mandal) {
@@ -1049,20 +1029,12 @@
       }
     }
 
-    const empName     = $('#empName').val().trim();
-    const designation = $('#designation').val().trim();
-    const mobile      = $('#mobile').val().trim();
-    const dateField   = $('#dateField').val();
     const project     = $('#selProject').val();
     const mandal      = $('#selMandal').val();
     const sector      = $('#selSector').val();
     const awc         = $('#selAWC').val();
     const remarks     = $('#remarks').val().trim();
 
-    check('empName',     empName.length > 0,              'Employee Name is required.');
-    check('designation', designation.length > 0,           'Designation is required.');
-    check('mobile',      /^\d{10}$/.test(mobile),        'Please enter a valid 10-digit mobile number.');
-    check('dateField',   dateField !== '',                 'Date is required.');
     check('selProject',  project !== null && project !== '', 'Please select a Project.');
     check('selMandal',   mandal  !== null && mandal !== '',  'Please select a Mandal.');
     check('selSector',   sector  !== null && sector !== '',  'Please select a Sector.');
@@ -1121,13 +1093,44 @@
 
     showLoading();
 
-    // Simulate async submission (replace with actual API call if needed)
-    setTimeout(() => {
-      hideLoading();
-      showToast('success', 'Submitted Successfully',
-        'Anganwadi data has been recorded. AWC ID: ' + $('#autoAwcId').val());
-      resetForm();
-    }, 1200);
+    // Collect form data
+    const formData = {
+      timestamp: new Date().toLocaleString('en-IN'),
+      project:   currentProject,
+      mandal:    currentMandal,
+      sector:    currentSector,
+      awcName:   (AWC_DATA.find(r => r.AWC_ID === $('#selAWC').val()) || {}).AWC_NAME || '',
+      awcId:     $('#autoAwcId').val(),
+      remarks:   $('#remarks').val().trim()
+    };
+
+    if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
+      // Send to Google Sheet
+      fetch(GOOGLE_SHEET_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      .then(() => {
+        hideLoading();
+        showToast('success', 'Submitted Successfully',
+          'AWC ID: ' + formData.awcId + ' — Data saved to Google Sheet.');
+        resetForm();
+      })
+      .catch(() => {
+        hideLoading();
+        showToast('error', 'Submission Failed', 'Network error. Please try again.');
+      });
+    } else {
+      // No Google Sheet URL configured — show success toast only
+      setTimeout(() => {
+        hideLoading();
+        showToast('success', 'Submitted Successfully',
+          'AWC ID: ' + formData.awcId + ' — Configure GOOGLE_SHEET_URL to save data.');
+        resetForm();
+      }, 800);
+    }
   });
 
   /* ================================================
@@ -1141,8 +1144,7 @@
     currentSector  = null;
 
     // Clear all errors
-    ['empName','designation','mobile','dateField',
-     'selProject','selMandal','selSector','selAWC','remarks']
+    ['selProject','selMandal','selSector','selAWC','remarks']
       .forEach(id => clearFieldError(id));
 
     // Re-init dropdowns to empty disabled state
@@ -1173,14 +1175,7 @@
   /* ================================================
      INLINE VALIDATION ON INPUT CHANGE
   ================================================ */
-  $('#empName').on('input', () => clearFieldError('empName'));
-  $('#designation').on('input', () => clearFieldError('designation'));
   $('#remarks').on('input', () => clearFieldError('remarks'));
-  $('#dateField').on('change', () => clearFieldError('dateField'));
-  $('#mobile').on('input', function () {
-    this.value = this.value.replace(/\D/g, '').slice(0, 10);
-    clearFieldError('mobile');
-  });
 
   /* ================================================
      INITIALISE ON DOM READY
@@ -1194,9 +1189,7 @@
     initSelect2('#selSector', 'Select Sector');
     initSelect2('#selAWC',    'Search Anganwadi Centre');
 
-    // Set today's date as default
-    const today = new Date().toISOString().split('T')[0];
-    $('#dateField').val(today);
+
   });
 
   </script>
