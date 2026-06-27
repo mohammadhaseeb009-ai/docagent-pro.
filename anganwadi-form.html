@@ -851,7 +851,8 @@
   const S2_OPTS = {
     theme: 'bootstrap-5',
     allowClear: true,
-    width: '100%'
+    width: '100%',
+    minimumResultsForSearch: Infinity
   };
 
   function initSelect2(selector, placeholder) {
@@ -873,7 +874,12 @@
       const label = labelFn ? labelFn(v) : v;
       $el.append(`<option value="${v}">${label}</option>`);
     });
-    $el.prop('disabled', values.length === 0);
+    // Explicitly set/remove disabled so Select2 re-init picks up correct state
+    if (values.length === 0) {
+      $el.attr('disabled', 'disabled');
+    } else {
+      $el.removeAttr('disabled');
+    }
     initSelect2(selector, placeholder);
   }
 
