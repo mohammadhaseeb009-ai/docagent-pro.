@@ -617,7 +617,7 @@ function toast(msg,type='info'){
   setTimeout(()=>d.remove(),3500);
 }
 function initS2(id,ph,disabled){
-  $(id).select2({theme:'bootstrap-5',placeholder:ph||'Select...',allowClear:true,width:'100%',minimumResultsForSearch:8});
+  try{ $(id).select2({theme:'bootstrap-5',placeholder:ph||'Select...',allowClear:true,width:'100%',minimumResultsForSearch:8}); }catch(e){}
   if(disabled){ $(id).prop('disabled',true); }
 }
 function setOpts(id,arr,ph,labelFn){
@@ -708,28 +708,30 @@ let gfP='',gfM='',gfS='';
 function initGF(){
   // Populate projects
   setOpts('#gfProject',uniq(AWC_DATA.map(r=>r.PROJ_NAME)),'All Projects');
-  initS2('#gfProject','All Projects');
-  initS2('#gfMandal','All Mandals');
-  initS2('#gfSector','All Sectors');
 
+  // Attach event listeners FIRST so they work even if Select2 fails to load
   $('#gfProject').on('change',function(){
     gfP=$(this).val()||''; gfM=''; gfS='';
     const mandals=uniq(AWC_DATA.filter(r=>!gfP||r.PROJ_NAME===gfP).map(r=>r.MName));
     setOpts('#gfMandal',mandals,'All Mandals',lbl);
     setOpts('#gfSector',[],'All Sectors');
-    $('#gfMandal').val('').trigger('change.select2');
-    $('#gfSector').val('').trigger('change.select2');
+    try{$('#gfMandal').val('').trigger('change.select2');$('#gfSector').val('').trigger('change.select2');}catch(e){}
     onFC();
   });
   $('#gfMandal').on('change',function(){
     gfM=$(this).val()||''; gfS='';
     const secs=uniq(AWC_DATA.filter(r=>(!gfP||r.PROJ_NAME===gfP)&&(!gfM||r.MName===gfM)).map(r=>r.SEC_NAME));
     setOpts('#gfSector',secs,'All Sectors');
-    $('#gfSector').val('').trigger('change.select2');
+    try{$('#gfSector').val('').trigger('change.select2');}catch(e){}
     onFC();
   });
   $('#gfSector').on('change',function(){ gfS=$(this).val()||''; onFC(); });
   document.getElementById('clearFiltersBtn').addEventListener('click',clearF);
+
+  // Initialize Select2 after listeners are attached
+  initS2('#gfProject','All Projects');
+  initS2('#gfMandal','All Mandals');
+  initS2('#gfSector','All Sectors');
 }
 
 function clearF(){
