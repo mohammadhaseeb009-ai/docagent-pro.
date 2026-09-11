@@ -1189,6 +1189,50 @@
     initSelect2('#selSector', 'Select Sector');
     initSelect2('#selAWC',    'Search Anganwadi Centre');
 
+    // Auto-fill from URL query params (used by dashboard shareable links)
+    (function applyQueryParams() {
+      const params = new URLSearchParams(window.location.search);
+      const proj   = params.get('project');
+      const mandal = params.get('mandal');
+      const sector = params.get('sector');
+      const awcId  = params.get('awc_id');
+      if (!proj) return;
+
+      // Select Project
+      $('#selProject').val(proj).trigger('change');
+
+      // After mandal dropdown is populated, select mandal
+      const waitMandal = setInterval(function () {
+        const opts = $('#selMandal option').map(function(){ return $(this).val(); }).get();
+        if (opts.indexOf(mandal) > -1) {
+          clearInterval(waitMandal);
+          $('#selMandal').val(mandal).trigger('change');
+
+          // After sector dropdown is populated, select sector
+          const waitSector = setInterval(function () {
+            const sopts = $('#selSector option').map(function(){ return $(this).val(); }).get();
+            if (sopts.indexOf(sector) > -1) {
+              clearInterval(waitSector);
+              $('#selSector').val(sector).trigger('change');
+
+              // After AWC dropdown is populated, select AWC
+              const waitAWC = setInterval(function () {
+                const aopts = $('#selAWC option').map(function(){ return $(this).val(); }).get();
+                if (awcId && aopts.indexOf(awcId) > -1) {
+                  clearInterval(waitAWC);
+                  $('#selAWC').val(awcId).trigger('change');
+                  // Lock dropdowns — pre-filled from dashboard link
+                  $('#selProject, #selMandal, #selSector, #selAWC').prop('disabled', true);
+                  $('<div class="alert alert-info alert-sm py-2 px-3 mb-2"><i class="fas fa-info-circle me-1"></i>Form pre-filled from dashboard. AWC fields are locked. Please fill <strong>Remarks</strong> and submit.</div>').prependTo('#mainForm');
+                } else if (aopts.length > 1) {
+                  clearInterval(waitAWC);
+                }
+              }, 100);
+            }
+          }, 100);
+        }
+      }, 100);
+    })();
 
   });
 
