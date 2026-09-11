@@ -1,11 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="refresh" content="0;url=anganwadi-form.html" />
-  <title>ICDS Anganwadi Portal — Redirecting...</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WCD &amp; SC Peddapalli – ICDS Portal</title>
+  <style>
+    :root { --navy:#1a237e; --saffron:#ff8f00; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:system-ui,sans-serif; background:#f5f6fa; min-height:100vh; display:flex; flex-direction:column; }
+    header {
+      background:linear-gradient(135deg,#1a237e,#0d1b5e);
+      color:#fff; padding:18px 24px; display:flex; align-items:center; gap:16px;
+    }
+    .seal {
+      width:56px; height:56px; border-radius:50%;
+      background:rgba(255,255,255,.15); border:2px solid rgba(255,255,255,.4);
+      display:flex; align-items:center; justify-content:center;
+      font-weight:800; font-size:12px; text-align:center; line-height:1.1; flex-shrink:0;
+    }
+    header h1 { font-size:1.2rem; font-weight:700; }
+    header p { font-size:.8rem; opacity:.85; margin-top:3px; }
+    main { flex:1; padding:40px 20px; max-width:860px; margin:0 auto; width:100%; }
+    h2 { color:var(--navy); font-size:1.1rem; font-weight:700; margin-bottom:24px; padding-bottom:8px; border-bottom:2px solid #dee2e6; }
+    .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; }
+    .card {
+      background:#fff; border-radius:12px; padding:24px;
+      box-shadow:0 2px 8px rgba(0,0,0,.08); border-top:4px solid var(--navy);
+      display:flex; flex-direction:column; gap:12px;
+      transition:box-shadow .2s, transform .2s;
+    }
+    .card:hover { box-shadow:0 6px 20px rgba(0,0,0,.13); transform:translateY(-2px); }
+    .card.accent-saffron { border-top-color:var(--saffron); }
+    .card-icon { font-size:2rem; }
+    .card h3 { font-size:1rem; font-weight:700; color:var(--navy); }
+    .card p { font-size:.83rem; color:#555; flex:1; line-height:1.5; }
+    .card a {
+      display:inline-block; padding:9px 20px; border-radius:8px;
+      background:var(--navy); color:#fff; text-decoration:none;
+      font-size:.85rem; font-weight:600; text-align:center;
+    }
+    .card.accent-saffron a { background:var(--saffron); }
+    .info { background:#e3f2fd; border:1px solid #90caf9; border-radius:8px; padding:14px 18px; margin-top:24px; font-size:.83rem; color:#1565c0; line-height:1.6; }
+    footer { text-align:center; padding:16px; font-size:.75rem; color:#888; background:#fff; border-top:1px solid #dee2e6; }
+    @media(max-width:480px) { header h1 { font-size:1rem; } }
+  </style>
 </head>
 <body>
-  <p>Redirecting to <a href="anganwadi-form.html">ICDS Anganwadi Data Entry Portal</a>...</p>
+<header>
+  <div class="seal">WCD<br>&amp;SC</div>
+  <div>
+    <h1>WCD &amp; SC Peddapalli – ICDS Digital Portal</h1>
+    <p>Women, Children, Disabled &amp; Senior Citizens Department &nbsp;|&nbsp; Telangana Government</p>
+  </div>
+</header>
+<main>
+  <h2>Available Tools</h2>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">📊</div>
+      <h3>AWC Intelligence Dashboard</h3>
+      <p>12-page Power BI-style analytics dashboard — KPI tiles, drill-down charts, AWC profiles, data quality report, and data collection manager for all 706 AWC centres in Peddapalli District.</p>
+      <a href="awc-dashboard.html">Open Dashboard →</a>
+    </div>
+    <div class="card accent-saffron">
+      <div class="card-icon">📝</div>
+      <h3>AWC Data Entry Form</h3>
+      <p>ICDS field data entry form for AWC workers — cascading Project → Mandal → Sector → AWC selection with Google Sheet integration. Also opens pre-filled when sent from the dashboard.</p>
+      <a href="anganwadi-form.html">Open Form →</a>
+    </div>
+  </div>
+  <div class="info">
+    <strong>How to use:</strong> Open the <strong>Dashboard</strong> to analyse all 706 AWC centres and generate shareable form links.
+    Go to <strong>Collect Data (Page 12)</strong> in the dashboard to send pre-filled form links to AWC workers via WhatsApp.
+    Configure Google Apps Script URL (Setup button) to enable live submission tracking.
+  </div>
+</main>
+<footer>ICDS – Peddapalli District &nbsp;|&nbsp; WCD &amp; SC Department, Telangana &nbsp;|&nbsp; 706 AWC Centres</footer>
 </body>
 </html>
