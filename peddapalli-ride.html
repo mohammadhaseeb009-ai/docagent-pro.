@@ -1471,6 +1471,29 @@ const MAP_LABELS = [
   { lat:18.608, lon:79.358, txt:'Ramagundam Rd', type:'road', sz:7 },
 ];
 
+// Urban area polygon — Peddapalli town
+const TOWN_AREA = [
+  [18.608,79.352],[18.626,79.352],[18.630,79.360],[18.630,79.378],
+  [18.628,79.392],[18.622,79.396],[18.610,79.394],[18.605,79.382],
+  [18.604,79.365],[18.608,79.352],
+];
+
+// Godavarikhani township
+const GODAVARIKHANI_AREA = [
+  [18.668,79.453],[18.692,79.455],[18.698,79.475],[18.695,79.498],
+  [18.680,79.508],[18.663,79.504],[18.656,79.485],[18.660,79.462],
+];
+
+// Landmark pin markers
+const LANDMARK_PINS = [
+  { lat:18.610, lon:79.368, icon:'🚂', label:'Railway Station' },
+  { lat:18.617, lon:79.372, icon:'🚌', label:'Bus Stand' },
+  { lat:18.622, lon:79.370, icon:'🏛️', label:'Collectorate' },
+  { lat:18.620, lon:79.376, icon:'🏥', label:'Govt Hospital' },
+  { lat:18.683, lon:79.483, icon:'⛏️', label:'SCCL Colony' },
+  { lat:18.614, lon:79.360, icon:'🏪', label:'Main Bazaar' },
+];
+
 // Demo route: Main Bazaar → Godavarikhani SCCL Colony
 const ROUTE = [
   [18.618,79.375],[18.625,79.382],[18.635,79.394],[18.646,79.408],
@@ -1496,34 +1519,50 @@ function getThemeColors() {
     || (!document.documentElement.dataset.theme
         && window.matchMedia('(prefers-color-scheme: dark)').matches);
   return dark ? {
-    bg:'#0A1428', water:'#112244', waterLine:'#1a3a6e',
+    bg:'#08111E',
+    terrainLight:'rgba(18,38,70,.6)',
+    water:'#0E2048', waterLine:'#1a3a7a', waterFill:'#0C1C3E',
     railBg:'#0f1e38', railFg:'#2a4060',
-    hwFill:'#2a4060', hwStr:'#3a5880',
-    majStr:'#1e3450', minStr:'#162a44', locStr:'#112038',
-    sccl:'rgba(245,166,35,.10)', scclStr:'rgba(245,166,35,.25)',
-    park:'rgba(34,200,122,.08)', parkStr:'rgba(34,200,122,.20)',
-    lblCity:'#E8EDF7', lblPoi:'#8A9BBF', lblWater:'#4a7ccc',
-    lblArea:'#7A8BA0', lblRoad:'#4D6080',
-    route:'#00D4AA', routeGlow:'rgba(0,212,170,.35)',
+    urbanFill:'rgba(22,38,65,.80)', urbanFill2:'rgba(18,32,55,.70)',
+    urbanStroke:'rgba(40,65,110,.4)',
+    hwCasing:'#0a1826', hwFill:'#2e4d78',
+    majCasing:'#081422', majFill:'#1e3558',
+    minCasing:null, minFill:'#162a42',
+    locStr:'#0e2036',
+    sccl:'rgba(245,166,35,.12)', scclStr:'rgba(245,166,35,.3)',
+    park:'rgba(34,200,122,.10)', parkStr:'rgba(34,200,122,.25)',
+    pinBg:'rgba(10,20,40,.85)', pinStroke:'rgba(60,100,160,.6)',
+    lblHalo:'rgba(8,17,30,.9)',
+    lblCity:'#DDE8FF', lblPoi:'#7A9FD0', lblWater:'#5588CC',
+    lblArea:'#6A7E9A', lblRoad:'#3D5570',
+    route:'#00D4AA', routeGlow:'rgba(0,212,170,.30)',
     car:'#00D4AA', driver:'#F5A623',
     pickup:'#22C87A', dropoff:'#FF4D6A',
   } : {
-    bg:'#E8EFF8', water:'#B8D4F0', waterLine:'#90B8E8',
-    railBg:'#D0DCF0', railFg:'#8AAAD0',
-    hwFill:'#C8D8F0', hwStr:'#A0B8DC',
-    majStr:'#B8CCEC', minStr:'#C8D8F4', locStr:'#D8E4F8',
-    sccl:'rgba(180,120,0,.08)', scclStr:'rgba(180,120,0,.20)',
-    park:'rgba(0,160,90,.10)', parkStr:'rgba(0,160,90,.25)',
-    lblCity:'#0D1427', lblPoi:'#4A5A78', lblWater:'#1a5caa',
-    lblArea:'#5A6A80', lblRoad:'#8090B0',
-    route:'#007A60', routeGlow:'rgba(0,122,96,.25)',
+    bg:'#E4EDF8',
+    terrainLight:'rgba(220,235,255,.5)',
+    water:'#A8CCEE', waterLine:'#80AADC', waterFill:'#B8D8F8',
+    railBg:'#C8D8EC', railFg:'#7AAAD0',
+    urbanFill:'rgba(240,245,255,.85)', urbanFill2:'rgba(235,242,255,.75)',
+    urbanStroke:'rgba(160,185,220,.5)',
+    hwCasing:'#A0BAD8', hwFill:'#C8DAF0',
+    majCasing:'#B0C8E4', majFill:'#D0E0F4',
+    minCasing:null, minFill:'#C8D8F0',
+    locStr:'#D0DCF0',
+    sccl:'rgba(180,120,0,.08)', scclStr:'rgba(180,120,0,.25)',
+    park:'rgba(0,160,90,.12)', parkStr:'rgba(0,160,90,.30)',
+    pinBg:'rgba(255,255,255,.92)', pinStroke:'rgba(100,140,200,.5)',
+    lblHalo:'rgba(228,237,248,.9)',
+    lblCity:'#0D1C35', lblPoi:'#3A5878', lblWater:'#1A5CAA',
+    lblArea:'#4A5E78', lblRoad:'#7090B8',
+    route:'#007A60', routeGlow:'rgba(0,122,96,.22)',
     car:'#007A60', driver:'#C07000',
     pickup:'#00883C', dropoff:'#CC2240',
   };
 }
 
 function drawMap(canvas, opts = {}) {
-  const { showRoute=false, progress=0, carT=null, driverT=null, zoomId='homeMap' } = opts;
+  const { showRoute=false, carT=null, driverT=null } = opts;
   const DPR = Math.min(window.devicePixelRatio || 1, 2);
   const rect = canvas.getBoundingClientRect();
   const W = rect.width || canvas.offsetWidth || 360;
@@ -1538,127 +1577,79 @@ function drawMap(canvas, opts = {}) {
   const C = getThemeColors();
   const p = (lat, lon) => proj(lat, lon, W, H, b);
 
-  // Background
+  // ── 1. Background ──
   ctx.fillStyle = C.bg;
   ctx.fillRect(0, 0, W, H);
 
-  // Manair River (filled)
-  if (MANAIR.length > 1) {
+  // Subtle terrain vignette
+  const tg = ctx.createRadialGradient(W*.45, H*.42, 0, W*.45, H*.42, Math.max(W,H)*.65);
+  tg.addColorStop(0, C.terrainLight);
+  tg.addColorStop(1, 'transparent');
+  ctx.fillStyle = tg;
+  ctx.fillRect(0, 0, W, H);
+
+  // ── helper: polygon ──
+  function poly(pts, fill, stroke, lw=1) {
+    if (pts.length < 3) return;
     ctx.beginPath();
-    let [mx,my] = p(MANAIR[0][0], MANAIR[0][1]);
-    ctx.moveTo(mx, my);
-    for (let i=1; i<MANAIR.length; i++) {
-      const [x,y] = p(MANAIR[i][0], MANAIR[i][1]);
-      ctx.lineTo(x, y);
-    }
-    // close the river band
-    for (let i=MANAIR.length-1; i>=0; i--) {
-      const [x,y] = p(MANAIR[i][0]-0.006, MANAIR[i][1]);
+    const [x0,y0] = p(pts[0][0], pts[0][1]);
+    ctx.moveTo(x0, y0);
+    for (let i=1; i<pts.length; i++) {
+      const [x,y] = p(pts[i][0], pts[i][1]);
       ctx.lineTo(x, y);
     }
     ctx.closePath();
-    ctx.fillStyle = C.water;
-    ctx.fill();
-    // River outline
+    if (fill)   { ctx.fillStyle=fill; ctx.fill(); }
+    if (stroke) { ctx.strokeStyle=stroke; ctx.lineWidth=lw; ctx.stroke(); }
+  }
+
+  // ── 2. Urban fills ──
+  poly(TOWN_AREA, C.urbanFill, C.urbanStroke, 0.6);
+  poly(GODAVARIKHANI_AREA, C.urbanFill2, C.urbanStroke, 0.6);
+  poly(SCCL_AREA, C.sccl, C.scclStr, 1.2);
+  poly(TOWN_PARK, C.park, C.parkStr, 0.8);
+
+  // ── 3. Manair River — wide stroke + centerline ──
+  function drawPolyline(pts, color, lw) {
+    if (pts.length < 2) return;
     ctx.beginPath();
-    [mx,my] = p(MANAIR[0][0], MANAIR[0][1]);
-    ctx.moveTo(mx, my);
-    for (let i=1; i<MANAIR.length; i++) {
-      const [x,y] = p(MANAIR[i][0], MANAIR[i][1]);
+    const [x0,y0] = p(pts[0][0], pts[0][1]);
+    ctx.moveTo(x0, y0);
+    for (let i=1; i<pts.length; i++) {
+      const [x,y] = p(pts[i][0], pts[i][1]);
       ctx.lineTo(x, y);
     }
-    ctx.strokeStyle = C.waterLine;
-    ctx.lineWidth = 3;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lw;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
     ctx.stroke();
   }
 
-  // Tributary
-  if (TRIBUTARY.length > 1) {
-    ctx.beginPath();
-    let [tx0,ty0] = p(TRIBUTARY[0][0], TRIBUTARY[0][1]);
-    ctx.moveTo(tx0,ty0);
-    for (let i=1; i<TRIBUTARY.length; i++) {
-      const [x,y] = p(TRIBUTARY[i][0], TRIBUTARY[i][1]);
-      ctx.lineTo(x, y);
-    }
-    ctx.strokeStyle = C.waterLine;
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-  }
+  const rw = Math.max(6, 14 - lvl * 3);
+  drawPolyline(MANAIR, C.water, rw + 4);      // outer river fill
+  drawPolyline(MANAIR, C.waterLine, rw * .45); // sparkling centerline
+  drawPolyline(TRIBUTARY, C.waterLine, 2.5);
 
-  // SCCL/Singareni area
-  if (SCCL_AREA.length > 2) {
-    ctx.beginPath();
-    let [sx,sy] = p(SCCL_AREA[0][0], SCCL_AREA[0][1]);
-    ctx.moveTo(sx, sy);
-    for (let i=1; i<SCCL_AREA.length; i++) {
-      const [x,y] = p(SCCL_AREA[i][0], SCCL_AREA[i][1]);
-      ctx.lineTo(x, y);
-    }
-    ctx.closePath();
-    ctx.fillStyle = C.sccl;
-    ctx.fill();
-    ctx.strokeStyle = C.scclStr;
-    ctx.lineWidth = 1;
-    ctx.stroke();
-  }
-
-  // Town park
-  if (TOWN_PARK.length > 2) {
-    ctx.beginPath();
-    let [px0,py0] = p(TOWN_PARK[0][0], TOWN_PARK[0][1]);
-    ctx.moveTo(px0, py0);
-    for (let i=1; i<TOWN_PARK.length; i++) {
-      const [x,y] = p(TOWN_PARK[i][0], TOWN_PARK[i][1]);
-      ctx.lineTo(x, y);
-    }
-    ctx.closePath();
-    ctx.fillStyle = C.park;
-    ctx.fill();
-    ctx.strokeStyle = C.parkStr;
-    ctx.lineWidth = .7;
-    ctx.stroke();
-  }
-
-  // Railway line (dashed)
+  // ── 4. Railway — bed + dashed sleepers ──
   if (RAILWAY.length > 1) {
-    // dark background rail
-    ctx.beginPath();
-    let [rx,ry] = p(RAILWAY[0][0], RAILWAY[0][1]);
-    ctx.moveTo(rx, ry);
-    for (let i=1; i<RAILWAY.length; i++) {
-      const [x,y] = p(RAILWAY[i][0], RAILWAY[i][1]);
-      ctx.lineTo(x, y);
-    }
-    ctx.strokeStyle = C.railBg;
-    ctx.lineWidth = 3;
-    ctx.setLineDash([]);
-    ctx.stroke();
-    // dashed overlay
-    ctx.beginPath();
-    [rx,ry] = p(RAILWAY[0][0], RAILWAY[0][1]);
-    ctx.moveTo(rx, ry);
-    for (let i=1; i<RAILWAY.length; i++) {
-      const [x,y] = p(RAILWAY[i][0], RAILWAY[i][1]);
-      ctx.lineTo(x, y);
-    }
-    ctx.strokeStyle = C.railFg;
-    ctx.lineWidth = 1.5;
+    drawPolyline(RAILWAY, C.railBg, 4);
     ctx.setLineDash([6,4]);
-    ctx.stroke();
+    drawPolyline(RAILWAY, C.railFg, 2);
     ctx.setLineDash([]);
   }
 
-  // Roads
-  const roadStyles = {
-    highway: { color:C.hwStr, w:4 },
-    major:   { color:C.majStr, w:2.5 },
-    minor:   { color:C.minStr, w:1.5 },
-    local:   { color:C.locStr, w:.8 },
+  // ── 5. Roads: casing pass then surface pass ──
+  const RS = {
+    highway: { casing:C.hwCasing, fill:C.hwFill, cw:8, fw:4.5 },
+    major:   { casing:C.majCasing, fill:C.majFill, cw:5.5, fw:3 },
+    minor:   { casing:null, fill:C.minFill, cw:0, fw:2 },
+    local:   { casing:null, fill:C.locStr,  cw:0, fw:1 },
   };
+  // Casing
   for (const rd of ROADS) {
-    const st = roadStyles[rd.t];
-    if (!st || rd.p.length < 2) continue;
+    const s = RS[rd.t];
+    if (!s?.casing || rd.p.length < 2) continue;
     ctx.beginPath();
     const [rx0,ry0] = p(rd.p[0][0], rd.p[0][1]);
     ctx.moveTo(rx0, ry0);
@@ -1666,109 +1657,119 @@ function drawMap(canvas, opts = {}) {
       const [x,y] = p(rd.p[i][0], rd.p[i][1]);
       ctx.lineTo(x, y);
     }
-    ctx.strokeStyle = st.color;
-    ctx.lineWidth = st.w;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
+    ctx.strokeStyle = s.casing;
+    ctx.lineWidth = s.cw;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.stroke();
+  }
+  // Surface
+  for (const rd of ROADS) {
+    const s = RS[rd.t];
+    if (!s || rd.p.length < 2) continue;
+    ctx.beginPath();
+    const [rx0,ry0] = p(rd.p[0][0], rd.p[0][1]);
+    ctx.moveTo(rx0, ry0);
+    for (let i=1; i<rd.p.length; i++) {
+      const [x,y] = p(rd.p[i][0], rd.p[i][1]);
+      ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = s.fill;
+    ctx.lineWidth = s.fw;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     ctx.stroke();
   }
 
-  // Route line
+  // ── 6. Route ──
   if (showRoute && ROUTE.length > 1) {
-    // glow
     ctx.beginPath();
-    let [rox,roy] = p(ROUTE[0][0], ROUTE[0][1]);
-    ctx.moveTo(rox, roy);
+    let [rx,ry] = p(ROUTE[0][0], ROUTE[0][1]);
+    ctx.moveTo(rx, ry);
     for (let i=1; i<ROUTE.length; i++) {
       const [x,y] = p(ROUTE[i][0], ROUTE[i][1]);
       ctx.lineTo(x, y);
     }
     ctx.strokeStyle = C.routeGlow;
-    ctx.lineWidth = 8;
+    ctx.lineWidth = 10;
     ctx.lineCap = 'round';
     ctx.stroke();
 
-    // solid route
     ctx.beginPath();
-    ctx.moveTo(rox, roy);
+    [rx,ry] = p(ROUTE[0][0], ROUTE[0][1]);
+    ctx.moveTo(rx, ry);
     for (let i=1; i<ROUTE.length; i++) {
       const [x,y] = p(ROUTE[i][0], ROUTE[i][1]);
       ctx.lineTo(x, y);
     }
     ctx.strokeStyle = C.route;
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 3.5;
     ctx.stroke();
 
-    // pickup pin
-    const [px0,py0] = p(ROUTE[0][0], ROUTE[0][1]);
-    ctx.beginPath();
-    ctx.arc(px0, py0, 6, 0, Math.PI*2);
-    ctx.fillStyle = C.pickup;
-    ctx.fill();
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-
-    // dropoff pin
-    const [dpx,dpy] = p(ROUTE[ROUTE.length-1][0], ROUTE[ROUTE.length-1][1]);
-    ctx.beginPath();
-    ctx.arc(dpx, dpy, 6, 0, Math.PI*2);
-    ctx.fillStyle = C.dropoff;
-    ctx.fill();
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+    function pin(lat, lon, color) {
+      const [px,py] = p(lat, lon);
+      ctx.beginPath();
+      ctx.arc(px, py, 7, 0, Math.PI*2);
+      ctx.fillStyle = color; ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    }
+    pin(ROUTE[0][0], ROUTE[0][1], C.pickup);
+    pin(ROUTE[ROUTE.length-1][0], ROUTE[ROUTE.length-1][1], C.dropoff);
   }
 
-  // Moving car on route
-  if (carT !== null && ROUTE.length > 1) {
+  // ── 7. Moving car ──
+  if (carT !== null) {
     const pos = interpolateRoute(ROUTE, carT);
     const [cx2,cy2] = p(pos[0], pos[1]);
-    // halo
-    ctx.beginPath();
-    ctx.arc(cx2, cy2, 12, 0, Math.PI*2);
-    ctx.fillStyle = C.routeGlow;
-    ctx.fill();
-    // car dot
-    ctx.beginPath();
-    ctx.arc(cx2, cy2, 6, 0, Math.PI*2);
-    ctx.fillStyle = C.car;
-    ctx.fill();
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx2,cy2,14,0,Math.PI*2);
+    ctx.fillStyle = C.routeGlow; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx2,cy2,7,0,Math.PI*2);
+    ctx.fillStyle = C.car; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
   }
 
-  // Driver approaching
+  // ── 8. Driver dot ──
   if (driverT !== null && DRIVER_APPROACH.length > 1) {
     const pos = interpolateRoute(DRIVER_APPROACH, driverT);
     const [dx,dy] = p(pos[0], pos[1]);
-    ctx.beginPath();
-    ctx.arc(dx, dy, 10, 0, Math.PI*2);
-    ctx.fillStyle = 'rgba(245,166,35,.25)';
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(dx, dy, 5, 0, Math.PI*2);
-    ctx.fillStyle = C.driver;
-    ctx.fill();
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+    ctx.beginPath(); ctx.arc(dx,dy,13,0,Math.PI*2);
+    ctx.fillStyle = 'rgba(245,166,35,.22)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(dx,dy,6,0,Math.PI*2);
+    ctx.fillStyle = C.driver; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
   }
 
-  // Map labels
+  // ── 9. Landmark pins ──
+  for (const lm of LANDMARK_PINS) {
+    const [lx,ly] = p(lm.lat, lm.lon);
+    if (lx < -16 || lx > W+16 || ly < -16 || ly > H+16) continue;
+    ctx.beginPath();
+    ctx.arc(lx, ly, 10, 0, Math.PI*2);
+    ctx.fillStyle = C.pinBg; ctx.fill();
+    ctx.strokeStyle = C.pinStroke; ctx.lineWidth = 1.2; ctx.stroke();
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(lm.icon, lx, ly);
+    ctx.textBaseline = 'alphabetic';
+  }
+
+  // ── 10. Labels with halos ──
   for (const lbl of MAP_LABELS) {
     const [lx,ly] = p(lbl.lat, lbl.lon);
-    if (lx < -20 || lx > W+20 || ly < -10 || ly > H+10) continue;
-    ctx.font = `${lbl.type==='city'?600:400} ${lbl.sz}px 'DM Sans',sans-serif`;
+    if (lx < -24 || lx > W+24 || ly < -10 || ly > H+10) continue;
+    const wt = (lbl.type === 'city') ? '700' : '400';
+    ctx.font = `${wt} ${lbl.sz}px 'DM Sans',sans-serif`;
     ctx.textAlign = 'center';
-    const txtColor = lbl.type==='water' ? C.lblWater
-      : lbl.type==='city' ? C.lblCity
-      : lbl.type==='area' ? C.lblArea
-      : lbl.type==='road' ? C.lblRoad
+    const oy = ly + lbl.sz * .38 + (lbl.type !== 'water' ? 13 : 0);
+    ctx.strokeStyle = C.lblHalo;
+    ctx.lineWidth = 3.5;
+    ctx.lineJoin = 'round';
+    ctx.strokeText(lbl.txt, lx, oy);
+    ctx.fillStyle = lbl.type==='water' ? C.lblWater
+      : lbl.type==='city'  ? C.lblCity
+      : lbl.type==='area'  ? C.lblArea
+      : lbl.type==='road'  ? C.lblRoad
       : C.lblPoi;
-    ctx.fillStyle = txtColor;
-    ctx.fillText(lbl.txt, lx, ly + (lbl.sz * .35));
+    ctx.fillText(lbl.txt, lx, oy);
   }
 }
 
