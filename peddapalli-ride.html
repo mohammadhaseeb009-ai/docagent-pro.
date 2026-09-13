@@ -581,7 +581,7 @@ input:focus,select:focus{border-color:var(--accent)}
 /* ─── LOADING OVERLAY ────────────────────────── */
 .loading-overlay{
   position:absolute;inset:0;background:rgba(6,9,26,.8);
-  display:none;place-items:center;z-index:200;backdrop-filter:blur(4px);
+  display:none;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(4px);
   flex-direction:column;gap:.8rem;
 }
 .loading-overlay.show{display:flex}
@@ -835,7 +835,7 @@ input:focus,select:focus{border-color:var(--accent)}
         <div class="eta-unit">ETA</div>
       </div>
       <div class="eta-divider">
-        <div class="eta-val">14 km</div>
+        <div class="eta-val" id="driverTripDist">14 km</div>
         <div class="eta-unit">TRIP DIST</div>
       </div>
       <div class="eta-divider">
@@ -859,7 +859,7 @@ input:focus,select:focus{border-color:var(--accent)}
       </button>
     </div>
 
-    <button class="btn-primary" style="margin-top:.4rem" onclick="startTracking()">
+    <button class="btn-primary" style="margin-top:.4rem" onclick="goTo('tracking')">
       Start Tracking →
     </button>
   </div>
@@ -941,7 +941,7 @@ input:focus,select:focus{border-color:var(--accent)}
   <div class="scroll-body">
     <div class="fare-big">
       <div class="fare-amount" id="payAmt">₹198</div>
-      <div class="fare-label">Total Fare · Main Bazaar → SCCL Colony</div>
+      <div class="fare-label" id="fareSubLabel">Total Fare · Main Bazaar → SCCL Colony</div>
     </div>
 
     <div class="fare-breakdown">
@@ -950,7 +950,7 @@ input:focus,select:focus{border-color:var(--accent)}
         <div class="fare-row-val" id="fb-base">₹30</div>
       </div>
       <div class="fare-row">
-        <div class="fare-row-lbl">Distance (14.0 km)</div>
+        <div class="fare-row-lbl" id="distFareLbl">Distance (14.0 km)</div>
         <div class="fare-row-val" id="fb-dist">₹168</div>
       </div>
       <div class="fare-row">
@@ -1030,11 +1030,11 @@ input:focus,select:focus{border-color:var(--accent)}
       </div>
       <div class="receipt-row">
         <div class="receipt-lbl">Distance</div>
-        <div class="receipt-val">14.0 km</div>
+        <div class="receipt-val" id="rcDist">14.0 km</div>
       </div>
       <div class="receipt-row">
         <div class="receipt-lbl">Duration</div>
-        <div class="receipt-val">22 min</div>
+        <div class="receipt-val" id="rcDur">22 min</div>
       </div>
       <div class="receipt-row">
         <div class="receipt-lbl">Paid</div>
@@ -1908,6 +1908,8 @@ function updateDriverScreen() {
   const fare = calcFare(selectedRide, destDist);
   const el = document.getElementById('driverFareD');
   if (el) el.textContent = '₹'+fare;
+  const td = document.getElementById('driverTripDist');
+  if (td) td.textContent = destDist + ' km';
   const dt = document.getElementById('trackDest');
   if (dt) dt.textContent = destName;
   updatePayScreen(fare);
@@ -1944,19 +1946,21 @@ function startDriverApproach() {
 /* ── RIDE TRACKING SIMULATION ────────────────────────────────────────── */
 let trackT = 0;
 let trackInterval = null;
-const TOTAL_KM = 14;
-const TOTAL_MIN = 22;
+let simTotalKm = 14;
+let simTotalMin = 22;
 
 function startRideSim() {
   trackT = 0;
+  simTotalKm = destDist;
+  simTotalMin = Math.round(destDist * 1.6);
   clearInterval(trackInterval);
   const c = document.getElementById('trackMap');
   if (c) drawMap(c, { showRoute:true, carT:0 });
 
   trackInterval = setInterval(() => {
     trackT = Math.min(trackT + 0.0032, 1);
-    const kmLeft = +(TOTAL_KM * (1-trackT)).toFixed(1);
-    const minLeft = Math.round(TOTAL_MIN * (1-trackT));
+    const kmLeft = +(simTotalKm * (1-trackT)).toFixed(1);
+    const minLeft = Math.round(simTotalMin * (1-trackT));
     const spd = Math.round(30 + Math.sin(trackT * Math.PI * 4) * 15);
     const d = document.getElementById('t-dist');
     const t = document.getElementById('t-time');
@@ -1981,6 +1985,8 @@ function updatePayScreen(fare) {
   const c = RIDE_CONFIG[selectedRide];
   const baseFare = c.base;
   const distFare = fare - baseFare;
+  const km = destDist.toFixed(1);
+  const estMin = Math.round(destDist * 1.6); // ~37.5 km/h avg
 
   document.getElementById('payAmt').textContent = '₹'+fare;
   document.getElementById('payBtnAmt').textContent = '₹'+fare;
@@ -1990,7 +1996,11 @@ function updatePayScreen(fare) {
   document.getElementById('rc-paid').textContent = '₹'+fare;
 
   const dstRoute = destName.replace(', Peddapalli','');
+  document.getElementById('fareSubLabel').textContent = `Total Fare · Main Bazaar → ${dstRoute}`;
+  document.getElementById('distFareLbl').textContent = `Distance (${km} km)`;
   document.getElementById('rc-route').textContent = `Main Bazaar → ${dstRoute}`;
+  document.getElementById('rcDist').textContent = km + ' km';
+  document.getElementById('rcDur').textContent = estMin + ' min';
 }
 
 function selPay(type) {
