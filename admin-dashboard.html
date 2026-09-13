@@ -469,17 +469,17 @@ td{padding:.7rem 1rem;vertical-align:middle}
         </div>
         <div class="stat-card" style="--card-accent:#F5A623">
           <div class="stat-label">Active Drivers</div>
-          <div class="stat-val" id="sc-drivers">47</div>
+          <div class="stat-val" id="sc-drivers">13</div>
           <div class="stat-sub">
-            of 63 registered
-            <span class="stat-trend trend-up">↑ 74.6% online</span>
+            of 20 registered
+            <span class="stat-trend trend-up">↑ 65% online</span>
           </div>
         </div>
         <div class="stat-card" style="--card-accent:#3B9EFF">
           <div class="stat-label">Registered Users</div>
           <div class="stat-val" id="sc-users">1,842</div>
           <div class="stat-sub">
-            +12 new today
+            +18 new today
             <span class="stat-trend trend-up">↑</span>
           </div>
         </div>
@@ -597,7 +597,7 @@ td{padding:.7rem 1rem;vertical-align:middle}
       <div class="section-hdr">
         <div>
           <div class="section-title">Driver Management</div>
-          <div class="section-sub">63 registered drivers in Peddapalli District</div>
+          <div class="section-sub">20 registered drivers in Peddapalli District</div>
         </div>
         <button class="btn btn-accent" onclick="openAddDriverModal()">+ Add Driver</button>
       </div>
@@ -867,15 +867,49 @@ const RIDES = [
   {id:'QR-2834',date:'13 Sep 2026, 07:42',user:'Raju Sharma',phone:'9701234567',from:'SCCL Colony',to:'Karimnagar',driver:'Imran S.',vehicle:'Sedan',fare:480,payment:'UPI',status:'Completed'},
   {id:'QR-2833',date:'13 Sep 2026, 07:30',user:'Lakshmi V.',phone:'9800123456',from:'Main Bazaar',to:'Housing Board',driver:'Suresh M.',vehicle:'Auto',fare:45,payment:'Cash',status:'Completed'},
   {id:'QR-2832',date:'13 Sep 2026, 07:15',user:'Mohan Das',phone:'9654321098',from:'Ramagundam',to:'Peddapalli',driver:'Raju K.',vehicle:'Mini Car',fare:220,payment:'UPI',status:'Completed'},
+  {id:'QR-2831',date:'13 Sep 2026, 06:58',user:'Nirmala Bai',phone:'9811234567',from:'Manthani',to:'Peddapalli Rly Stn',driver:'Kavitha N.',vehicle:'Mini Car',fare:290,payment:'UPI',status:'Completed'},
+  {id:'QR-2830',date:'13 Sep 2026, 06:40',user:'Syed Hussain',phone:'9988001122',from:'Godavarikhani Phase 2',to:'NTPC Colony',driver:'Imran S.',vehicle:'Sedan',fare:95,payment:'UPI',status:'Completed'},
+  {id:'QR-2829',date:'13 Sep 2026, 06:22',user:'Tulasi Devi',phone:'9700223344',from:'Ramagundam Bus Stand',to:'Peddapalli',driver:'Suresh M.',vehicle:'Auto',fare:340,payment:'Cash',status:'Completed'},
+  {id:'QR-2828',date:'13 Sep 2026, 06:05',user:'Prasad Rao',phone:'9123009988',from:'Police Station',to:'Dist Hospital',driver:'Ramesh B.',vehicle:'Bike',fare:38,payment:'UPI',status:'Completed'},
+  {id:'QR-2827',date:'13 Sep 2026, 05:50',user:'Bhavani K.',phone:'9866554433',from:'Housing Board Colony',to:'Railway Station',driver:'Venkat R.',vehicle:'Auto',fare:72,payment:'Cash',status:'Completed'},
+  {id:'QR-2826',date:'12 Sep 2026, 22:35',user:'Ravi Shankar',phone:'9834561234',from:'Old Bus Stand',to:'Jagtial Road',driver:'Naresh G.',vehicle:'Auto',fare:120,payment:'UPI',status:'Completed'},
+  {id:'QR-2825',date:'12 Sep 2026, 21:18',user:'Divya Reddy',phone:'9908765432',from:'SCCL Colony Gate 4',to:'Godavarikhani Market',driver:'Laxman T.',vehicle:'Mini Car',fare:65,payment:'Cash',status:'Completed'},
+  {id:'QR-2824',date:'12 Sep 2026, 20:42',user:'Mahesh Kumar',phone:'9777888999',from:'Collectorate',to:'Karimnagar',driver:'Imran S.',vehicle:'Sedan',fare:520,payment:'UPI',status:'Completed'},
+  {id:'QR-2823',date:'12 Sep 2026, 20:10',user:'Anitha Lakshmi',phone:'9654001122',from:'Peddapalli Town',to:'Sultanabad',driver:'Suresh M.',vehicle:'Auto',fare:180,payment:'Cash',status:'Cancelled'},
+  {id:'QR-2822',date:'12 Sep 2026, 19:55',user:'Nagaraju B.',phone:'9876400123',from:'Godavarikhani',to:'Ramagundam Power Plant',driver:'Raju K.',vehicle:'Mini Car',fare:88,payment:'UPI',status:'Completed'},
+  {id:'QR-2821',date:'12 Sep 2026, 19:30',user:'Pushpa Rani',phone:'9800456789',from:'Manthani Bridge',to:'Peddapalli',driver:'Kavitha N.',vehicle:'Mini Car',fare:310,payment:'UPI',status:'Completed'},
+  {id:'QR-2820',date:'12 Sep 2026, 18:45',user:'Suresh Babu',phone:'9701002233',from:'Railway Station',to:'NTPC Colony Gate',driver:'Naresh G.',vehicle:'Auto',fare:155,payment:'Cash',status:'Completed'},
+  {id:'QR-2819',date:'12 Sep 2026, 18:20',user:'Rekha Devi',phone:'9988123456',from:'Main Bazaar',to:'Collectorate Circle',driver:'Ramesh B.',vehicle:'Bike',fare:32,payment:'UPI',status:'Completed'},
+  {id:'QR-2818',date:'12 Sep 2026, 17:55',user:'Anil Reddy',phone:'9123334455',from:'Bus Stand',to:'SCCL Quarter 7',driver:'Laxman T.',vehicle:'Mini Car',fare:195,payment:'UPI',status:'Completed'},
+  {id:'QR-2817',date:'12 Sep 2026, 17:30',user:'Geeta Bai',phone:'9866001234',from:'Housing Board',to:'Junior College',driver:'Venkat R.',vehicle:'Auto',fare:48,payment:'Cash',status:'Completed'},
+  {id:'QR-2816',date:'12 Sep 2026, 17:05',user:'Ramu Nayak',phone:'9944556677',from:'Godavarikhani',to:'Karimnagar',driver:'Imran S.',vehicle:'Sedan',fare:440,payment:'UPI',status:'Cancelled'},
+  {id:'QR-2815',date:'12 Sep 2026, 16:40',user:'Chandrika V.',phone:'9700334455',from:'Peddapalli Circle',to:'Railway Station',driver:'Suresh M.',vehicle:'Auto',fare:58,payment:'Cash',status:'Completed'},
+  {id:'QR-2814',date:'12 Sep 2026, 16:12',user:'Srikanth P.',phone:'9876120034',from:'NTPC Gate 1',to:'Godavarikhani Market',driver:'Naresh G.',vehicle:'Auto',fare:110,payment:'UPI',status:'Completed'},
+  {id:'QR-2813',date:'12 Sep 2026, 15:50',user:'Mumtaz B.',phone:'9900112233',from:'Govt Hospital',to:'Main Bazaar',driver:'Raju K.',vehicle:'Mini Car',fare:42,payment:'Cash',status:'Completed'},
+  {id:'QR-2812',date:'12 Sep 2026, 15:25',user:'Bheem Rao',phone:'9812345001',from:'Ramagundam',to:'Peddapalli',driver:'Laxman T.',vehicle:'Sedan',fare:360,payment:'UPI',status:'Completed'},
 ];
 
 const DRIVERS = [
-  {id:'D-001',name:'Suresh Mallikarjuna',avatar:'🧔',vehicle:'Auto Rickshaw',plate:'TS 09 AB 1234',rating:4.8,rides:1240,status:'online',earnings:'₹4,280',zone:'Peddapalli Town'},
-  {id:'D-002',name:'Raju Kumar',avatar:'👨',vehicle:'Mini Car',plate:'TS 09 CD 5678',rating:4.6,rides:890,status:'online',earnings:'₹3,100',zone:'Godavarikhani'},
-  {id:'D-003',name:'Venkat Rao',avatar:'🧑',vehicle:'Auto Rickshaw',plate:'TS 09 EF 9012',rating:4.5,rides:760,status:'offline',earnings:'₹0',zone:'Peddapalli Town'},
-  {id:'D-004',name:'Imran Sheikh',avatar:'👦',vehicle:'Sedan',plate:'TS 09 GH 3456',rating:4.9,rides:1540,status:'online',earnings:'₹5,600',zone:'Ramagundam'},
-  {id:'D-005',name:'Ramesh Babu',avatar:'🧔',vehicle:'Bike',plate:'TS 09 IJ 7890',rating:4.3,rides:430,status:'online',earnings:'₹1,200',zone:'Manthani'},
-  {id:'D-006',name:'Kavitha Reddy',avatar:'👩',vehicle:'Mini Car',plate:'TS 09 KL 2345',rating:4.7,rides:980,status:'suspended',earnings:'₹0',zone:'Godavarikhani'},
+  {id:'D-001',name:'Suresh Mallikarjuna',avatar:'🧔',vehicle:'Auto Rickshaw',plate:'TS 09 AB 1234',rating:4.8,rides:1240,status:'online',earnings:'₹4,280',zone:'Peddapalli Town',phone:'9876543210',licence:'TS09AB202300012',joined:'Mar 2023'},
+  {id:'D-002',name:'Raju Kumar Yadav',avatar:'👨',vehicle:'Mini Car (Maruti Alto)',plate:'TS 09 CD 5678',rating:4.6,rides:890,status:'online',earnings:'₹3,100',zone:'Godavarikhani',phone:'9000112233',licence:'TS09CD202200089',joined:'Jun 2022'},
+  {id:'D-003',name:'Venkat Rao Pillai',avatar:'🧑',vehicle:'Auto Rickshaw',plate:'TS 09 EF 9012',rating:4.5,rides:760,status:'offline',earnings:'₹0',zone:'Peddapalli Town',phone:'9123456780',licence:'TS09EF202100076',joined:'Nov 2021'},
+  {id:'D-004',name:'Imran Sheikh',avatar:'👦',vehicle:'Sedan (Honda City)',plate:'TS 09 GH 3456',rating:4.9,rides:1540,status:'online',earnings:'₹5,600',zone:'Ramagundam',phone:'9988776600',licence:'TS09GH202000154',joined:'Jan 2020'},
+  {id:'D-005',name:'Ramesh Babu Naik',avatar:'🧔',vehicle:'Bike (Splendor)',plate:'TS 09 IJ 7890',rating:4.3,rides:430,status:'online',earnings:'₹1,200',zone:'Manthani',phone:'9876001100',licence:'TS09IJ202400043',joined:'Feb 2024'},
+  {id:'D-006',name:'Kavitha Nalluri',avatar:'👩',vehicle:'Mini Car (WagonR)',plate:'TS 09 KL 2345',rating:4.7,rides:980,status:'online',earnings:'₹3,840',zone:'Godavarikhani',phone:'9012334455',licence:'TS09KL202100098',joined:'Aug 2021'},
+  {id:'D-007',name:'Naresh Goud',avatar:'🧑',vehicle:'Auto Rickshaw',plate:'TS 09 MN 6789',rating:4.4,rides:620,status:'online',earnings:'₹2,150',zone:'Peddapalli Town',phone:'9834561200',licence:'TS09MN202200062',joined:'Apr 2022'},
+  {id:'D-008',name:'Laxman Teja',avatar:'👨',vehicle:'Mini Car (Swift)',plate:'TS 09 OP 1357',rating:4.6,rides:810,status:'offline',earnings:'₹0',zone:'Ramagundam',phone:'9908760000',licence:'TS09OP202100081',joined:'Sep 2021'},
+  {id:'D-009',name:'Shyam Sundar',avatar:'🧔',vehicle:'Auto Rickshaw',plate:'TS 09 QR 2468',rating:4.2,rides:320,status:'online',earnings:'₹980',zone:'Manthani',phone:'9777001234',licence:'TS09QR202400032',joined:'Jan 2024'},
+  {id:'D-010',name:'Radha Krishna M.',avatar:'🧑',vehicle:'Sedan (Dzire)',plate:'TS 09 ST 3579',rating:4.8,rides:1180,status:'online',earnings:'₹4,920',zone:'Godavarikhani',phone:'9654100002',licence:'TS09ST202000118',joined:'May 2020'},
+  {id:'D-011',name:'Pavan Kumar',avatar:'👦',vehicle:'Bike (Pulsar)',plate:'TS 09 UV 4680',rating:4.1,rides:210,status:'offline',earnings:'₹0',zone:'Peddapalli Town',phone:'9866500100',licence:'TS09UV202500021',joined:'Mar 2025'},
+  {id:'D-012',name:'Sunitha Devi',avatar:'👩',vehicle:'Mini Car (Alto K10)',plate:'TS 09 WX 5791',rating:4.5,rides:560,status:'online',earnings:'₹2,040',zone:'Ramagundam',phone:'9944110022',licence:'TS09WX202200056',joined:'Jul 2022'},
+  {id:'D-013',name:'Bhaskar Rao',avatar:'🧔',vehicle:'Auto Rickshaw',plate:'TS 09 YZ 6802',rating:4.7,rides:970,status:'offline',earnings:'₹0',zone:'Godavarikhani',phone:'9700122233',licence:'TS09YZ202100097',joined:'Dec 2021'},
+  {id:'D-014',name:'Anwar Ahmed',avatar:'👨',vehicle:'Sedan (Etios)',plate:'TS 09 AA 7913',rating:4.6,rides:740,status:'online',earnings:'₹2,680',zone:'Manthani',phone:'9900223344',licence:'TS09AA202200074',joined:'Feb 2022'},
+  {id:'D-015',name:'Jyothi Lakshmi',avatar:'👩',vehicle:'Mini Car (Celerio)',plate:'TS 09 BB 8024',rating:4.9,rides:1320,status:'online',earnings:'₹4,460',zone:'Peddapalli Town',phone:'9812340011',licence:'TS09BB202000132',joined:'Sep 2020'},
+  {id:'D-016',name:'Govind Rao',avatar:'🧑',vehicle:'Auto Rickshaw',plate:'TS 09 CC 9135',rating:3.9,rides:180,status:'suspended',earnings:'₹0',zone:'Ramagundam',phone:'9866443300',licence:'TS09CC202500018',joined:'Jun 2025'},
+  {id:'D-017',name:'Swathi Reddy',avatar:'👩',vehicle:'Mini Car (i10)',plate:'TS 09 DD 1246',rating:4.5,rides:490,status:'online',earnings:'₹1,760',zone:'Godavarikhani',phone:'9701334455',licence:'TS09DD202300049',joined:'Jan 2023'},
+  {id:'D-018',name:'Hanuman Rao',avatar:'🧔',vehicle:'Auto Rickshaw',plate:'TS 09 EE 2357',rating:4.3,rides:380,status:'offline',earnings:'₹0',zone:'Peddapalli Town',phone:'9988334455',licence:'TS09EE202300038',joined:'Apr 2023'},
+  {id:'D-019',name:'Sameer Khan',avatar:'👦',vehicle:'Sedan (Ciaz)',plate:'TS 09 FF 3468',rating:4.7,rides:1050,status:'online',earnings:'₹3,920',zone:'Ramagundam',phone:'9123887766',licence:'TS09FF202100105',joined:'Oct 2021'},
+  {id:'D-020',name:'Usha Rani',avatar:'👩',vehicle:'Bike (Activa)',plate:'TS 09 GG 4579',rating:4.0,rides:95,status:'offline',earnings:'₹0',zone:'Manthani',phone:'9866001122',licence:'TS09GG202500009',joined:'Aug 2025'},
 ];
 
 const USERS = [
@@ -885,6 +919,20 @@ const USERS = [
   {name:'Fatima Begum',phone:'+91 99887 76655',joined:'Jan 2026',rides:35,spent:'₹5,120',rating:4.9,status:'Active'},
   {name:'Priya Teja',phone:'+91 98760 01122',joined:'Apr 2026',rides:14,spent:'₹980',rating:4.2,status:'Active'},
   {name:'Kiran Rao',phone:'+91 90123 45678',joined:'May 2026',rides:8,spent:'₹540',rating:4.7,status:'Blocked'},
+  {name:'Sravani Pullela',phone:'+91 98765 43999',joined:'Dec 2025',rides:74,spent:'₹9,120',rating:4.9,status:'Active'},
+  {name:'Raju Sharma',phone:'+91 97012 34567',joined:'Nov 2025',rides:29,spent:'₹3,640',rating:4.4,status:'Active'},
+  {name:'Lakshmi Vasudeva',phone:'+91 98004 56789',joined:'Jan 2026',rides:52,spent:'₹5,680',rating:4.7,status:'Active'},
+  {name:'Mohan Das Nair',phone:'+91 96543 21098',joined:'Feb 2026',rides:18,spent:'₹2,200',rating:4.3,status:'Active'},
+  {name:'Nirmala Bai',phone:'+91 98112 34567',joined:'Oct 2025',rides:41,spent:'₹4,750',rating:4.6,status:'Active'},
+  {name:'Syed Hussain',phone:'+91 99880 01122',joined:'Mar 2026',rides:33,spent:'₹6,380',rating:4.8,status:'Active'},
+  {name:'Tulasi Devi',phone:'+91 97002 23344',joined:'Apr 2026',rides:10,spent:'₹1,020',rating:4.0,status:'Active'},
+  {name:'Prasad Rao',phone:'+91 91230 09988',joined:'Jun 2026',rides:6,spent:'₹380',rating:4.5,status:'Active'},
+  {name:'Bhavani Kumari',phone:'+91 98665 54433',joined:'May 2026',rides:21,spent:'₹2,890',rating:4.7,status:'Active'},
+  {name:'Mahesh Kumar',phone:'+91 97778 88999',joined:'Feb 2026',rides:56,spent:'₹8,340',rating:4.5,status:'Active'},
+  {name:'Anitha Lakshmi',phone:'+91 96540 01122',joined:'Jan 2026',rides:38,spent:'₹4,100',rating:4.3,status:'Active'},
+  {name:'Nagaraju Boyapati',phone:'+91 98764 00123',joined:'Mar 2026',rides:12,spent:'₹1,160',rating:4.6,status:'Active'},
+  {name:'Mumtaz Begum',phone:'+91 99001 12233',joined:'Apr 2026',rides:9,spent:'₹640',rating:4.4,status:'Active'},
+  {name:'Bheem Rao',phone:'+91 98123 45001',joined:'Jan 2026',rides:67,spent:'₹10,200',rating:4.8,status:'Active'},
 ];
 
 const PAYMENTS = [
@@ -895,6 +943,19 @@ const PAYMENTS = [
   {txn:'TXN8472906',ride:'QR-2836',user:'Kiran Rao',amount:'₹40',method:'UPI',ref:'YBL29180881',time:'08:10',status:'Success'},
   {txn:'TXN8472905',ride:'QR-2835',user:'Sravani P.',amount:'₹68',method:'Cash',ref:'—',time:'07:58',status:'Collected'},
   {txn:'TXN8472904',ride:'QR-2834',user:'Raju Sharma',amount:'₹480',method:'UPI',ref:'YBL29180802',time:'07:42',status:'Success'},
+  {txn:'TXN8472903',ride:'QR-2833',user:'Lakshmi V.',amount:'₹45',method:'Cash',ref:'—',time:'07:30',status:'Collected'},
+  {txn:'TXN8472902',ride:'QR-2832',user:'Mohan Das',amount:'₹220',method:'UPI',ref:'YBL29180744',time:'07:15',status:'Success'},
+  {txn:'TXN8472901',ride:'QR-2831',user:'Nirmala Bai',amount:'₹290',method:'UPI',ref:'YBL29180701',time:'06:58',status:'Success'},
+  {txn:'TXN8472900',ride:'QR-2830',user:'Syed Hussain',amount:'₹95',method:'UPI',ref:'YBL29180665',time:'06:40',status:'Success'},
+  {txn:'TXN8472899',ride:'QR-2829',user:'Tulasi Devi',amount:'₹340',method:'Cash',ref:'—',time:'06:22',status:'Collected'},
+  {txn:'TXN8472898',ride:'QR-2828',user:'Prasad Rao',amount:'₹38',method:'UPI',ref:'YBL29180602',time:'06:05',status:'Success'},
+  {txn:'TXN8472897',ride:'QR-2827',user:'Bhavani K.',amount:'₹72',method:'Cash',ref:'—',time:'05:50',status:'Collected'},
+  {txn:'TXN8472896',ride:'QR-2826',user:'Ravi Shankar',amount:'₹120',method:'UPI',ref:'YBL29178901',time:'22:35',status:'Success'},
+  {txn:'TXN8472895',ride:'QR-2825',user:'Divya Reddy',amount:'₹65',method:'Cash',ref:'—',time:'21:18',status:'Collected'},
+  {txn:'TXN8472894',ride:'QR-2824',user:'Mahesh Kumar',amount:'₹520',method:'UPI',ref:'YBL29178812',time:'20:42',status:'Success'},
+  {txn:'TXN8472893',ride:'QR-2822',user:'Nagaraju B.',amount:'₹88',method:'UPI',ref:'YBL29178744',time:'19:55',status:'Success'},
+  {txn:'TXN8472892',ride:'QR-2821',user:'Pushpa Rani',amount:'₹310',method:'UPI',ref:'YBL29178701',time:'19:30',status:'Success'},
+  {txn:'TXN8472891',ride:'QR-2820',user:'Suresh Babu',amount:'₹155',method:'Cash',ref:'—',time:'18:45',status:'Collected'},
 ];
 
 const LIVE_RIDES = [
@@ -902,6 +963,10 @@ const LIVE_RIDES = [
   {driver:'Raju K.',passenger:'Divya S.',from:'Main Bazaar',to:'Collectorate',eta:'6 min',fare:'₹90'},
   {driver:'Imran S.',passenger:'Naveena T.',from:'SCCL Colony',to:'Godavarikhani',eta:'12 min',fare:'₹140'},
   {driver:'Ramesh B.',passenger:'Arjun V.',from:'Housing Board',to:'Govt Hospital',eta:'8 min',fare:'₹55'},
+  {driver:'Kavitha N.',passenger:'Sunita R.',from:'Peddapalli Circle',to:'Manthani',eta:'18 min',fare:'₹280'},
+  {driver:'Naresh G.',passenger:'Bheem R.',from:'NTPC Gate 1',to:'Railway Station',eta:'14 min',fare:'₹145'},
+  {driver:'Radha K.',passenger:'Fatima B.',from:'Godavarikhani Market',to:'Ramagundam',eta:'9 min',fare:'₹85'},
+  {driver:'Sameer K.',passenger:'Prasad T.',from:'Old Bus Stand',to:'Karimnagar',eta:'22 min',fare:'₹490'},
 ];
 
 /* ════ SECTION NAVIGATION ══════════════════════════ */
