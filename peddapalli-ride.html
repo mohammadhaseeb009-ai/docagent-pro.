@@ -600,6 +600,76 @@ input:focus,select:focus{border-color:var(--accent)}
   display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;
 }
 .notify-strip span:first-child{font-size:1rem}
+
+/* ─── AUTH SCREENS ───────────────────────────── */
+.auth-wrap{
+  flex:1;display:flex;flex-direction:column;
+  justify-content:center;padding:1.8rem 1.4rem 1.4rem;
+  overflow-y:auto;
+}
+.auth-wrap::-webkit-scrollbar{display:none}
+.auth-logo-block{
+  text-align:center;margin-bottom:1.8rem;
+}
+.auth-logo-icon{font-size:2.8rem;margin-bottom:.3rem}
+.auth-logo-name{
+  font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:800;
+  color:var(--accent);letter-spacing:-.02em;
+}
+.auth-logo-sub{font-size:.75rem;color:var(--txt3);letter-spacing:.08em;text-transform:uppercase}
+.auth-card{
+  background:var(--surf);border:1px solid var(--border);
+  border-radius:18px;padding:1.4rem 1.2rem;margin-bottom:1rem;
+}
+.auth-title{
+  font-family:'Outfit',sans-serif;font-weight:800;font-size:1.3rem;
+  margin-bottom:.2rem;
+}
+.auth-sub{font-size:.85rem;color:var(--txt2);margin-bottom:1.2rem}
+.auth-field{position:relative;margin-bottom:.9rem}
+.auth-field label{
+  display:block;font-size:.72rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--txt3);margin-bottom:.3rem;
+}
+.auth-field input{padding-right:2.5rem}
+.pwd-toggle{
+  position:absolute;right:.7rem;bottom:.6rem;
+  font-size:.95rem;color:var(--txt3);padding:0;
+}
+.auth-forgot{text-align:right;margin-top:-.4rem;margin-bottom:.9rem}
+.auth-forgot button{font-size:.8rem;color:var(--accent)}
+.auth-divider{
+  display:flex;align-items:center;gap:.7rem;
+  margin:.9rem 0;font-size:.78rem;color:var(--txt3);
+}
+.auth-divider::before,.auth-divider::after{
+  content:'';flex:1;height:1px;background:var(--border);
+}
+.auth-footer{
+  text-align:center;font-size:.7rem;color:var(--txt3);
+  line-height:1.5;padding:0 .5rem;
+}
+.auth-footer a{color:var(--accent)}
+.auth-switch{
+  text-align:center;margin-top:.8rem;font-size:.82rem;color:var(--txt2);
+}
+.auth-switch button{color:var(--accent);font-weight:600}
+.input-err{
+  font-size:.72rem;color:var(--danger);margin-top:.25rem;display:none;
+}
+.input-err.show{display:block}
+.otp-row{display:flex;gap:.5rem;margin-bottom:.9rem}
+.otp-row input{
+  flex:1;text-align:center;font-family:'DM Mono',monospace;
+  font-size:1.2rem;font-weight:500;padding:.6rem .3rem;
+}
+.phone-row{display:flex;gap:.5rem}
+.phone-code{
+  width:72px;flex-shrink:0;background:var(--surf2);
+  border:1px solid var(--border);border-radius:var(--r);
+  padding:.55rem .5rem;font-size:.9rem;text-align:center;
+  color:var(--txt2);
+}
 </style>
 </head>
 <body>
@@ -612,9 +682,128 @@ input:focus,select:focus{border-color:var(--accent)}
 </div>
 
 <!-- ═══════════════════════════════════════════
+     SCREEN: LOGIN
+═══════════════════════════════════════════════ -->
+<div class="screen active" id="s-login">
+  <div class="auth-wrap">
+    <div class="auth-logo-block">
+      <div class="auth-logo-icon">🛺</div>
+      <div class="auth-logo-name">QuickRide</div>
+      <div class="auth-logo-sub">Peddapalli District · Telangana</div>
+    </div>
+
+    <div class="auth-card">
+      <div class="auth-title">Welcome Back</div>
+      <div class="auth-sub">Sign in to book your ride</div>
+
+      <div class="auth-field">
+        <label>Phone Number</label>
+        <div class="phone-row">
+          <div class="phone-code">🇮🇳 +91</div>
+          <input type="tel" id="loginPhone" placeholder="98765 43210" maxlength="10" inputmode="numeric">
+        </div>
+        <div class="input-err" id="err-loginPhone">Enter a valid 10-digit number</div>
+      </div>
+
+      <div class="auth-field">
+        <label>Password</label>
+        <input type="password" id="loginPwd" placeholder="••••••••">
+        <button class="pwd-toggle" onclick="togglePwd('loginPwd',this)" type="button">👁</button>
+        <div class="input-err" id="err-loginPwd">Password cannot be empty</div>
+      </div>
+
+      <div class="auth-forgot">
+        <button onclick="showToast('OTP sent to your registered number')" type="button">Forgot password?</button>
+      </div>
+
+      <button class="btn-primary" onclick="doLogin()" type="button">Sign In →</button>
+
+      <div class="auth-divider"><span>or</span></div>
+
+      <button class="btn-secondary" onclick="goTo('signup')" type="button">Create New Account</button>
+    </div>
+
+    <div class="auth-footer">
+      By continuing you agree to QuickRide's
+      <a href="#" onclick="showToast('Terms loading…');return false">Terms of Service</a>
+      and
+      <a href="#" onclick="showToast('Privacy policy loading…');return false">Privacy Policy</a>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: SIGNUP
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s-signup">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goTo('login')">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h2>Create Account</h2>
+  </div>
+
+  <div class="auth-wrap" style="padding-top:.5rem;justify-content:flex-start">
+    <div class="auth-card" style="margin-top:.2rem">
+      <div class="auth-sub" style="margin-bottom:1.1rem">Join thousands riding in Peddapalli</div>
+
+      <div class="auth-field">
+        <label>Full Name *</label>
+        <input type="text" id="signupName" placeholder="e.g. Ravi Kumar">
+        <div class="input-err" id="err-signupName">Name is required</div>
+      </div>
+
+      <div class="auth-field">
+        <label>Phone Number *</label>
+        <div class="phone-row">
+          <div class="phone-code">🇮🇳 +91</div>
+          <input type="tel" id="signupPhone" placeholder="98765 43210" maxlength="10" inputmode="numeric">
+        </div>
+        <div class="input-err" id="err-signupPhone">Enter a valid 10-digit number</div>
+      </div>
+
+      <div class="auth-field">
+        <label>Email (Optional)</label>
+        <input type="email" id="signupEmail" placeholder="you@email.com">
+      </div>
+
+      <div class="auth-field">
+        <label>Password *</label>
+        <input type="password" id="signupPwd" placeholder="Minimum 6 characters">
+        <button class="pwd-toggle" onclick="togglePwd('signupPwd',this)" type="button">👁</button>
+        <div class="input-err" id="err-signupPwd">Password must be at least 6 characters</div>
+      </div>
+
+      <div class="auth-field">
+        <label>Confirm Password *</label>
+        <input type="password" id="signupPwd2" placeholder="Re-enter password">
+        <button class="pwd-toggle" onclick="togglePwd('signupPwd2',this)" type="button">👁</button>
+        <div class="input-err" id="err-signupPwd2">Passwords do not match</div>
+      </div>
+
+      <div style="margin-bottom:1rem">
+        <label style="display:flex;align-items:flex-start;gap:.6rem;cursor:pointer;font-size:.8rem;color:var(--txt2)">
+          <input type="checkbox" id="signupAgree" style="width:auto;margin-top:2px">
+          I agree to the Terms of Service and Privacy Policy
+        </label>
+        <div class="input-err" id="err-signupAgree">Please accept the terms to continue</div>
+      </div>
+
+      <button class="btn-primary" onclick="doSignup()" type="button">Create Account →</button>
+    </div>
+
+    <div class="auth-switch">
+      Already have an account? <button onclick="goTo('login')" type="button">Sign In</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
      SCREEN: HOME
 ═══════════════════════════════════════════════ -->
-<div class="screen active" id="s-home">
+<div class="screen" id="s-home">
   <div class="home-header">
     <div class="home-logo">
       QuickRide
@@ -853,7 +1042,7 @@ input:focus,select:focus{border-color:var(--accent)}
         <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         Message
       </button>
-      <button class="icon-btn" onclick="goTo('home');showToast('Ride cancelled')">
+      <button class="icon-btn" onclick="cancelRide()">
         <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         Cancel
       </button>
@@ -1832,6 +2021,11 @@ function initScreen(name) {
     updateScaleBar(document.getElementById('homeScale'), 'homeMap', mapZoomLevels.homeMap||0);
   }
   if (name === 'options') {
+    // Sync destination label with current state
+    const dl = document.getElementById('destLabel');
+    if (dl) dl.textContent = destName;
+    const rdl = document.getElementById('routeDistLabel');
+    if (rdl) rdl.textContent = `~${destDist} km · via ${destDist > 20 ? 'NH 563' : 'town roads'}`;
     const c = document.getElementById('routeMap');
     if (c) { setTimeout(() => drawMap(c, { showRoute:true }), 30); }
     updateFares();
@@ -1886,9 +2080,12 @@ function refreshBookBtn() {
 }
 
 function pickDest(name, dist) {
-  destName = name + ', Peddapalli';
+  const farCities = ['Karimnagar','Ramagundam','Hyderabad'];
+  destName = farCities.includes(name) ? name : name + ', Peddapalli';
   destDist = parseFloat(dist);
   document.getElementById('destLabel').textContent = destName;
+  const rdl = document.getElementById('routeDistLabel');
+  if (rdl) rdl.textContent = `~${destDist} km · via ${destDist > 20 ? 'NH 563' : 'town roads'}`;
   goTo('options');
 }
 
@@ -2025,6 +2222,86 @@ function copyUPI() {
   const txt = 'haseeb@ybl';
   if (navigator.clipboard) navigator.clipboard.writeText(txt);
   showToast('✓ UPI ID copied: haseeb@ybl');
+}
+
+/* ── CANCEL RIDE ─────────────────────────────────────────────────────── */
+function cancelRide() {
+  clearInterval(driverApproachInterval);
+  clearInterval(trackInterval);
+  driverApproachInterval = null;
+  trackInterval = null;
+  goTo('home');
+  showToast('Ride cancelled');
+}
+
+/* ── AUTH ────────────────────────────────────────────────────────────── */
+let currentUser = { name:'Haseeb', phone:'' };
+
+function togglePwd(id, btn) {
+  const inp = document.getElementById(id);
+  if (!inp) return;
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+  else { inp.type = 'password'; btn.textContent = '👁'; }
+}
+
+function showErr(id, show) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('show', show);
+}
+
+function doLogin() {
+  const phone = (document.getElementById('loginPhone')?.value || '').replace(/\s/g,'');
+  const pwd = document.getElementById('loginPwd')?.value || '';
+  let ok = true;
+  const phoneOk = /^\d{10}$/.test(phone);
+  showErr('err-loginPhone', !phoneOk);
+  showErr('err-loginPwd', !pwd);
+  if (!phoneOk || !pwd) return;
+
+  const ol = document.createElement('div');
+  ol.className = 'loading-overlay show';
+  ol.innerHTML = '<div class="spinner"></div><div class="loading-txt">Signing in…</div>';
+  document.getElementById('app').appendChild(ol);
+  setTimeout(() => {
+    ol.remove();
+    currentUser = { name: 'Haseeb', phone: '+91 ' + phone };
+    goTo('home');
+    showToast('Welcome back, Haseeb!');
+  }, 1400);
+}
+
+function doSignup() {
+  const name   = (document.getElementById('signupName')?.value  || '').trim();
+  const phone  = (document.getElementById('signupPhone')?.value || '').replace(/\s/g,'');
+  const pwd    = document.getElementById('signupPwd')?.value  || '';
+  const pwd2   = document.getElementById('signupPwd2')?.value || '';
+  const agreed = document.getElementById('signupAgree')?.checked;
+
+  const phoneOk = /^\d{10}$/.test(phone);
+  showErr('err-signupName',  !name);
+  showErr('err-signupPhone', !phoneOk);
+  showErr('err-signupPwd',   pwd.length < 6);
+  showErr('err-signupPwd2',  pwd !== pwd2);
+  showErr('err-signupAgree', !agreed);
+  if (!name || !phoneOk || pwd.length < 6 || pwd !== pwd2 || !agreed) return;
+
+  const ol = document.createElement('div');
+  ol.className = 'loading-overlay show';
+  ol.innerHTML = '<div class="spinner"></div><div class="loading-txt">Creating your account…</div>';
+  document.getElementById('app').appendChild(ol);
+  setTimeout(() => {
+    ol.remove();
+    currentUser = { name, phone: '+91 ' + phone };
+    const fl = name[0].toUpperCase();
+    document.querySelectorAll('.avatar-btn').forEach(el => el.textContent = fl);
+    document.querySelectorAll('.profile-ava').forEach(el => el.textContent = fl);
+    const pn = document.querySelector('.profile-name');
+    if (pn) pn.textContent = name;
+    const pp = document.querySelector('.profile-phone');
+    if (pp) pp.textContent = currentUser.phone + ' · Peddapalli';
+    goTo('home');
+    showToast('Welcome to QuickRide, ' + name.split(' ')[0] + '!');
+  }, 1800);
 }
 
 /* ── RATING ──────────────────────────────────────────────────────────── */
