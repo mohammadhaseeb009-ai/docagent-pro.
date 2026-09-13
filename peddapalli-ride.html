@@ -1,0 +1,2059 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>QuickRide Peddapalli</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────── */
+:root {
+  --bg:      #06091A;
+  --surf:    #0D1427;
+  --surf2:   #152038;
+  --surf3:   #1C2D4C;
+  --accent:  #00D4AA;
+  --accent2: #00B891;
+  --amber:   #F5A623;
+  --danger:  #FF4D6A;
+  --success: #22C87A;
+  --txt:     #E8EDF7;
+  --txt2:    #8A9BBF;
+  --txt3:    #4D6080;
+  --border:  #1F3050;
+  --card-r:  14px;
+  --r:       10px;
+  --sh: 0 4px 24px rgba(0,0,0,.4);
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:    #F0F4FF;
+    --surf:  #FFFFFF;
+    --surf2: #EBF0FA;
+    --surf3: #DDE5F5;
+    --txt:   #0D1427;
+    --txt2:  #4A5A78;
+    --txt3:  #8A9BBF;
+    --border:#C8D4EC;
+    --sh: 0 4px 24px rgba(0,50,100,.10);
+  }
+}
+:root[data-theme="light"] {
+  --bg:    #F0F4FF;
+  --surf:  #FFFFFF;
+  --surf2: #EBF0FA;
+  --surf3: #DDE5F5;
+  --txt:   #0D1427;
+  --txt2:  #4A5A78;
+  --txt3:  #8A9BBF;
+  --border:#C8D4EC;
+  --sh: 0 4px 24px rgba(0,50,100,.10);
+}
+
+/* ─── RESET ──────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%;-webkit-text-size-adjust:100%}
+body{
+  min-height:100%;background:var(--bg);color:var(--txt);
+  font-family:'DM Sans',system-ui,sans-serif;
+  font-size:15px;line-height:1.5;
+  overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;
+}
+button{
+  font-family:inherit;cursor:pointer;border:none;
+  background:none;color:inherit;
+}
+canvas{display:block}
+input,select{
+  font-family:inherit;font-size:inherit;
+  background:var(--surf2);color:var(--txt);
+  border:1px solid var(--border);border-radius:var(--r);
+  padding:.55rem .9rem;width:100%;outline:none;
+}
+input:focus,select:focus{border-color:var(--accent)}
+
+/* ─── PHONE SHELL ────────────────────────────── */
+#app{
+  width:100%;max-width:420px;height:100dvh;
+  position:relative;overflow:hidden;
+  background:var(--bg);
+}
+
+/* ─── STATUS BAR ─────────────────────────────── */
+.status-bar{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:.35rem 1.1rem;font-family:'DM Mono',monospace;font-size:11px;
+  color:var(--txt2);flex-shrink:0;
+}
+
+/* ─── SCREEN SYSTEM ──────────────────────────── */
+.screen{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  opacity:0;pointer-events:none;
+  transition:opacity .28s ease,transform .28s ease;
+  transform:translateX(30px);
+  overflow:hidden;
+}
+.screen.active{
+  opacity:1;pointer-events:auto;transform:translateX(0);
+}
+.screen.slide-out{
+  opacity:0;transform:translateX(-30px);
+}
+
+/* ─── BOTTOM NAV ─────────────────────────────── */
+.bot-nav{
+  position:absolute;bottom:0;left:0;right:0;
+  display:flex;background:var(--surf);
+  border-top:1px solid var(--border);
+  padding-bottom:env(safe-area-inset-bottom,.3rem);
+  z-index:100;
+}
+.nav-tab{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:.55rem .4rem .4rem;font-size:10px;color:var(--txt3);
+  letter-spacing:.03em;transition:color .18s;
+}
+.nav-tab.active{color:var(--accent)}
+.nav-tab svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8}
+.nav-tab.active svg{stroke:var(--accent)}
+
+/* ─── SHARED COMPONENTS ──────────────────────── */
+.top-bar{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.8rem 1rem .5rem;flex-shrink:0;
+}
+.top-bar h2{font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700}
+.back-btn{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--surf2);display:grid;place-items:center;flex-shrink:0;
+}
+.back-btn svg{width:18px;height:18px;stroke:var(--txt);stroke-width:2;fill:none}
+.scroll-body{flex:1;overflow-y:auto;padding:0 1rem 5.5rem;overscroll-behavior:contain}
+.scroll-body::-webkit-scrollbar{display:none}
+
+.btn-primary{
+  width:100%;padding:.85rem;border-radius:var(--card-r);
+  background:var(--accent);color:#06091A;
+  font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;
+  letter-spacing:.02em;transition:background .15s,transform .1s;
+  display:flex;align-items:center;justify-content:center;gap:.5rem;
+}
+.btn-primary:active{transform:scale(.97);background:var(--accent2)}
+.btn-secondary{
+  width:100%;padding:.8rem;border-radius:var(--card-r);
+  background:var(--surf2);border:1px solid var(--border);
+  font-weight:600;transition:background .15s;
+}
+.btn-secondary:active{background:var(--surf3)}
+
+.chip{
+  display:inline-flex;align-items:center;gap:.3rem;
+  padding:.25rem .65rem;border-radius:20px;font-size:12px;font-weight:600;
+}
+.chip.success{background:rgba(34,200,122,.15);color:var(--success)}
+.chip.amber{background:rgba(245,166,35,.15);color:var(--amber)}
+.chip.accent{background:rgba(0,212,170,.15);color:var(--accent)}
+
+/* ─── MAP CANVAS ─────────────────────────────── */
+.map-wrap{
+  position:relative;border-radius:var(--card-r);overflow:hidden;
+  background:#0A1428;flex-shrink:0;
+}
+.map-wrap canvas{width:100%;height:100%;display:block}
+.map-overlay{
+  position:absolute;inset:0;pointer-events:none;
+}
+.map-lbl{
+  position:absolute;top:.6rem;left:.6rem;
+  background:rgba(6,9,26,.75);backdrop-filter:blur(6px);
+  border:1px solid var(--border);border-radius:8px;
+  padding:.3rem .6rem;font-size:11px;color:var(--txt2);
+  font-family:'DM Mono',monospace;pointer-events:none;
+}
+.map-compass{
+  position:absolute;top:.6rem;right:.6rem;
+  background:rgba(6,9,26,.75);backdrop-filter:blur(6px);
+  border:1px solid var(--border);border-radius:8px;
+  width:32px;height:32px;display:grid;place-items:center;
+  font-size:11px;font-weight:700;color:var(--accent);
+  font-family:'Outfit',sans-serif;
+}
+.map-zoom{
+  position:absolute;bottom:.7rem;right:.6rem;
+  display:flex;flex-direction:column;gap:4px;
+}
+.map-zoom button{
+  background:rgba(6,9,26,.8);backdrop-filter:blur(6px);
+  border:1px solid var(--border);border-radius:7px;
+  width:30px;height:30px;display:grid;place-items:center;
+  color:var(--txt);font-size:16px;pointer-events:auto;
+}
+.map-zoom button:active{background:var(--surf3)}
+.map-scale{
+  position:absolute;bottom:.7rem;left:.6rem;
+  background:rgba(6,9,26,.75);backdrop-filter:blur(6px);
+  border:1px solid var(--border);border-radius:6px;
+  padding:.15rem .45rem;font-size:10px;color:var(--txt3);
+  font-family:'DM Mono',monospace;
+}
+
+/* ─── HOME SCREEN ────────────────────────────── */
+#s-home .scroll-body{padding-top:.5rem}
+.home-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:.6rem 1rem .8rem;
+}
+.home-logo{
+  font-family:'Outfit',sans-serif;font-weight:800;font-size:1.3rem;
+  color:var(--accent);letter-spacing:-.02em;
+}
+.home-logo span{color:var(--txt2);font-weight:400;font-size:.75rem;
+  display:block;letter-spacing:.04em;margin-top:-2px}
+.avatar-btn{
+  width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),#0098d4);
+  display:grid;place-items:center;font-weight:700;font-size:.9rem;
+  color:#06091A;flex-shrink:0;
+}
+.where-box{
+  background:var(--surf);border:1px solid var(--border);
+  border-radius:var(--card-r);padding:.85rem 1rem;margin-bottom:.9rem;
+  display:flex;align-items:center;gap:.75rem;cursor:pointer;
+  transition:border-color .18s;
+}
+.where-box:active{border-color:var(--accent)}
+.where-dot{
+  width:10px;height:10px;border-radius:50%;background:var(--accent);flex-shrink:0;
+}
+.where-txt{color:var(--txt2);font-size:.95rem}
+
+.home-map-wrap{
+  border-radius:var(--card-r);overflow:hidden;margin-bottom:1rem;
+  height:220px;position:relative;background:#0A1428;
+}
+.home-map-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
+
+.section-lbl{
+  font-size:.7rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--txt3);margin-bottom:.6rem;
+}
+.quick-dest-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1rem;
+}
+.qdest{
+  background:var(--surf);border:1px solid var(--border);border-radius:var(--card-r);
+  padding:.7rem .6rem;text-align:center;cursor:pointer;transition:border-color .18s;
+}
+.qdest:active{border-color:var(--accent)}
+.qdest-icon{font-size:1.4rem;margin-bottom:.25rem}
+.qdest-name{font-size:.75rem;font-weight:600;color:var(--txt)}
+.qdest-dist{font-size:.68rem;color:var(--txt3);font-family:'DM Mono',monospace}
+
+.promo-strip{
+  background:linear-gradient(120deg,#0D2140,#142C52);
+  border:1px solid var(--border);border-radius:var(--card-r);
+  padding:.9rem 1rem;display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:.9rem;
+}
+.promo-strip-txt h4{font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700}
+.promo-strip-txt p{font-size:.78rem;color:var(--txt2)}
+.promo-code{
+  background:var(--accent);color:#06091A;font-family:'DM Mono',monospace;
+  font-weight:500;font-size:.8rem;padding:.3rem .6rem;border-radius:6px;
+}
+
+/* ─── OPTIONS SCREEN ─────────────────────────── */
+.loc-row{
+  display:flex;gap:.6rem;margin-bottom:1rem;
+}
+.loc-field{
+  flex:1;background:var(--surf2);border:1px solid var(--border);
+  border-radius:var(--r);padding:.55rem .75rem;
+  display:flex;align-items:center;gap:.5rem;font-size:.88rem;
+  overflow:hidden;
+}
+.loc-field-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+}
+.loc-field-txt{
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  color:var(--txt);font-size:.85rem;
+}
+.route-mini-map{height:190px;margin-bottom:1rem}
+.ride-options{display:flex;flex-direction:column;gap:.65rem}
+
+.ride-card{
+  background:var(--surf);border:1.5px solid var(--border);
+  border-radius:var(--card-r);padding:.85rem 1rem;
+  display:flex;align-items:center;gap:.85rem;cursor:pointer;
+  transition:border-color .18s,background .18s;
+}
+.ride-card:active,.ride-card.selected{
+  border-color:var(--accent);background:rgba(0,212,170,.06);
+}
+.ride-icon{
+  font-size:1.8rem;width:46px;text-align:center;flex-shrink:0;
+}
+.ride-info{flex:1}
+.ride-name{font-family:'Outfit',sans-serif;font-weight:700;font-size:.95rem}
+.ride-eta{font-size:.78rem;color:var(--txt2)}
+.ride-fare{
+  font-family:'DM Mono',monospace;font-weight:500;
+  font-size:1rem;color:var(--txt);font-variant-numeric:tabular-nums;
+}
+.ride-fare-note{font-size:.7rem;color:var(--txt3);text-align:right}
+
+.book-bar{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:.8rem 1rem;padding-bottom:calc(.8rem + env(safe-area-inset-bottom));
+  background:linear-gradient(to top,var(--bg) 70%,transparent);
+  z-index:50;
+}
+
+/* ─── DRIVER SCREEN ──────────────────────────── */
+.driver-hero{
+  height:240px;position:relative;flex-shrink:0;
+}
+.driver-hero canvas{position:absolute;inset:0;width:100%;height:100%}
+.driver-panel{
+  flex:1;background:var(--surf);border-radius:22px 22px 0 0;
+  margin-top:-18px;padding:1.2rem 1rem;overflow-y:auto;
+}
+.driver-panel::-webkit-scrollbar{display:none}
+.status-strip{
+  display:flex;align-items:center;gap:.6rem;margin-bottom:1rem;
+}
+.status-pill{
+  background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.25);
+  color:var(--accent);font-size:.75rem;font-weight:700;letter-spacing:.06em;
+  padding:.25rem .7rem;border-radius:20px;
+}
+.driver-card{
+  display:flex;align-items:center;gap:.9rem;margin-bottom:1rem;
+}
+.driver-ava{
+  width:54px;height:54px;border-radius:50%;
+  background:linear-gradient(135deg,#1a3a6e,var(--surf3));
+  display:grid;place-items:center;font-size:1.4rem;flex-shrink:0;
+}
+.driver-name{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem}
+.driver-sub{font-size:.78rem;color:var(--txt2)}
+.driver-plate{
+  font-family:'DM Mono',monospace;font-size:.82rem;
+  background:var(--amber);color:#06091A;
+  padding:.2rem .55rem;border-radius:5px;font-weight:500;display:inline-block;
+  margin-top:.2rem;
+}
+.stars{color:var(--amber);font-size:.85rem;letter-spacing:.1em}
+.eta-box{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  background:var(--surf2);border-radius:var(--card-r);
+  border:1px solid var(--border);padding:.85rem .5rem;
+  gap:.5rem;margin-bottom:1rem;text-align:center;
+}
+.eta-val{
+  font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:500;
+  color:var(--txt);font-variant-numeric:tabular-nums;
+}
+.eta-unit{font-size:.68rem;color:var(--txt3);letter-spacing:.04em}
+.eta-divider{border-left:1px solid var(--border)}
+.action-row{display:flex;gap:.7rem;margin-bottom:.9rem}
+.icon-btn{
+  flex:1;background:var(--surf2);border:1px solid var(--border);
+  border-radius:var(--r);padding:.7rem;
+  display:flex;flex-direction:column;align-items:center;gap:.3rem;
+  font-size:.75rem;color:var(--txt2);
+}
+.icon-btn svg{width:22px;height:22px;stroke:var(--txt2);fill:none;stroke-width:1.8}
+
+/* ─── TRACKING SCREEN ────────────────────────── */
+.track-map{height:280px;position:relative;flex-shrink:0}
+.track-map canvas{position:absolute;inset:0;width:100%;height:100%}
+.track-panel{
+  flex:1;background:var(--surf);border-radius:22px 22px 0 0;
+  margin-top:-18px;padding:1rem;overflow-y:auto;
+}
+.track-panel::-webkit-scrollbar{display:none}
+.track-status-row{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;
+}
+.track-live{
+  display:flex;align-items:center;gap:.4rem;font-size:.78rem;
+  color:var(--success);font-weight:600;
+}
+.live-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--success);
+  animation:pulse 1.4s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+.track-metrics{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1rem;
+}
+.metric-box{
+  background:var(--surf2);border:1px solid var(--border);
+  border-radius:var(--r);padding:.7rem .6rem;text-align:center;
+}
+.metric-val{
+  font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500;
+  color:var(--accent);font-variant-numeric:tabular-nums;
+}
+.metric-lbl{font-size:.68rem;color:var(--txt3);letter-spacing:.04em}
+.sos-btn{
+  width:100%;padding:.75rem;border-radius:var(--r);
+  background:rgba(255,77,106,.1);border:1.5px solid var(--danger);
+  color:var(--danger);font-weight:700;font-size:.88rem;letter-spacing:.06em;
+  margin-bottom:.7rem;
+}
+.ride-stops{display:flex;flex-direction:column;gap:0;margin-bottom:.8rem}
+.stop-row{display:flex;gap:.7rem;align-items:flex-start}
+.stop-dot-col{
+  display:flex;flex-direction:column;align-items:center;width:16px;flex-shrink:0;
+  padding-top:3px;
+}
+.stop-dot{
+  width:10px;height:10px;border-radius:50%;flex-shrink:0;
+}
+.stop-line{width:2px;flex:1;min-height:22px;background:var(--border)}
+.stop-info{flex:1;padding-bottom:.75rem}
+.stop-name{font-size:.88rem;font-weight:600}
+.stop-addr{font-size:.75rem;color:var(--txt3)}
+
+/* ─── PAYMENT SCREEN ─────────────────────────── */
+.fare-big{
+  text-align:center;padding:1.2rem 1rem .8rem;flex-shrink:0;
+}
+.fare-amount{
+  font-family:'Outfit',sans-serif;font-size:3rem;font-weight:800;
+  color:var(--txt);letter-spacing:-.02em;font-variant-numeric:tabular-nums;
+}
+.fare-label{font-size:.8rem;color:var(--txt2);margin-top:.1rem}
+.fare-breakdown{
+  background:var(--surf2);border:1px solid var(--border);
+  border-radius:var(--card-r);margin-bottom:1rem;
+}
+.fare-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:.65rem 1rem;border-bottom:1px solid var(--border);
+}
+.fare-row:last-child{border-bottom:none}
+.fare-row-lbl{font-size:.85rem;color:var(--txt2)}
+.fare-row-val{font-family:'DM Mono',monospace;font-size:.9rem;font-variant-numeric:tabular-nums}
+
+.pay-methods{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1rem}
+.pay-method{
+  background:var(--surf);border:1.5px solid var(--border);
+  border-radius:var(--card-r);padding:.85rem 1rem;
+  display:flex;align-items:center;gap:.85rem;cursor:pointer;
+  transition:border-color .18s;
+}
+.pay-method:active,.pay-method.sel{border-color:var(--accent)}
+.pay-icon{font-size:1.6rem;width:38px;text-align:center;flex-shrink:0}
+.pay-name{font-weight:600;font-size:.92rem}
+.pay-sub{font-size:.75rem;color:var(--txt2);margin-top:.05rem}
+.pay-check{margin-left:auto;width:20px;height:20px;border-radius:50%;
+  border:2px solid var(--border);display:grid;place-items:center}
+.pay-check.on{background:var(--accent);border-color:var(--accent);color:#06091A;font-size:11px}
+
+.upi-merchant-box{
+  background:rgba(0,212,170,.07);border:1px solid rgba(0,212,170,.25);
+  border-radius:var(--r);padding:.7rem .85rem;margin-bottom:.8rem;
+  display:flex;align-items:center;gap:.7rem;
+}
+.upi-icon{font-size:1.3rem}
+.upi-mid-info{flex:1}
+.upi-mid-label{font-size:.7rem;color:var(--txt3);letter-spacing:.04em}
+.upi-mid-id{font-family:'DM Mono',monospace;font-size:.88rem;color:var(--accent)}
+.upi-copy-btn{
+  font-size:.72rem;font-weight:700;color:var(--accent);
+  background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.2);
+  border-radius:6px;padding:.25rem .5rem;
+}
+
+/* ─── COMPLETE SCREEN ────────────────────────── */
+.complete-hero{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:1.5rem 1.5rem 1rem;text-align:center;
+  gap:1rem;
+}
+.complete-icon{
+  width:80px;height:80px;border-radius:50%;
+  background:rgba(34,200,122,.1);border:2.5px solid var(--success);
+  display:grid;place-items:center;font-size:2rem;
+}
+.complete-title{font-family:'Outfit',sans-serif;font-size:1.6rem;font-weight:800}
+.complete-sub{color:var(--txt2);font-size:.9rem;max-width:22ch}
+.receipt-box{
+  background:var(--surf);border:1px solid var(--border);border-radius:var(--card-r);
+  padding:.9rem 1rem;width:100%;text-align:left;
+}
+.receipt-row{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:.82rem;padding:.25rem 0;
+}
+.receipt-row:not(:last-child){border-bottom:1px solid var(--border);padding-bottom:.5rem;margin-bottom:.25rem}
+.receipt-lbl{color:var(--txt2)}
+.receipt-val{font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums}
+.rating-row{
+  display:flex;justify-content:center;gap:.5rem;margin-top:.5rem;
+}
+.star-btn{font-size:1.6rem;cursor:pointer;transition:transform .12s}
+.star-btn:active{transform:scale(1.3)}
+
+/* ─── HISTORY SCREEN ─────────────────────────── */
+.hist-card{
+  background:var(--surf);border:1px solid var(--border);border-radius:var(--card-r);
+  padding:.9rem 1rem;margin-bottom:.7rem;
+}
+.hist-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem}
+.hist-route{font-weight:600;font-size:.9rem}
+.hist-amount{font-family:'DM Mono',monospace;font-size:1rem;font-variant-numeric:tabular-nums}
+.hist-meta{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+.hist-date{font-size:.75rem;color:var(--txt3)}
+
+/* ─── OFFERS SCREEN ─────────────────────────── */
+.offer-card{
+  background:var(--surf);border:1px solid var(--border);border-radius:var(--card-r);
+  padding:1rem;margin-bottom:.7rem;display:flex;gap:.85rem;
+}
+.offer-img{
+  width:56px;height:56px;border-radius:var(--r);
+  display:grid;place-items:center;font-size:1.6rem;flex-shrink:0;
+}
+.offer-title{font-family:'Outfit',sans-serif;font-weight:700;font-size:.95rem;margin-bottom:.2rem}
+.offer-desc{font-size:.78rem;color:var(--txt2);margin-bottom:.4rem}
+.offer-code{
+  font-family:'DM Mono',monospace;font-size:.78rem;
+  background:var(--surf2);border:1px dashed var(--border);
+  border-radius:5px;padding:.2rem .5rem;display:inline-block;
+}
+
+/* ─── PROFILE SCREEN ─────────────────────────── */
+.profile-hero{
+  background:linear-gradient(160deg,var(--surf) 0%,#0d1f3c 100%);
+  border-bottom:1px solid var(--border);
+  padding:1.2rem 1rem 1.5rem;flex-shrink:0;
+  display:flex;flex-direction:column;align-items:center;gap:.6rem;text-align:center;
+}
+.profile-ava{
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),#0098d4);
+  display:grid;place-items:center;font-size:1.8rem;font-weight:700;color:#06091A;
+}
+.profile-name{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.2rem}
+.profile-phone{font-size:.82rem;color:var(--txt2)}
+
+.settings-group{margin-bottom:.9rem}
+.settings-group-lbl{
+  font-size:.7rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--txt3);padding:.4rem 0 .5rem;
+}
+.settings-item{
+  background:var(--surf);border:1px solid var(--border);
+  border-radius:var(--card-r);margin-bottom:.5rem;
+}
+.settings-row{
+  display:flex;align-items:center;gap:.8rem;
+  padding:.8rem .9rem;cursor:pointer;
+}
+.settings-row:not(:last-child){border-bottom:1px solid var(--border)}
+.settings-icon{
+  width:34px;height:34px;border-radius:9px;
+  background:var(--surf2);display:grid;place-items:center;font-size:1rem;flex-shrink:0;
+}
+.settings-txt{flex:1}
+.settings-label{font-size:.9rem;font-weight:500}
+.settings-val{font-size:.75rem;color:var(--txt2);font-family:'DM Mono',monospace}
+.settings-arrow{color:var(--txt3);font-size:1rem}
+
+/* ─── TOAST ──────────────────────────────────── */
+.toast{
+  position:fixed;top:1rem;left:50%;transform:translateX(-50%) translateY(-80px);
+  background:var(--surf);border:1px solid var(--border);border-radius:var(--r);
+  padding:.55rem 1.1rem;font-size:.85rem;font-weight:500;z-index:999;
+  box-shadow:var(--sh);white-space:nowrap;transition:transform .3s cubic-bezier(.22,1,.36,1);
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ─── LOADING OVERLAY ────────────────────────── */
+.loading-overlay{
+  position:absolute;inset:0;background:rgba(6,9,26,.8);
+  display:none;place-items:center;z-index:200;backdrop-filter:blur(4px);
+  flex-direction:column;gap:.8rem;
+}
+.loading-overlay.show{display:flex}
+.spinner{
+  width:42px;height:42px;border-radius:50%;
+  border:3px solid var(--surf3);border-top-color:var(--accent);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-txt{font-size:.85rem;color:var(--txt2)}
+
+/* ─── NOTIFY STRIP ───────────────────────────── */
+.notify-strip{
+  background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.25);
+  border-radius:var(--r);padding:.55rem .8rem;font-size:.8rem;
+  display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;
+}
+.notify-strip span:first-child{font-size:1rem}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- STATUS BAR -->
+<div class="status-bar" id="statusBar">
+  <span id="sbTime">09:41</span>
+  <span>📶 4G&nbsp;&nbsp;🔋 84%</span>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: HOME
+═══════════════════════════════════════════════ -->
+<div class="screen active" id="s-home">
+  <div class="home-header">
+    <div class="home-logo">
+      QuickRide
+      <span>PEDDAPALLI DISTRICT</span>
+    </div>
+    <button class="avatar-btn" onclick="goTo('profile')">H</button>
+  </div>
+
+  <div class="scroll-body">
+    <div class="notify-strip">
+      <span>🎉</span>
+      <span>First ride in Peddapalli? Get <strong>₹30 off</strong> — use <strong>PDPL30</strong></span>
+    </div>
+
+    <div class="where-box" onclick="goTo('options')">
+      <div class="where-dot"></div>
+      <div class="where-txt">Where to in Peddapalli?</div>
+    </div>
+
+    <div class="home-map-wrap" id="homeMapWrap">
+      <canvas id="homeMap"></canvas>
+      <div class="map-lbl">📍 Peddapalli, TS</div>
+      <div class="map-compass">N</div>
+      <div class="map-zoom">
+        <button onclick="mapZoom(1,'homeMap')">+</button>
+        <button onclick="mapZoom(-1,'homeMap')">−</button>
+      </div>
+      <div class="map-scale" id="homeScale">2 km</div>
+    </div>
+
+    <div class="section-lbl">Quick Destinations</div>
+    <div class="quick-dest-grid">
+      <div class="qdest" onclick="pickDest('Railway Station','1.2 km')">
+        <div class="qdest-icon">🚂</div>
+        <div class="qdest-name">Railway Station</div>
+        <div class="qdest-dist">1.2 km</div>
+      </div>
+      <div class="qdest" onclick="pickDest('Bus Stand','0.5 km')">
+        <div class="qdest-icon">🚌</div>
+        <div class="qdest-name">Bus Stand</div>
+        <div class="qdest-dist">0.5 km</div>
+      </div>
+      <div class="qdest" onclick="pickDest('SCCL Colony','14 km')">
+        <div class="qdest-icon">⛏️</div>
+        <div class="qdest-name">SCCL Colony</div>
+        <div class="qdest-dist">14 km</div>
+      </div>
+      <div class="qdest" onclick="pickDest('Collectorate','0.8 km')">
+        <div class="qdest-icon">🏛️</div>
+        <div class="qdest-name">Collectorate</div>
+        <div class="qdest-dist">0.8 km</div>
+      </div>
+      <div class="qdest" onclick="pickDest('Godavarikhani','15 km')">
+        <div class="qdest-icon">🏭</div>
+        <div class="qdest-name">Godavarikhani</div>
+        <div class="qdest-dist">15 km</div>
+      </div>
+      <div class="qdest" onclick="pickDest('Karimnagar','55 km')">
+        <div class="qdest-icon">🌆</div>
+        <div class="qdest-name">Karimnagar</div>
+        <div class="qdest-dist">55 km</div>
+      </div>
+    </div>
+
+    <div class="promo-strip">
+      <div class="promo-strip-txt">
+        <h4>Manair Morning Offer</h4>
+        <p>30% off rides before 9 AM — every day</p>
+      </div>
+      <div class="promo-code">EARLY30</div>
+    </div>
+  </div>
+
+  <nav class="bot-nav">
+    <button class="nav-tab active" onclick="goTo('home')">
+      <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+      Home
+    </button>
+    <button class="nav-tab" onclick="goTo('history')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
+      Rides
+    </button>
+    <button class="nav-tab" onclick="goTo('offers')">
+      <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      Offers
+    </button>
+    <button class="nav-tab" onclick="goTo('profile')">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Account
+    </button>
+  </nav>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: OPTIONS
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s-options">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goTo('home')">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h2>Book a Ride</h2>
+  </div>
+
+  <div class="scroll-body">
+    <div class="loc-row">
+      <div class="loc-field">
+        <div class="loc-field-dot" style="background:var(--accent)"></div>
+        <div class="loc-field-txt">Main Bazaar, Peddapalli</div>
+      </div>
+    </div>
+    <div class="loc-row">
+      <div class="loc-field">
+        <div class="loc-field-dot" style="background:var(--danger)"></div>
+        <div class="loc-field-txt" id="destLabel">SCCL Colony, Godavarikhani</div>
+      </div>
+    </div>
+
+    <div class="map-wrap route-mini-map" id="routeMapWrap">
+      <canvas id="routeMap"></canvas>
+      <div class="map-lbl" id="routeDistLabel">~14 km · via NH 563</div>
+      <div class="map-compass">N</div>
+      <div class="map-zoom">
+        <button onclick="mapZoom(1,'routeMap')">+</button>
+        <button onclick="mapZoom(-1,'routeMap')">−</button>
+      </div>
+      <div class="map-scale" id="routeScale">5 km</div>
+    </div>
+
+    <div class="section-lbl">Choose Ride Type</div>
+    <div class="ride-options">
+      <div class="ride-card selected" id="rc-auto" onclick="selectRide('auto')">
+        <div class="ride-icon">🛺</div>
+        <div class="ride-info">
+          <div class="ride-name">Auto</div>
+          <div class="ride-eta">4 min away · 3 seater</div>
+        </div>
+        <div>
+          <div class="ride-fare" id="rf-auto">₹198</div>
+          <div class="ride-fare-note">₹30 + ₹12/km</div>
+        </div>
+      </div>
+      <div class="ride-card" id="rc-bike" onclick="selectRide('bike')">
+        <div class="ride-icon">🏍️</div>
+        <div class="ride-info">
+          <div class="ride-name">Bike</div>
+          <div class="ride-eta">2 min away · 1 rider</div>
+        </div>
+        <div>
+          <div class="ride-fare" id="rf-bike">₹132</div>
+          <div class="ride-fare-note">₹20 + ₹8/km</div>
+        </div>
+      </div>
+      <div class="ride-card" id="rc-mini" onclick="selectRide('mini')">
+        <div class="ride-icon">🚗</div>
+        <div class="ride-info">
+          <div class="ride-name">Mini Cab</div>
+          <div class="ride-eta">7 min away · 4 seater</div>
+        </div>
+        <div>
+          <div class="ride-fare" id="rf-mini">₹250</div>
+          <div class="ride-fare-note">₹40 + ₹15/km</div>
+        </div>
+      </div>
+      <div class="ride-card" id="rc-sedan" onclick="selectRide('sedan')">
+        <div class="ride-icon">🚙</div>
+        <div class="ride-info">
+          <div class="ride-name">Sedan</div>
+          <div class="ride-eta">9 min away · 4 seater AC</div>
+        </div>
+        <div>
+          <div class="ride-fare" id="rf-sedan">₹302</div>
+          <div class="ride-fare-note">₹50 + ₹18/km</div>
+        </div>
+      </div>
+    </div>
+    <div style="height:4.5rem"></div>
+  </div>
+
+  <div class="book-bar">
+    <button class="btn-primary" onclick="bookRide()">
+      <span id="bookBtnTxt">Book Auto — ₹198</span>
+    </button>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: DRIVER
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s-driver">
+  <div class="driver-hero">
+    <canvas id="driverMap"></canvas>
+    <div class="map-compass" style="position:absolute;top:.6rem;right:.6rem">N</div>
+    <div class="map-lbl" style="position:absolute;top:.6rem;left:.6rem">🟢 Driver approaching</div>
+  </div>
+
+  <div class="driver-panel">
+    <div class="status-strip">
+      <div class="status-pill">DRIVER FOUND</div>
+      <span style="font-size:.8rem;color:var(--txt2)">Arriving in <strong id="driverEtaMin">4 min</strong></span>
+    </div>
+
+    <div class="driver-card">
+      <div class="driver-ava">👨</div>
+      <div>
+        <div class="driver-name">Raju Naik</div>
+        <div class="stars">★★★★★</div>
+        <div class="driver-sub">Bajaj RE Auto · 4.9 rating · 1,240 rides</div>
+        <div class="driver-plate">TS 08 UA 5671</div>
+      </div>
+    </div>
+
+    <div class="eta-box">
+      <div>
+        <div class="eta-val" id="driverEtaSec">4:00</div>
+        <div class="eta-unit">ETA</div>
+      </div>
+      <div class="eta-divider">
+        <div class="eta-val">14 km</div>
+        <div class="eta-unit">TRIP DIST</div>
+      </div>
+      <div class="eta-divider">
+        <div class="eta-val" id="driverFareD">₹198</div>
+        <div class="eta-unit">FARE</div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="icon-btn">
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Call
+      </button>
+      <button class="icon-btn">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Message
+      </button>
+      <button class="icon-btn" onclick="goTo('home');showToast('Ride cancelled')">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Cancel
+      </button>
+    </div>
+
+    <button class="btn-primary" style="margin-top:.4rem" onclick="startTracking()">
+      Start Tracking →
+    </button>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: TRACKING
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s-tracking">
+  <div class="track-map">
+    <canvas id="trackMap"></canvas>
+    <div class="map-compass" style="position:absolute;top:.6rem;right:.6rem">N</div>
+  </div>
+
+  <div class="track-panel">
+    <div class="track-status-row">
+      <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem">On Your Way</div>
+      <div class="track-live"><div class="live-dot"></div>LIVE</div>
+    </div>
+
+    <div class="track-metrics">
+      <div class="metric-box">
+        <div class="metric-val" id="t-dist">0.0</div>
+        <div class="metric-lbl">KM LEFT</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-val" id="t-time">20</div>
+        <div class="metric-lbl">MIN LEFT</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-val" id="t-spd">0</div>
+        <div class="metric-lbl">KM/H</div>
+      </div>
+    </div>
+
+    <div class="ride-stops">
+      <div class="stop-row">
+        <div class="stop-dot-col">
+          <div class="stop-dot" style="background:var(--accent)"></div>
+          <div class="stop-line"></div>
+        </div>
+        <div class="stop-info">
+          <div class="stop-name">Main Bazaar, Peddapalli</div>
+          <div class="stop-addr">Pickup · Railway Road Junction</div>
+        </div>
+      </div>
+      <div class="stop-row">
+        <div class="stop-dot-col">
+          <div class="stop-dot" style="background:var(--danger)"></div>
+        </div>
+        <div class="stop-info" style="padding-bottom:0">
+          <div class="stop-name" id="trackDest">SCCL Colony, Godavarikhani</div>
+          <div class="stop-addr">Drop-off</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="sos-btn">🆘 SOS — Emergency</button>
+
+    <button class="btn-primary" onclick="goTo('payment')">
+      Arrived — Pay Now →
+    </button>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: PAYMENT
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s-payment">
+  <div class="top-bar" style="padding-bottom:.3rem">
+    <button class="back-btn" onclick="goTo('tracking')">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h2>Pay for Your Ride</h2>
+  </div>
+
+  <div class="scroll-body">
+    <div class="fare-big">
+      <div class="fare-amount" id="payAmt">₹198</div>
+      <div class="fare-label">Total Fare · Main Bazaar → SCCL Colony</div>
+    </div>
+
+    <div class="fare-breakdown">
+      <div class="fare-row">
+        <div class="fare-row-lbl">Base fare</div>
+        <div class="fare-row-val" id="fb-base">₹30</div>
+      </div>
+      <div class="fare-row">
+        <div class="fare-row-lbl">Distance (14.0 km)</div>
+        <div class="fare-row-val" id="fb-dist">₹168</div>
+      </div>
+      <div class="fare-row">
+        <div class="fare-row-lbl">Platform fee</div>
+        <div class="fare-row-val">₹0</div>
+      </div>
+      <div class="fare-row" style="font-weight:700">
+        <div class="fare-row-lbl" style="color:var(--txt)">Total</div>
+        <div class="fare-row-val" id="fb-total">₹198</div>
+      </div>
+    </div>
+
+    <div class="section-lbl">Payment Method</div>
+    <div class="pay-methods">
+      <div class="pay-method sel" id="pm-upi" onclick="selPay('upi')">
+        <div class="pay-icon">📱</div>
+        <div>
+          <div class="pay-name">UPI</div>
+          <div class="pay-sub">Pay via any UPI app</div>
+        </div>
+        <div class="pay-check on" id="pc-upi">✓</div>
+      </div>
+      <div class="pay-method" id="pm-cash" onclick="selPay('cash')">
+        <div class="pay-icon">💵</div>
+        <div>
+          <div class="pay-name">Cash</div>
+          <div class="pay-sub">Pay to driver directly</div>
+        </div>
+        <div class="pay-check" id="pc-cash"></div>
+      </div>
+      <div class="pay-method" id="pm-wallet" onclick="selPay('wallet')">
+        <div class="pay-icon">👛</div>
+        <div>
+          <div class="pay-name">QuickWallet</div>
+          <div class="pay-sub">Balance: ₹0.00</div>
+        </div>
+        <div class="pay-check" id="pc-wallet"></div>
+      </div>
+    </div>
+
+    <div class="upi-merchant-box">
+      <div class="upi-icon">🏦</div>
+      <div class="upi-mid-info">
+        <div class="upi-mid-label">MERCHANT UPI ID (QUICKRIDE)</div>
+        <div class="upi-mid-id">haseeb@ybl</div>
+      </div>
+      <button class="upi-copy-btn" onclick="copyUPI()">Copy</button>
+    </div>
+
+    <button class="btn-primary" onclick="payNow()">
+      Pay <span id="payBtnAmt">₹198</span> →
+    </button>
+  </div>
+
+  <div class="loading-overlay" id="payLoading">
+    <div class="spinner"></div>
+    <div class="loading-txt">Processing payment…</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: COMPLETE
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s-complete">
+  <div class="complete-hero">
+    <div class="complete-icon">✅</div>
+    <div>
+      <div class="complete-title">Ride Complete!</div>
+      <div class="complete-sub" style="color:var(--txt2)">Thank you for riding with QuickRide Peddapalli</div>
+    </div>
+
+    <div class="receipt-box">
+      <div class="receipt-row">
+        <div class="receipt-lbl">Route</div>
+        <div class="receipt-val" style="font-size:.78rem" id="rc-route">Main Bazaar → SCCL Colony</div>
+      </div>
+      <div class="receipt-row">
+        <div class="receipt-lbl">Distance</div>
+        <div class="receipt-val">14.0 km</div>
+      </div>
+      <div class="receipt-row">
+        <div class="receipt-lbl">Duration</div>
+        <div class="receipt-val">22 min</div>
+      </div>
+      <div class="receipt-row">
+        <div class="receipt-lbl">Paid</div>
+        <div class="receipt-val" id="rc-paid">₹198</div>
+      </div>
+      <div class="receipt-row">
+        <div class="receipt-lbl">Via</div>
+        <div class="receipt-val">✓ UPI · haseeb@ybl</div>
+      </div>
+    </div>
+
+    <div style="width:100%;text-align:left">
+      <div class="section-lbl" style="margin-bottom:.5rem">Rate Your Driver</div>
+      <div class="rating-row">
+        <span class="star-btn" onclick="rateDriver(1)">⭐</span>
+        <span class="star-btn" onclick="rateDriver(2)">⭐</span>
+        <span class="star-btn" onclick="rateDriver(3)">⭐</span>
+        <span class="star-btn" onclick="rateDriver(4)">⭐</span>
+        <span class="star-btn" onclick="rateDriver(5)">⭐</span>
+      </div>
+    </div>
+
+    <button class="btn-primary" style="width:100%" onclick="goTo('home')">Back to Home</button>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: HISTORY
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s-history">
+  <div class="top-bar">
+    <h2 style="font-family:'Outfit',sans-serif;font-weight:800;font-size:1.2rem">Your Rides</h2>
+  </div>
+  <div class="scroll-body">
+    <div class="hist-card">
+      <div class="hist-top">
+        <div class="hist-route">Main Bazaar → SCCL Colony</div>
+        <div class="hist-amount">₹198</div>
+      </div>
+      <div class="hist-meta">
+        <span class="chip success">Completed</span>
+        <span class="hist-date">Today, 9:05 AM</span>
+        <span class="hist-date">· 🛺 Auto</span>
+      </div>
+    </div>
+    <div class="hist-card">
+      <div class="hist-top">
+        <div class="hist-route">Collectorate → Bus Stand</div>
+        <div class="hist-amount">₹54</div>
+      </div>
+      <div class="hist-meta">
+        <span class="chip success">Completed</span>
+        <span class="hist-date">Yesterday, 2:30 PM</span>
+        <span class="hist-date">· 🏍️ Bike</span>
+      </div>
+    </div>
+    <div class="hist-card">
+      <div class="hist-top">
+        <div class="hist-route">Peddapalli → Karimnagar</div>
+        <div class="hist-amount">₹1,040</div>
+      </div>
+      <div class="hist-meta">
+        <span class="chip success">Completed</span>
+        <span class="hist-date">Sep 10, 11:00 AM</span>
+        <span class="hist-date">· 🚙 Sedan</span>
+      </div>
+    </div>
+    <div class="hist-card">
+      <div class="hist-top">
+        <div class="hist-route">Bus Stand → Godavarikhani</div>
+        <div class="hist-amount">₹225</div>
+      </div>
+      <div class="hist-meta">
+        <span class="chip success">Completed</span>
+        <span class="hist-date">Sep 8, 8:15 AM</span>
+        <span class="hist-date">· 🛺 Auto</span>
+      </div>
+    </div>
+    <div class="hist-card">
+      <div class="hist-top">
+        <div class="hist-route">Railway Station → Collectorate</div>
+        <div class="hist-amount">₹46</div>
+      </div>
+      <div class="hist-meta">
+        <span class="chip amber">Cancelled</span>
+        <span class="hist-date">Sep 7, 6:50 PM</span>
+      </div>
+    </div>
+  </div>
+  <nav class="bot-nav">
+    <button class="nav-tab" onclick="goTo('home')">
+      <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+      Home
+    </button>
+    <button class="nav-tab active" onclick="goTo('history')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
+      Rides
+    </button>
+    <button class="nav-tab" onclick="goTo('offers')">
+      <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      Offers
+    </button>
+    <button class="nav-tab" onclick="goTo('profile')">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Account
+    </button>
+  </nav>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: OFFERS
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s-offers">
+  <div class="top-bar">
+    <h2 style="font-family:'Outfit',sans-serif;font-weight:800;font-size:1.2rem">Offers & Promos</h2>
+  </div>
+  <div class="scroll-body">
+    <div class="offer-card">
+      <div class="offer-img" style="background:rgba(0,212,170,.1)">🎉</div>
+      <div>
+        <div class="offer-title">New User Offer</div>
+        <div class="offer-desc">First ride in Peddapalli — flat ₹30 off on any vehicle</div>
+        <span class="offer-code">PDPL30</span>
+      </div>
+    </div>
+    <div class="offer-card">
+      <div class="offer-img" style="background:rgba(245,166,35,.1)">🌅</div>
+      <div>
+        <div class="offer-title">Morning Ride Deal</div>
+        <div class="offer-desc">30% off on rides booked before 9 AM daily</div>
+        <span class="offer-code">EARLY30</span>
+      </div>
+    </div>
+    <div class="offer-card">
+      <div class="offer-img" style="background:rgba(0,152,212,.1)">⛏️</div>
+      <div>
+        <div class="offer-title">SCCL Worker Special</div>
+        <div class="offer-desc">₹20 off on Peddapalli ↔ Godavarikhani rides — show SCCL ID</div>
+        <span class="offer-code">SCCL20</span>
+      </div>
+    </div>
+    <div class="offer-card">
+      <div class="offer-img" style="background:rgba(34,200,122,.1)">📱</div>
+      <div>
+        <div class="offer-title">UPI Cashback</div>
+        <div class="offer-desc">₹10 cashback when you pay via UPI to haseeb@ybl</div>
+        <span class="offer-code">UPI10</span>
+      </div>
+    </div>
+    <div class="offer-card">
+      <div class="offer-img" style="background:rgba(255,77,106,.1)">🚂</div>
+      <div>
+        <div class="offer-title">Station Connect</div>
+        <div class="offer-desc">15% off on rides to/from Peddapalli Railway Station</div>
+        <span class="offer-code">TRAIN15</span>
+      </div>
+    </div>
+  </div>
+  <nav class="bot-nav">
+    <button class="nav-tab" onclick="goTo('home')">
+      <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+      Home
+    </button>
+    <button class="nav-tab" onclick="goTo('history')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
+      Rides
+    </button>
+    <button class="nav-tab active" onclick="goTo('offers')">
+      <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      Offers
+    </button>
+    <button class="nav-tab" onclick="goTo('profile')">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Account
+    </button>
+  </nav>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: PROFILE
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s-profile">
+  <div class="top-bar" style="padding-bottom:.2rem">
+    <h2 style="font-family:'Outfit',sans-serif;font-weight:800;font-size:1.2rem">My Account</h2>
+  </div>
+
+  <div style="overflow-y:auto;flex:1;padding-bottom:5.5rem">
+    <div class="profile-hero">
+      <div class="profile-ava">H</div>
+      <div class="profile-name">Haseeb</div>
+      <div class="profile-phone">+91 90000 00000 · Peddapalli</div>
+      <div class="chip success" style="margin-top:.2rem">✓ Verified Rider</div>
+    </div>
+
+    <div style="padding:.9rem 1rem 0">
+      <div class="settings-group">
+        <div class="settings-group-lbl">Wallet & Payments</div>
+        <div class="settings-item">
+          <div class="settings-row">
+            <div class="settings-icon">💳</div>
+            <div class="settings-txt">
+              <div class="settings-label">QuickWallet</div>
+              <div class="settings-val">Balance: ₹0.00</div>
+            </div>
+            <div class="settings-arrow">›</div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-icon">🏦</div>
+            <div class="settings-txt">
+              <div class="settings-label">UPI Linked</div>
+              <div class="settings-val">haseeb@ybl (YES Bank)</div>
+            </div>
+            <div class="chip success" style="font-size:.68rem">✓ Active</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-group-lbl">Ride History</div>
+        <div class="settings-item">
+          <div class="settings-row" onclick="goTo('history')">
+            <div class="settings-icon">🕒</div>
+            <div class="settings-txt">
+              <div class="settings-label">Past Rides</div>
+              <div class="settings-val">5 rides · ₹1,563 total</div>
+            </div>
+            <div class="settings-arrow">›</div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-icon">⭐</div>
+            <div class="settings-txt">
+              <div class="settings-label">Your Rating</div>
+              <div class="settings-val">4.9 · Excellent Rider</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-group-lbl">App</div>
+        <div class="settings-item">
+          <div class="settings-row">
+            <div class="settings-icon">🌍</div>
+            <div class="settings-txt">
+              <div class="settings-label">Region</div>
+              <div class="settings-val">Peddapalli District, Telangana</div>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-icon">🔔</div>
+            <div class="settings-txt">
+              <div class="settings-label">Notifications</div>
+              <div class="settings-val">Enabled</div>
+            </div>
+            <div class="settings-arrow">›</div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-icon">🌙</div>
+            <div class="settings-txt">
+              <div class="settings-label">Dark Mode</div>
+              <div class="settings-val">On</div>
+            </div>
+            <div class="settings-arrow">›</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-group-lbl">Support</div>
+        <div class="settings-item">
+          <div class="settings-row">
+            <div class="settings-icon">💬</div>
+            <div class="settings-txt"><div class="settings-label">Help & Support</div></div>
+            <div class="settings-arrow">›</div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-icon">🛡️</div>
+            <div class="settings-txt"><div class="settings-label">Safety Center</div></div>
+            <div class="settings-arrow">›</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-secondary" style="margin-bottom:1rem" onclick="showToast('Logged out')">
+        Sign Out
+      </button>
+
+      <div style="text-align:center;font-size:.72rem;color:var(--txt3);padding-bottom:.5rem">
+        QuickRide Peddapalli v1.0.0 · UPI Merchant: haseeb@ybl
+      </div>
+    </div>
+  </div>
+
+  <nav class="bot-nav">
+    <button class="nav-tab" onclick="goTo('home')">
+      <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+      Home
+    </button>
+    <button class="nav-tab" onclick="goTo('history')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
+      Rides
+    </button>
+    <button class="nav-tab" onclick="goTo('offers')">
+      <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      Offers
+    </button>
+    <button class="nav-tab active" onclick="goTo('profile')">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Account
+    </button>
+  </nav>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ── PEDDAPALLI MAP DATA ─────────────────────────────────────────────── */
+
+// Full district bounds (for home map, wider view)
+const DISTRICT_BOUNDS = { lat0:18.55, lat1:18.73, lon0:79.28, lon1:79.55 };
+
+// Town bounds (for route/tracking maps)
+const TOWN_BOUNDS = { lat0:18.580, lat1:18.700, lon0:79.330, lon1:79.520 };
+
+// Zoom system
+let mapZoomLevels = { homeMap:0, routeMap:0, driverMap:0, trackMap:0 };
+function getZoomBounds(canvasId, level) {
+  const cx = { lat: 18.617, lon: 79.412 };
+  const spans = [
+    { dlat:0.120, dlon:0.190 },  // zoom 0 – district view
+    { dlat:0.065, dlon:0.100 },  // zoom 1
+    { dlat:0.038, dlon:0.058 },  // zoom 2 – town detail
+  ];
+  const s = spans[Math.min(level, 2)];
+  return { lat0:cx.lat-s.dlat/2, lat1:cx.lat+s.dlat/2,
+           lon0:cx.lon-s.dlon/2, lon1:cx.lon+s.dlon/2 };
+}
+
+// Manair River — flows roughly WSW through Peddapalli area
+const MANAIR = [
+  [18.602,79.280],[18.600,79.300],[18.601,79.320],
+  [18.603,79.340],[18.602,79.358],[18.601,79.374],
+  [18.600,79.395],[18.601,79.418],[18.600,79.440],
+  [18.602,79.465],[18.604,79.490],[18.605,79.520],
+];
+
+// Smaller tributary near town
+const TRIBUTARY = [
+  [18.612,79.360],[18.607,79.366],[18.603,79.371],[18.601,79.378],
+];
+
+// Singareni / SCCL Open Cast area (simplified polygon)
+const SCCL_AREA = [
+  [18.668,79.458],[18.682,79.462],[18.692,79.478],[18.690,79.500],
+  [18.678,79.505],[18.660,79.498],[18.655,79.480],[18.660,79.465],
+];
+
+// Peddapalli town park / ground
+const TOWN_PARK = [
+  [18.619,79.370],[18.623,79.370],[18.623,79.376],[18.619,79.376],
+];
+
+// Roads
+const ROADS = [
+  // Highways
+  { t:'highway', p:[[18.570,79.340],[18.590,79.348],[18.608,79.356],[18.618,79.368],[18.630,79.380],[18.648,79.400],[18.665,79.425],[18.683,79.460]] },  // NH 563
+  { t:'highway', p:[[18.618,79.290],[18.616,79.315],[18.614,79.340],[18.612,79.360],[18.611,79.380],[18.612,79.405]] },  // SH connector
+
+  // Major roads
+  { t:'major', p:[[18.610,79.330],[18.615,79.340],[18.617,79.350],[18.618,79.362],[18.618,79.372],[18.617,79.382],[18.616,79.395]] },  // Main Bazaar Road
+  { t:'major', p:[[18.590,79.360],[18.598,79.365],[18.607,79.367],[18.617,79.368],[18.628,79.368],[18.638,79.370]] },  // East-West connector
+  { t:'major', p:[[18.618,79.368],[18.620,79.360],[18.622,79.348],[18.622,79.335]] },  // Station Road N
+  { t:'major', p:[[18.618,79.368],[18.618,79.378],[18.619,79.388],[18.620,79.400],[18.622,79.415]] },  // Bypass road
+  { t:'major', p:[[18.617,79.372],[18.628,79.380],[18.642,79.395],[18.658,79.418],[18.672,79.442],[18.683,79.460]] },  // Godavarikhani road
+  { t:'major', p:[[18.618,79.372],[18.608,79.360],[18.596,79.345],[18.585,79.333]] },  // Karimnagar road
+
+  // Minor roads – town grid
+  { t:'minor', p:[[18.612,79.355],[18.614,79.362],[18.616,79.370],[18.614,79.378],[18.612,79.385]] },
+  { t:'minor', p:[[18.620,79.355],[18.619,79.363],[18.618,79.372],[18.618,79.382],[18.616,79.390]] },
+  { t:'minor', p:[[18.624,79.358],[18.622,79.365],[18.622,79.373],[18.621,79.382]] },
+  { t:'minor', p:[[18.608,79.360],[18.610,79.368],[18.611,79.376],[18.610,79.383]] },
+  { t:'minor', p:[[18.615,79.345],[18.618,79.352],[18.620,79.358],[18.622,79.365]] },
+  { t:'minor', p:[[18.605,79.362],[18.610,79.362],[18.618,79.362],[18.628,79.362]] },
+  { t:'minor', p:[[18.605,79.370],[18.610,79.370],[18.616,79.370],[18.622,79.370]] },
+  { t:'minor', p:[[18.605,79.378],[18.611,79.378],[18.618,79.378],[18.624,79.378]] },
+  { t:'minor', p:[[18.628,79.370],[18.635,79.375],[18.642,79.382],[18.650,79.390]] },
+  { t:'minor', p:[[18.638,79.385],[18.645,79.395],[18.650,79.404],[18.655,79.416]] },
+
+  // Local streets
+  { t:'local', p:[[18.617,79.364],[18.619,79.364],[18.621,79.366]] },
+  { t:'local', p:[[18.615,79.374],[18.618,79.374],[18.621,79.374]] },
+  { t:'local', p:[[18.616,79.382],[18.618,79.382],[18.620,79.382]] },
+  { t:'local', p:[[18.618,79.368],[18.619,79.374],[18.619,79.380]] },
+  { t:'local', p:[[18.614,79.380],[18.614,79.384],[18.614,79.388]] },
+  { t:'local', p:[[18.622,79.368],[18.623,79.374],[18.624,79.378]] },
+  { t:'local', p:[[18.618,79.355],[18.619,79.358],[18.620,79.362]] },
+  { t:'local', p:[[18.650,79.400],[18.654,79.408],[18.658,79.415]] },
+  { t:'local', p:[[18.660,79.420],[18.665,79.428],[18.668,79.438]] },
+  { t:'local', p:[[18.670,79.445],[18.675,79.452],[18.680,79.458]] },
+];
+
+// Railway line (Kazipet–Balharshah)
+const RAILWAY = [
+  [18.572,79.310],[18.588,79.328],[18.602,79.345],[18.611,79.362],[18.613,79.375],
+  [18.614,79.390],[18.617,79.408],[18.622,79.428],[18.630,79.450],[18.640,79.475],
+];
+
+// Labels
+const MAP_LABELS = [
+  { lat:18.618, lon:79.372, txt:'Peddapalli', type:'city', sz:10 },
+  { lat:18.610, lon:79.367, txt:'Railway Stn', type:'poi', sz:8 },
+  { lat:18.616, lon:79.373, txt:'Bus Stand', type:'poi', sz:8 },
+  { lat:18.622, lon:79.370, txt:'Collectorate', type:'poi', sz:8 },
+  { lat:18.620, lon:79.376, txt:"Govt Hospital", type:'poi', sz:7 },
+  { lat:18.600, lon:79.395, txt:'Manair River', type:'water', sz:8 },
+  { lat:18.678, lon:79.475, txt:'Godavarikhani', type:'city', sz:9 },
+  { lat:18.683, lon:79.490, txt:'SCCL Colony', type:'area', sz:8 },
+  { lat:18.672, lon:79.465, txt:'Singareni', type:'area', sz:8 },
+  { lat:18.595, lon:79.335, txt:'Karimnagar Rd', type:'road', sz:7 },
+  { lat:18.645, lon:79.405, txt:'NH 563', type:'road', sz:7 },
+  { lat:18.619, lon:79.373, txt:'Town Park', type:'park', sz:7 },
+  { lat:18.612, lon:79.355, txt:'Sulthanabad Rd', type:'road', sz:7 },
+  { lat:18.680, lon:79.452, txt:'Opencast Mines', type:'area', sz:7 },
+  { lat:18.608, lon:79.358, txt:'Ramagundam Rd', type:'road', sz:7 },
+];
+
+// Demo route: Main Bazaar → Godavarikhani SCCL Colony
+const ROUTE = [
+  [18.618,79.375],[18.625,79.382],[18.635,79.394],[18.646,79.408],
+  [18.658,79.424],[18.667,79.440],[18.674,79.455],[18.680,79.468],[18.683,79.483],
+];
+
+// Driver approach route (4 waypoints approaching pickup)
+const DRIVER_APPROACH = [
+  [18.630,79.390],[18.624,79.383],[18.620,79.378],[18.618,79.375],
+];
+
+/* ── PROJECTION ──────────────────────────────────────────────────────── */
+function proj(lat, lon, W, H, b) {
+  return [
+    (lon - b.lon0) / (b.lon1 - b.lon0) * W,
+    (1 - (lat - b.lat0) / (b.lat1 - b.lat0)) * H,
+  ];
+}
+
+/* ── DRAW MAP ────────────────────────────────────────────────────────── */
+function getThemeColors() {
+  const dark = document.documentElement.dataset.theme === 'dark'
+    || (!document.documentElement.dataset.theme
+        && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  return dark ? {
+    bg:'#0A1428', water:'#112244', waterLine:'#1a3a6e',
+    railBg:'#0f1e38', railFg:'#2a4060',
+    hwFill:'#2a4060', hwStr:'#3a5880',
+    majStr:'#1e3450', minStr:'#162a44', locStr:'#112038',
+    sccl:'rgba(245,166,35,.10)', scclStr:'rgba(245,166,35,.25)',
+    park:'rgba(34,200,122,.08)', parkStr:'rgba(34,200,122,.20)',
+    lblCity:'#E8EDF7', lblPoi:'#8A9BBF', lblWater:'#4a7ccc',
+    lblArea:'#7A8BA0', lblRoad:'#4D6080',
+    route:'#00D4AA', routeGlow:'rgba(0,212,170,.35)',
+    car:'#00D4AA', driver:'#F5A623',
+    pickup:'#22C87A', dropoff:'#FF4D6A',
+  } : {
+    bg:'#E8EFF8', water:'#B8D4F0', waterLine:'#90B8E8',
+    railBg:'#D0DCF0', railFg:'#8AAAD0',
+    hwFill:'#C8D8F0', hwStr:'#A0B8DC',
+    majStr:'#B8CCEC', minStr:'#C8D8F4', locStr:'#D8E4F8',
+    sccl:'rgba(180,120,0,.08)', scclStr:'rgba(180,120,0,.20)',
+    park:'rgba(0,160,90,.10)', parkStr:'rgba(0,160,90,.25)',
+    lblCity:'#0D1427', lblPoi:'#4A5A78', lblWater:'#1a5caa',
+    lblArea:'#5A6A80', lblRoad:'#8090B0',
+    route:'#007A60', routeGlow:'rgba(0,122,96,.25)',
+    car:'#007A60', driver:'#C07000',
+    pickup:'#00883C', dropoff:'#CC2240',
+  };
+}
+
+function drawMap(canvas, opts = {}) {
+  const { showRoute=false, progress=0, carT=null, driverT=null, zoomId='homeMap' } = opts;
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
+  const rect = canvas.getBoundingClientRect();
+  const W = rect.width || canvas.offsetWidth || 360;
+  const H = rect.height || canvas.offsetHeight || 220;
+  canvas.width  = W * DPR;
+  canvas.height = H * DPR;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(DPR, DPR);
+
+  const lvl = mapZoomLevels[canvas.id] || 0;
+  const b = getZoomBounds(canvas.id, lvl);
+  const C = getThemeColors();
+  const p = (lat, lon) => proj(lat, lon, W, H, b);
+
+  // Background
+  ctx.fillStyle = C.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // Manair River (filled)
+  if (MANAIR.length > 1) {
+    ctx.beginPath();
+    let [mx,my] = p(MANAIR[0][0], MANAIR[0][1]);
+    ctx.moveTo(mx, my);
+    for (let i=1; i<MANAIR.length; i++) {
+      const [x,y] = p(MANAIR[i][0], MANAIR[i][1]);
+      ctx.lineTo(x, y);
+    }
+    // close the river band
+    for (let i=MANAIR.length-1; i>=0; i--) {
+      const [x,y] = p(MANAIR[i][0]-0.006, MANAIR[i][1]);
+      ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = C.water;
+    ctx.fill();
+    // River outline
+    ctx.beginPath();
+    [mx,my] = p(MANAIR[0][0], MANAIR[0][1]);
+    ctx.moveTo(mx, my);
+    for (let i=1; i<MANAIR.length; i++) {
+      const [x,y] = p(MANAIR[i][0], MANAIR[i][1]);
+      ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = C.waterLine;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+  }
+
+  // Tributary
+  if (TRIBUTARY.length > 1) {
+    ctx.beginPath();
+    let [tx0,ty0] = p(TRIBUTARY[0][0], TRIBUTARY[0][1]);
+    ctx.moveTo(tx0,ty0);
+    for (let i=1; i<TRIBUTARY.length; i++) {
+      const [x,y] = p(TRIBUTARY[i][0], TRIBUTARY[i][1]);
+      ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = C.waterLine;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  // SCCL/Singareni area
+  if (SCCL_AREA.length > 2) {
+    ctx.beginPath();
+    let [sx,sy] = p(SCCL_AREA[0][0], SCCL_AREA[0][1]);
+    ctx.moveTo(sx, sy);
+    for (let i=1; i<SCCL_AREA.length; i++) {
+      const [x,y] = p(SCCL_AREA[i][0], SCCL_AREA[i][1]);
+      ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = C.sccl;
+    ctx.fill();
+    ctx.strokeStyle = C.scclStr;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Town park
+  if (TOWN_PARK.length > 2) {
+    ctx.beginPath();
+    let [px0,py0] = p(TOWN_PARK[0][0], TOWN_PARK[0][1]);
+    ctx.moveTo(px0, py0);
+    for (let i=1; i<TOWN_PARK.length; i++) {
+      const [x,y] = p(TOWN_PARK[i][0], TOWN_PARK[i][1]);
+      ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = C.park;
+    ctx.fill();
+    ctx.strokeStyle = C.parkStr;
+    ctx.lineWidth = .7;
+    ctx.stroke();
+  }
+
+  // Railway line (dashed)
+  if (RAILWAY.length > 1) {
+    // dark background rail
+    ctx.beginPath();
+    let [rx,ry] = p(RAILWAY[0][0], RAILWAY[0][1]);
+    ctx.moveTo(rx, ry);
+    for (let i=1; i<RAILWAY.length; i++) {
+      const [x,y] = p(RAILWAY[i][0], RAILWAY[i][1]);
+      ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = C.railBg;
+    ctx.lineWidth = 3;
+    ctx.setLineDash([]);
+    ctx.stroke();
+    // dashed overlay
+    ctx.beginPath();
+    [rx,ry] = p(RAILWAY[0][0], RAILWAY[0][1]);
+    ctx.moveTo(rx, ry);
+    for (let i=1; i<RAILWAY.length; i++) {
+      const [x,y] = p(RAILWAY[i][0], RAILWAY[i][1]);
+      ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = C.railFg;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6,4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Roads
+  const roadStyles = {
+    highway: { color:C.hwStr, w:4 },
+    major:   { color:C.majStr, w:2.5 },
+    minor:   { color:C.minStr, w:1.5 },
+    local:   { color:C.locStr, w:.8 },
+  };
+  for (const rd of ROADS) {
+    const st = roadStyles[rd.t];
+    if (!st || rd.p.length < 2) continue;
+    ctx.beginPath();
+    const [rx0,ry0] = p(rd.p[0][0], rd.p[0][1]);
+    ctx.moveTo(rx0, ry0);
+    for (let i=1; i<rd.p.length; i++) {
+      const [x,y] = p(rd.p[i][0], rd.p[i][1]);
+      ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = st.color;
+    ctx.lineWidth = st.w;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+  }
+
+  // Route line
+  if (showRoute && ROUTE.length > 1) {
+    // glow
+    ctx.beginPath();
+    let [rox,roy] = p(ROUTE[0][0], ROUTE[0][1]);
+    ctx.moveTo(rox, roy);
+    for (let i=1; i<ROUTE.length; i++) {
+      const [x,y] = p(ROUTE[i][0], ROUTE[i][1]);
+      ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = C.routeGlow;
+    ctx.lineWidth = 8;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+
+    // solid route
+    ctx.beginPath();
+    ctx.moveTo(rox, roy);
+    for (let i=1; i<ROUTE.length; i++) {
+      const [x,y] = p(ROUTE[i][0], ROUTE[i][1]);
+      ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = C.route;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // pickup pin
+    const [px0,py0] = p(ROUTE[0][0], ROUTE[0][1]);
+    ctx.beginPath();
+    ctx.arc(px0, py0, 6, 0, Math.PI*2);
+    ctx.fillStyle = C.pickup;
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // dropoff pin
+    const [dpx,dpy] = p(ROUTE[ROUTE.length-1][0], ROUTE[ROUTE.length-1][1]);
+    ctx.beginPath();
+    ctx.arc(dpx, dpy, 6, 0, Math.PI*2);
+    ctx.fillStyle = C.dropoff;
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  // Moving car on route
+  if (carT !== null && ROUTE.length > 1) {
+    const pos = interpolateRoute(ROUTE, carT);
+    const [cx2,cy2] = p(pos[0], pos[1]);
+    // halo
+    ctx.beginPath();
+    ctx.arc(cx2, cy2, 12, 0, Math.PI*2);
+    ctx.fillStyle = C.routeGlow;
+    ctx.fill();
+    // car dot
+    ctx.beginPath();
+    ctx.arc(cx2, cy2, 6, 0, Math.PI*2);
+    ctx.fillStyle = C.car;
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  // Driver approaching
+  if (driverT !== null && DRIVER_APPROACH.length > 1) {
+    const pos = interpolateRoute(DRIVER_APPROACH, driverT);
+    const [dx,dy] = p(pos[0], pos[1]);
+    ctx.beginPath();
+    ctx.arc(dx, dy, 10, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(245,166,35,.25)';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(dx, dy, 5, 0, Math.PI*2);
+    ctx.fillStyle = C.driver;
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  // Map labels
+  for (const lbl of MAP_LABELS) {
+    const [lx,ly] = p(lbl.lat, lbl.lon);
+    if (lx < -20 || lx > W+20 || ly < -10 || ly > H+10) continue;
+    ctx.font = `${lbl.type==='city'?600:400} ${lbl.sz}px 'DM Sans',sans-serif`;
+    ctx.textAlign = 'center';
+    const txtColor = lbl.type==='water' ? C.lblWater
+      : lbl.type==='city' ? C.lblCity
+      : lbl.type==='area' ? C.lblArea
+      : lbl.type==='road' ? C.lblRoad
+      : C.lblPoi;
+    ctx.fillStyle = txtColor;
+    ctx.fillText(lbl.txt, lx, ly + (lbl.sz * .35));
+  }
+}
+
+function interpolateRoute(pts, t) {
+  const n = pts.length - 1;
+  const idx = Math.min(Math.floor(t * n), n - 1);
+  const frac = t * n - idx;
+  const a = pts[idx], b = pts[idx+1];
+  return [a[0] + (b[0]-a[0])*frac, a[1] + (b[1]-a[1])*frac];
+}
+
+/* ── SCALE BAR ───────────────────────────────────────────────────────── */
+function updateScaleBar(scaleEl, canvasId, level) {
+  const b = getZoomBounds(canvasId, level);
+  const km = Math.round((b.lon1 - b.lon0) * 85); // ~85km per degree at 18°N
+  const scales = [0.5,1,2,5,10,20,50,100];
+  const nice = scales.find(s => s >= km/5) || km;
+  if (scaleEl) scaleEl.textContent = nice >= 1 ? `${nice} km` : `${nice*1000} m`;
+}
+
+/* ── MAP ZOOM ────────────────────────────────────────────────────────── */
+function mapZoom(dir, canvasId) {
+  const cur = mapZoomLevels[canvasId] || 0;
+  mapZoomLevels[canvasId] = Math.max(0, Math.min(2, cur + dir));
+  redrawCanvas(canvasId);
+  const scaleId = canvasId === 'homeMap' ? 'homeScale'
+    : canvasId === 'routeMap' ? 'routeScale' : null;
+  if (scaleId) updateScaleBar(document.getElementById(scaleId), canvasId, mapZoomLevels[canvasId]);
+}
+
+function redrawCanvas(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const inTrack = id === 'trackMap';
+  const inDriver = id === 'driverMap';
+  drawMap(el, {
+    showRoute: id === 'routeMap' || inTrack,
+    carT: inTrack ? trackT : null,
+    driverT: inDriver ? driverT : null,
+    zoomId: id,
+  });
+}
+
+/* ── NAVIGATION ──────────────────────────────────────────────────────── */
+let currentScreen = 'home';
+function goTo(name) {
+  const old = document.getElementById('s-' + currentScreen);
+  const nxt = document.getElementById('s-' + name);
+  if (!nxt || name === currentScreen) return;
+  if (old) { old.classList.add('slide-out'); setTimeout(() => old.classList.remove('active','slide-out'), 300); }
+  nxt.classList.add('active');
+  currentScreen = name;
+  setTimeout(() => initScreen(name), 50);
+}
+
+function initScreen(name) {
+  if (name === 'home') {
+    const c = document.getElementById('homeMap');
+    if (c) { drawMap(c, {}); }
+    updateScaleBar(document.getElementById('homeScale'), 'homeMap', mapZoomLevels.homeMap||0);
+  }
+  if (name === 'options') {
+    const c = document.getElementById('routeMap');
+    if (c) { setTimeout(() => drawMap(c, { showRoute:true }), 30); }
+    updateFares();
+    updateScaleBar(document.getElementById('routeScale'), 'routeMap', mapZoomLevels.routeMap||0);
+  }
+  if (name === 'driver') {
+    startDriverApproach();
+  }
+  if (name === 'tracking') {
+    startRideSim();
+  }
+}
+
+/* ── SELECTED RIDE ───────────────────────────────────────────────────── */
+let selectedRide = 'auto';
+let destName = 'SCCL Colony, Godavarikhani';
+let destDist = 14;
+
+const RIDE_CONFIG = {
+  auto:  { base:30,  rate:12, icon:'🛺', label:'Auto' },
+  bike:  { base:20,  rate:8,  icon:'🏍️', label:'Bike' },
+  mini:  { base:40,  rate:15, icon:'🚗', label:'Mini Cab' },
+  sedan: { base:50,  rate:18, icon:'🚙', label:'Sedan' },
+};
+
+function calcFare(type, km) {
+  const c = RIDE_CONFIG[type];
+  return c.base + Math.round(c.rate * km);
+}
+
+function updateFares() {
+  for (const [k, c] of Object.entries(RIDE_CONFIG)) {
+    const f = calcFare(k, destDist);
+    const el = document.getElementById('rf-'+k);
+    if (el) el.textContent = '₹'+f;
+  }
+  refreshBookBtn();
+}
+
+function selectRide(type) {
+  document.querySelectorAll('.ride-card').forEach(el => el.classList.remove('selected'));
+  document.getElementById('rc-'+type)?.classList.add('selected');
+  selectedRide = type;
+  refreshBookBtn();
+}
+
+function refreshBookBtn() {
+  const fare = calcFare(selectedRide, destDist);
+  const c = RIDE_CONFIG[selectedRide];
+  const el = document.getElementById('bookBtnTxt');
+  if (el) el.textContent = `Book ${c.label} — ₹${fare}`;
+}
+
+function pickDest(name, dist) {
+  destName = name + ', Peddapalli';
+  destDist = parseFloat(dist);
+  document.getElementById('destLabel').textContent = destName;
+  goTo('options');
+}
+
+function bookRide() {
+  const loading = document.createElement('div');
+  loading.className = 'loading-overlay show';
+  loading.innerHTML = '<div class="spinner"></div><div class="loading-txt">Finding drivers near you…</div>';
+  document.getElementById('app').appendChild(loading);
+  setTimeout(() => {
+    loading.remove();
+    updateDriverScreen();
+    goTo('driver');
+  }, 2200);
+}
+
+function updateDriverScreen() {
+  const fare = calcFare(selectedRide, destDist);
+  const el = document.getElementById('driverFareD');
+  if (el) el.textContent = '₹'+fare;
+  const dt = document.getElementById('trackDest');
+  if (dt) dt.textContent = destName;
+  updatePayScreen(fare);
+}
+
+/* ── DRIVER APPROACH ANIMATION ───────────────────────────────────────── */
+let driverT = 0;
+let driverApproachInterval = null;
+let etaSeconds = 240;
+
+function startDriverApproach() {
+  driverT = 0;
+  etaSeconds = 240;
+  clearInterval(driverApproachInterval);
+  const c = document.getElementById('driverMap');
+  if (c) drawMap(c, { driverT });
+
+  driverApproachInterval = setInterval(() => {
+    driverT = Math.min(driverT + 0.006, 1);
+    etaSeconds = Math.max(0, etaSeconds - 2);
+    const min = Math.floor(etaSeconds/60);
+    const sec = etaSeconds % 60;
+    const el = document.getElementById('driverEtaSec');
+    if (el) el.textContent = `${min}:${sec.toString().padStart(2,'0')}`;
+    const em = document.getElementById('driverEtaMin');
+    if (em) em.textContent = min > 0 ? `${min} min` : 'Arriving';
+    if (c && document.getElementById('s-driver').classList.contains('active')) {
+      drawMap(c, { driverT });
+    }
+    if (driverT >= 1) clearInterval(driverApproachInterval);
+  }, 120);
+}
+
+/* ── RIDE TRACKING SIMULATION ────────────────────────────────────────── */
+let trackT = 0;
+let trackInterval = null;
+const TOTAL_KM = 14;
+const TOTAL_MIN = 22;
+
+function startRideSim() {
+  trackT = 0;
+  clearInterval(trackInterval);
+  const c = document.getElementById('trackMap');
+  if (c) drawMap(c, { showRoute:true, carT:0 });
+
+  trackInterval = setInterval(() => {
+    trackT = Math.min(trackT + 0.0032, 1);
+    const kmLeft = +(TOTAL_KM * (1-trackT)).toFixed(1);
+    const minLeft = Math.round(TOTAL_MIN * (1-trackT));
+    const spd = Math.round(30 + Math.sin(trackT * Math.PI * 4) * 15);
+    const d = document.getElementById('t-dist');
+    const t = document.getElementById('t-time');
+    const s = document.getElementById('t-spd');
+    if (d) d.textContent = kmLeft;
+    if (t) t.textContent = minLeft;
+    if (s) s.textContent = spd;
+    if (c && document.getElementById('s-tracking').classList.contains('active')) {
+      drawMap(c, { showRoute:true, carT:trackT });
+    }
+    if (trackT >= 1) {
+      clearInterval(trackInterval);
+      setTimeout(() => goTo('payment'), 600);
+    }
+  }, 120);
+}
+
+/* ── PAYMENT ─────────────────────────────────────────────────────────── */
+let selPayMethod = 'upi';
+
+function updatePayScreen(fare) {
+  const c = RIDE_CONFIG[selectedRide];
+  const baseFare = c.base;
+  const distFare = fare - baseFare;
+
+  document.getElementById('payAmt').textContent = '₹'+fare;
+  document.getElementById('payBtnAmt').textContent = '₹'+fare;
+  document.getElementById('fb-base').textContent = '₹'+baseFare;
+  document.getElementById('fb-dist').textContent = '₹'+distFare;
+  document.getElementById('fb-total').textContent = '₹'+fare;
+  document.getElementById('rc-paid').textContent = '₹'+fare;
+
+  const dstRoute = destName.replace(', Peddapalli','');
+  document.getElementById('rc-route').textContent = `Main Bazaar → ${dstRoute}`;
+}
+
+function selPay(type) {
+  selPayMethod = type;
+  ['upi','cash','wallet'].forEach(t => {
+    document.getElementById('pm-'+t)?.classList.remove('sel');
+    const pc = document.getElementById('pc-'+t);
+    if (pc) { pc.classList.remove('on'); pc.textContent = ''; }
+  });
+  document.getElementById('pm-'+type)?.classList.add('sel');
+  const pc = document.getElementById('pc-'+type);
+  if (pc) { pc.classList.add('on'); pc.textContent = '✓'; }
+}
+
+function payNow() {
+  const ol = document.getElementById('payLoading');
+  ol.classList.add('show');
+  setTimeout(() => { ol.classList.remove('show'); goTo('complete'); }, 1800);
+}
+
+function copyUPI() {
+  const txt = 'haseeb@ybl';
+  if (navigator.clipboard) navigator.clipboard.writeText(txt);
+  showToast('✓ UPI ID copied: haseeb@ybl');
+}
+
+/* ── RATING ──────────────────────────────────────────────────────────── */
+function rateDriver(n) {
+  showToast('⭐ ' + n + '-star rating submitted. Thank you!');
+}
+
+/* ── TOAST ───────────────────────────────────────────────────────────── */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+/* ── CLOCK ───────────────────────────────────────────────────────────── */
+function updateClock() {
+  const now = new Date();
+  const h = now.getHours().toString().padStart(2,'0');
+  const m = now.getMinutes().toString().padStart(2,'0');
+  const el = document.getElementById('sbTime');
+  if (el) el.textContent = h + ':' + m;
+}
+updateClock();
+setInterval(updateClock, 30000);
+
+/* ── INIT ────────────────────────────────────────────────────────────── */
+window.addEventListener('load', () => {
+  initScreen('home');
+  updateFares();
+});
+
+// Resize handler
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => redrawCanvas(currentScreen+'Map'), 200);
+});
+</script>
+</body>
+</html>
