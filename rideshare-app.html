@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>QuickRide</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* ─── TOKENS ──────────────────────────────── */
+:root {
+  --bg:         #06091A;
+  --surf:       #0D1427;
+  --surf2:      #152038;
+  --surf3:      #1C2D4C;
+  --border:     rgba(255,255,255,0.07);
+  --text:       #D8E4F8;
+  --text2:      #6E86A8;
+  --text3:      #3A4E6A;
+  --accent:     #00D4AA;
+  --accent2:    #00B891;
+  --aglow:      rgba(0,212,170,0.18);
+  --adim:       rgba(0,212,170,0.10);
+  --amber:      #F5A623;
+  --amberdim:   rgba(245,166,35,0.13);
+  --danger:     #FF4D6A;
+  --success:    #22C87A;
+  --shadow:     0 16px 48px rgba(0,0,0,0.55);
+  --nav-h:      70px;
+  --top-h:      56px;
+  --r:          14px;
+  --rl:         22px;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:#EEF2FA; --surf:#FFFFFF; --surf2:#F3F7FF; --surf3:#E8EEFA;
+    --border:rgba(0,0,0,0.07); --text:#0A0F1E; --text2:#4E6280; --text3:#9AAAC0;
+    --accent:#00A88A; --accent2:#008F75; --aglow:rgba(0,168,138,0.15); --adim:rgba(0,168,138,0.08);
+    --amber:#C8800A; --amberdim:rgba(200,128,10,0.10);
+    --shadow:0 8px 32px rgba(0,0,0,0.14);
+  }
+}
+:root[data-theme="dark"]  { --bg:#06091A; --surf:#0D1427; --surf2:#152038; --surf3:#1C2D4C; --border:rgba(255,255,255,0.07); --text:#D8E4F8; --text2:#6E86A8; --text3:#3A4E6A; --accent:#00D4AA; --accent2:#00B891; --aglow:rgba(0,212,170,0.18); --adim:rgba(0,212,170,0.10); --amber:#F5A623; --amberdim:rgba(245,166,35,0.13); --shadow:0 16px 48px rgba(0,0,0,0.55); }
+:root[data-theme="light"] { --bg:#EEF2FA; --surf:#FFFFFF; --surf2:#F3F7FF; --surf3:#E8EEFA; --border:rgba(0,0,0,0.07); --text:#0A0F1E; --text2:#4E6280; --text3:#9AAAC0; --accent:#00A88A; --accent2:#008F75; --aglow:rgba(0,168,138,0.15); --adim:rgba(0,168,138,0.08); --amber:#C8800A; --amberdim:rgba(200,128,10,0.10); --shadow:0 8px 32px rgba(0,0,0,0.14); }
+
+/* ─── RESET ───────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+button{cursor:pointer;border:none;background:none;font:inherit}
+input,select{font:inherit;border:none;outline:none;background:none}
+a{text-decoration:none;color:inherit}
+
+/* ─── BODY / HOST ─────────────────────────── */
+body {
+  font-family:'DM Sans',system-ui,sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 0;
+  transition: background .3s;
+}
+@media (max-width:480px) { body { padding:0; align-items:flex-start; } }
+
+/* ─── PHONE SHELL ─────────────────────────── */
+.phone {
+  width: 390px;
+  min-height: 780px;
+  background: var(--surf);
+  border-radius: 44px;
+  box-shadow: var(--shadow), 0 0 0 1px var(--border), inset 0 0 0 1px rgba(255,255,255,0.04);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+@media (max-width:480px) {
+  .phone { width:100%; border-radius:0; min-height:100svh; box-shadow:none; }
+}
+
+/* ─── STATUS BAR ──────────────────────────── */
+.status-bar {
+  height: var(--top-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  flex-shrink: 0;
+  background: var(--surf);
+  position: relative;
+  z-index: 10;
+}
+.status-bar .time { font-family:'Outfit',sans-serif; font-weight:600; font-size:.95rem; color:var(--text); }
+.status-icons { display:flex; align-items:center; gap:6px; }
+.status-icons svg { color:var(--text); }
+
+/* ─── SCREEN CONTAINER ────────────────────── */
+.screens {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+.screen {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(24px);
+  transition: opacity .28s ease, transform .28s ease;
+  background: var(--surf);
+  scrollbar-width: none;
+}
+.screen::-webkit-scrollbar { display:none; }
+.screen.active {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateX(0);
+}
+.screen.slide-left { transform: translateX(-24px); }
+
+/* ─── BOTTOM NAV ──────────────────────────── */
+.bottom-nav {
+  height: var(--nav-h);
+  background: var(--surf);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 20;
+}
+.nav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 20px;
+  color: var(--text3);
+  transition: color .2s;
+  position: relative;
+}
+.nav-btn.active { color: var(--accent); }
+.nav-btn svg { width:22px; height:22px; }
+.nav-btn span { font-size:.68rem; font-weight:500; letter-spacing:.3px; }
+.nav-pip {
+  position: absolute;
+  top: 4px; right: 14px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--danger);
+  border: 2px solid var(--surf);
+}
+
+/* ─── MAP CANVAS ──────────────────────────── */
+.map-wrap { position:relative; height:300px; overflow:hidden; flex-shrink:0; }
+#map-canvas { width:100%; height:100%; display:block; }
+.map-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 40%, var(--surf) 100%);
+  pointer-events: none;
+}
+
+/* ─── BOOKING CARD ────────────────────────── */
+.booking-card {
+  position: relative;
+  z-index: 2;
+  margin: -32px 16px 0;
+  background: var(--surf2);
+  border-radius: var(--rl);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+.location-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.location-row:last-child { border-bottom: none; }
+.loc-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.loc-dot.pickup { background: var(--accent); box-shadow: 0 0 0 3px var(--adim); }
+.loc-dot.drop   { background: var(--amber);  box-shadow: 0 0 0 3px var(--amberdim); }
+.loc-line {
+  width: 1px; height: 24px;
+  background: var(--border);
+  margin-left: 5.5px;
+  flex-shrink: 0;
+  align-self: stretch;
+  display: none;
+}
+.loc-fields { display:flex; flex-direction:column; gap:0; flex:1; }
+.loc-label { font-size:.72rem; color:var(--text2); font-weight:500; margin-bottom:2px; text-transform:uppercase; letter-spacing:.5px; }
+.loc-value { font-size:.95rem; color:var(--text); font-weight:500; }
+.loc-value.placeholder { color:var(--text3); }
+
+/* ─── SECTION HEADER ──────────────────────── */
+.sec-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 16px 10px;
+}
+.sec-title { font-family:'Outfit',sans-serif; font-weight:600; font-size:1rem; color:var(--text); }
+.sec-link  { font-size:.82rem; color:var(--accent); font-weight:500; }
+
+/* ─── QUICK CHIPS ─────────────────────────── */
+.quick-chips {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.quick-chips::-webkit-scrollbar { display:none; }
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  font-size:.83rem;
+  font-weight:500;
+  color: var(--text);
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: border-color .2s, background .2s;
+  cursor: pointer;
+}
+.chip:hover { border-color: var(--accent); background: var(--adim); }
+.chip-icon { font-size:1rem; }
+
+/* ─── RECENT RIDES ────────────────────────── */
+.ride-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background .15s;
+}
+.ride-item:hover { background: var(--surf2); }
+.ride-thumb {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: var(--surf3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size:1.3rem;
+  flex-shrink: 0;
+}
+.ride-info { flex:1; min-width:0; }
+.ride-dest { font-weight:600; font-size:.9rem; color:var(--text); margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ride-meta { font-size:.78rem; color:var(--text2); }
+.ride-fare { font-family:'DM Mono',monospace; font-size:.92rem; font-weight:500; color:var(--text); }
+
+/* ─── SCREEN TOPBAR ───────────────────────── */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px 16px;
+  position: sticky;
+  top: 0;
+  background: var(--surf);
+  z-index: 5;
+}
+.back-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--surf2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  flex-shrink: 0;
+  transition: background .2s;
+}
+.back-btn:hover { background: var(--surf3); }
+.topbar-title { font-family:'Outfit',sans-serif; font-weight:700; font-size:1.1rem; color:var(--text); }
+
+/* ─── RIDE OPTIONS ────────────────────────── */
+.route-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--surf2);
+  border-radius: var(--r);
+  margin: 0 16px 16px;
+  border: 1px solid var(--border);
+}
+.route-pt { font-size:.82rem; color:var(--text2); }
+.route-pt strong { display:block; font-size:.9rem; color:var(--text); font-weight:600; }
+.route-arrow { color:var(--text3); }
+
+.ride-opt {
+  margin: 0 16px 10px;
+  padding: 16px;
+  background: var(--surf2);
+  border-radius: var(--r);
+  border: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.ride-opt:hover { border-color: var(--border); }
+.ride-opt.selected { border-color: var(--accent); background: var(--adim); }
+.ride-opt-icon { font-size:2rem; width:52px; text-align:center; flex-shrink:0; }
+.ride-opt-info { flex:1; }
+.ride-opt-name { font-family:'Outfit',sans-serif; font-weight:700; font-size:1rem; color:var(--text); margin-bottom:2px; }
+.ride-opt-desc { font-size:.78rem; color:var(--text2); }
+.ride-opt-right { text-align:right; }
+.ride-opt-fare { font-family:'DM Mono',monospace; font-weight:500; font-size:1.05rem; color:var(--text); }
+.ride-opt-eta  { font-size:.75rem; color:var(--text2); margin-top:2px; }
+.surge-badge {
+  display: inline-block;
+  font-size:.68rem;
+  padding: 2px 7px;
+  border-radius: 50px;
+  background: var(--amberdim);
+  color: var(--amber);
+  font-weight:600;
+  margin-left:6px;
+}
+
+/* ─── CTA BUTTON ──────────────────────────── */
+.cta-wrap { padding: 16px; }
+.cta-btn {
+  width: 100%;
+  padding: 16px;
+  background: var(--accent);
+  color: #04120E;
+  font-family:'Outfit',sans-serif;
+  font-weight:700;
+  font-size:1rem;
+  border-radius: var(--r);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity .2s, transform .15s;
+  box-shadow: 0 4px 20px var(--aglow);
+}
+.cta-btn:hover  { opacity:.9; }
+.cta-btn:active { transform: scale(.98); }
+.cta-btn.secondary {
+  background: var(--surf3);
+  color: var(--text);
+  box-shadow: none;
+}
+
+/* ─── DRIVER CARD ─────────────────────────── */
+.driver-card {
+  margin: 0 16px 16px;
+  background: var(--surf2);
+  border-radius: var(--rl);
+  padding: 20px;
+  border: 1px solid var(--border);
+}
+.driver-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.driver-avatar {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size:1.6rem;
+  flex-shrink: 0;
+  border: 2px solid var(--aglow);
+}
+.driver-name { font-family:'Outfit',sans-serif; font-weight:700; font-size:1.05rem; color:var(--text); margin-bottom:2px; }
+.driver-vehicle { font-size:.82rem; color:var(--text2); margin-bottom:4px; }
+.driver-rating { display:flex; align-items:center; gap:4px; font-size:.82rem; color:var(--amber); font-weight:600; }
+.driver-actions {
+  display: flex;
+  gap: 10px;
+}
+.driver-action-btn {
+  flex: 1;
+  padding: 12px;
+  background: var(--surf3);
+  border-radius: var(--r);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size:.85rem;
+  font-weight:600;
+  color:var(--text);
+  transition: background .2s;
+}
+.driver-action-btn:hover { background: var(--accent); color:#04120E; }
+
+.eta-bar {
+  margin: 0 16px 16px;
+  padding: 14px 18px;
+  background: var(--adim);
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.eta-label { font-size:.8rem; color:var(--text2); margin-bottom:2px; }
+.eta-value { font-family:'Outfit',sans-serif; font-weight:800; font-size:1.6rem; color:var(--accent); }
+.eta-otp   { font-family:'DM Mono',monospace; font-size:1.4rem; font-weight:500; color:var(--text); letter-spacing:4px; }
+.eta-otp-label { font-size:.78rem; color:var(--text2); margin-bottom:2px; }
+
+/* ─── TRACKING MAP ─────────────────────────── */
+.tracking-map-wrap { position:relative; height:260px; }
+#track-canvas { width:100%; height:100%; display:block; }
+.tracking-info-row {
+  display: flex;
+  gap: 1px;
+  margin: 0 16px 16px;
+  overflow: hidden;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+}
+.tracking-stat {
+  flex: 1;
+  background: var(--surf2);
+  padding: 14px 12px;
+  text-align: center;
+}
+.tracking-stat:not(:last-child) { border-right:1px solid var(--border); }
+.ts-label { font-size:.72rem; color:var(--text2); text-transform:uppercase; letter-spacing:.5px; margin-bottom:4px; }
+.ts-val { font-family:'DM Mono',monospace; font-weight:500; font-size:1rem; color:var(--text); }
+
+/* ─── PAYMENT SCREEN ──────────────────────── */
+.fare-summary-card {
+  margin: 0 16px 20px;
+  background: linear-gradient(135deg, var(--surf2), var(--surf3));
+  border-radius: var(--rl);
+  padding: 22px;
+  border: 1px solid var(--border);
+}
+.fare-total-label { font-size:.82rem; color:var(--text2); margin-bottom:6px; font-weight:500; }
+.fare-total-amount { font-family:'Outfit',sans-serif; font-weight:900; font-size:2.4rem; color:var(--text); margin-bottom:14px; }
+.fare-breakdown { border-top:1px solid var(--border); padding-top:14px; display:flex; flex-direction:column; gap:8px; }
+.fare-row { display:flex; justify-content:space-between; font-size:.83rem; color:var(--text2); }
+.fare-row.total { color:var(--text); font-weight:600; font-size:.9rem; border-top:1px dashed var(--border); padding-top:8px; margin-top:4px; }
+.fare-row span:last-child { font-family:'DM Mono',monospace; }
+
+.payment-section-title {
+  padding: 4px 16px 10px;
+  font-family:'Outfit',sans-serif;
+  font-weight:700;
+  font-size:.9rem;
+  color:var(--text2);
+  text-transform:uppercase;
+  letter-spacing:.8px;
+}
+.pay-method {
+  margin: 0 16px 8px;
+  background: var(--surf2);
+  border-radius: var(--r);
+  border: 2px solid transparent;
+  padding: 15px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.pay-method:hover { border-color: var(--border); }
+.pay-method.selected { border-color: var(--accent); background: var(--adim); }
+.pay-method-icon {
+  width: 42px; height: 42px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size:1.3rem;
+  flex-shrink: 0;
+}
+.pay-method-info { flex:1; }
+.pay-method-name { font-weight:600; font-size:.92rem; color:var(--text); margin-bottom:2px; }
+.pay-method-sub  { font-size:.78rem; color:var(--text2); font-family:'DM Mono',monospace; }
+.pay-check {
+  width:22px; height:22px;
+  border-radius:50%;
+  border:2px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  transition:all .2s;
+  flex-shrink:0;
+}
+.pay-method.selected .pay-check { background:var(--accent); border-color:var(--accent); }
+
+/* UPI highlight box */
+.upi-merchant-box {
+  margin: 4px 16px 16px;
+  background: var(--adim);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.upi-merchant-box .upi-icon { font-size:1.5rem; }
+.upi-mid-info { flex:1; }
+.upi-mid-label { font-size:.75rem; color:var(--text2); margin-bottom:2px; }
+.upi-mid-id { font-family:'DM Mono',monospace; font-weight:500; font-size:.95rem; color:var(--accent); }
+
+/* Add card form */
+.card-form {
+  margin: 0 16px 16px;
+  background: var(--surf2);
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  padding: 18px;
+  display: none;
+  flex-direction: column;
+  gap: 14px;
+}
+.card-form.visible { display:flex; }
+.card-visual {
+  height: 130px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #1A3A6A 0%, #0D2248 50%, #0A1830 100%);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+.card-visual::before {
+  content:'';
+  position:absolute;
+  top:-20px; right:-20px;
+  width:100px; height:100px;
+  border-radius:50%;
+  background:rgba(0,212,170,0.12);
+}
+.card-visual::after {
+  content:'';
+  position:absolute;
+  bottom:-30px; right:30px;
+  width:140px; height:140px;
+  border-radius:50%;
+  background:rgba(245,166,35,0.07);
+}
+.card-chip { font-size:1.4rem; }
+.card-num-display { font-family:'DM Mono',monospace; font-size:1rem; color:rgba(255,255,255,0.85); letter-spacing:3px; }
+.card-bottom { display:flex; justify-content:space-between; align-items:flex-end; }
+.card-holder-label,.card-exp-label { font-size:.62rem; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:.5px; margin-bottom:2px; }
+.card-holder-val,.card-exp-val { font-size:.82rem; color:rgba(255,255,255,0.9); font-weight:500; letter-spacing:.5px; }
+
+.form-group { display:flex; flex-direction:column; gap:6px; }
+.form-group label { font-size:.75rem; color:var(--text2); font-weight:500; text-transform:uppercase; letter-spacing:.4px; }
+.form-input {
+  background: var(--surf3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-size:.92rem;
+  transition: border-color .2s;
+  width:100%;
+}
+.form-input:focus { border-color:var(--accent); }
+.form-input::placeholder { color:var(--text3); }
+.form-row { display:flex; gap:12px; }
+.form-row .form-group { flex:1; }
+
+/* ─── WALLET OPTIONS ──────────────────────── */
+.wallet-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 0 16px 16px;
+}
+.wallet-btn {
+  background: var(--surf2);
+  border-radius: var(--r);
+  border: 2px solid transparent;
+  padding: 14px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: border-color .2s;
+}
+.wallet-btn:hover { border-color:var(--border); }
+.wallet-btn.selected { border-color:var(--accent); background:var(--adim); }
+.wallet-logo { font-size:1.4rem; }
+.wallet-name { font-size:.85rem; font-weight:600; color:var(--text); }
+
+/* ─── TRIP COMPLETE ───────────────────────── */
+.complete-hero {
+  text-align: center;
+  padding: 32px 24px 24px;
+}
+.complete-icon {
+  width: 80px; height:80px;
+  border-radius:50%;
+  background: var(--adim);
+  border: 2px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size:2.2rem;
+  margin: 0 auto 18px;
+}
+.complete-title { font-family:'Outfit',sans-serif; font-weight:800; font-size:1.5rem; color:var(--text); margin-bottom:6px; }
+.complete-sub   { font-size:.88rem; color:var(--text2); }
+
+.receipt-card {
+  margin: 0 16px 16px;
+  background: var(--surf2);
+  border-radius: var(--rl);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--border);
+  font-size:.87rem;
+}
+.receipt-row:last-child { border-bottom:none; }
+.receipt-row .rk { color:var(--text2); }
+.receipt-row .rv { color:var(--text); font-weight:500; font-family:'DM Mono',monospace; }
+.receipt-row.total { background:var(--adim); }
+.receipt-row.total .rk,.receipt-row.total .rv { font-weight:700; color:var(--text); font-size:.95rem; }
+
+/* ─── HISTORY ─────────────────────────────── */
+.history-filter {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.filter-chip {
+  padding: 7px 16px;
+  border-radius: 50px;
+  font-size:.82rem;
+  font-weight:500;
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all .2s;
+}
+.filter-chip.active { background:var(--accent); color:#04120E; border-color:var(--accent); font-weight:700; }
+
+.history-item {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background .15s;
+}
+.history-item:hover { background:var(--surf2); }
+.hi-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
+.hi-route { font-weight:600; font-size:.92rem; color:var(--text); margin-bottom:3px; }
+.hi-date  { font-size:.77rem; color:var(--text2); }
+.hi-fare  { font-family:'DM Mono',monospace; font-weight:600; font-size:.95rem; color:var(--text); }
+.hi-bottom { display:flex; align-items:center; gap:8px; }
+.hi-type {
+  display:flex; align-items:center; gap:5px;
+  font-size:.76rem; color:var(--text2);
+}
+.hi-status {
+  font-size:.72rem;
+  padding:3px 10px;
+  border-radius:50px;
+  font-weight:600;
+}
+.hi-status.completed { background:rgba(34,200,122,0.12); color:var(--success); }
+.hi-status.cancelled { background:rgba(255,77,106,0.12); color:var(--danger); }
+
+/* ─── PROFILE ─────────────────────────────── */
+.profile-hero {
+  text-align: center;
+  padding: 24px 16px 20px;
+  background: linear-gradient(to bottom, var(--surf2), var(--surf));
+}
+.profile-avatar {
+  width: 80px; height:80px;
+  border-radius:50%;
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  display:flex; align-items:center; justify-content:center;
+  font-size:2rem; font-weight:700;
+  color:#04120E;
+  margin:0 auto 14px;
+  border:3px solid var(--aglow);
+}
+.profile-name { font-family:'Outfit',sans-serif; font-weight:700; font-size:1.15rem; color:var(--text); margin-bottom:3px; }
+.profile-email { font-size:.82rem; color:var(--text2); margin-bottom:10px; }
+.profile-stats {
+  display: flex;
+  gap: 1px;
+  margin-top:14px;
+  border-radius:var(--r);
+  overflow:hidden;
+  border: 1px solid var(--border);
+}
+.pstat { flex:1; background:var(--surf2); padding:12px 8px; text-align:center; }
+.pstat-val { font-family:'DM Mono',monospace; font-weight:600; font-size:1.1rem; color:var(--text); }
+.pstat-label { font-size:.7rem; color:var(--text2); margin-top:2px; }
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background .15s;
+}
+.menu-item:hover { background:var(--surf2); }
+.menu-icon {
+  width:40px; height:40px;
+  border-radius:11px;
+  background:var(--surf2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.1rem;
+  flex-shrink:0;
+}
+.menu-label { flex:1; font-size:.92rem; font-weight:500; color:var(--text); }
+.menu-arrow { color:var(--text3); font-size:.8rem; }
+.menu-badge { font-size:.72rem; font-weight:700; color:var(--accent); }
+
+/* Payment settings row */
+.payment-account-row {
+  margin: 0 16px 16px;
+  padding: 16px;
+  background: var(--adim);
+  border-radius:var(--r);
+  border:1px solid var(--border);
+}
+.par-label { font-size:.75rem; color:var(--text2); text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
+.par-id { font-family:'DM Mono',monospace; font-size:1rem; font-weight:500; color:var(--accent); }
+.par-verified { display:inline-flex; align-items:center; gap:5px; font-size:.75rem; color:var(--success); margin-top:4px; }
+
+/* ─── TOAST ───────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--surf3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 12px 22px;
+  border-radius: 50px;
+  font-size:.85rem;
+  font-weight:500;
+  box-shadow: var(--shadow);
+  opacity:0;
+  transition:all .3s ease;
+  z-index:1000;
+  pointer-events:none;
+  white-space:nowrap;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ─── LOADING SPINNER ─────────────────────── */
+.spinner-overlay {
+  position:absolute; inset:0;
+  background:rgba(6,9,26,0.6);
+  backdrop-filter:blur(4px);
+  display:flex; align-items:center; justify-content:center;
+  z-index:50;
+  border-radius:inherit;
+  opacity:0; pointer-events:none;
+  transition:opacity .3s;
+}
+.spinner-overlay.visible { opacity:1; pointer-events:all; }
+.spinner {
+  width:48px; height:48px;
+  border:3px solid var(--surf3);
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ─── HOME SCREEN GREETING ────────────────── */
+.greeting-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px 16px;
+}
+.greeting-text { }
+.greeting-hey { font-size:.82rem; color:var(--text2); }
+.greeting-name { font-family:'Outfit',sans-serif; font-weight:700; font-size:1.2rem; color:var(--text); }
+.notif-btn {
+  width:40px; height:40px;
+  border-radius:50%;
+  background:var(--surf2);
+  border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--text);
+  position:relative;
+}
+.notif-dot { position:absolute; top:8px; right:9px; width:7px; height:7px; border-radius:50%; background:var(--accent); border:2px solid var(--surf2); }
+
+/* ─── OFFERS SCREEN ───────────────────────── */
+.offer-card {
+  margin:0 16px 12px;
+  border-radius:var(--rl);
+  overflow:hidden;
+  position:relative;
+  cursor:pointer;
+}
+.offer-bg {
+  height:130px;
+  display:flex;
+  align-items:flex-end;
+  padding:18px;
+  position:relative;
+}
+.offer-tag {
+  display:inline-block;
+  padding:4px 12px;
+  border-radius:50px;
+  font-size:.75rem;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  margin-bottom:8px;
+}
+.offer-title { font-family:'Outfit',sans-serif; font-weight:800; font-size:1.1rem; color:#fff; }
+.offer-desc  { font-size:.78rem; color:rgba(255,255,255,0.75); margin-top:3px; }
+.offer-code {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(255,255,255,0.15);
+  border:1px dashed rgba(255,255,255,0.4);
+  border-radius:8px;
+  padding:8px 14px;
+  margin:10px 16px 0;
+  font-family:'DM Mono',monospace;
+  font-size:.88rem;
+  color:var(--text);
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     PHONE SHELL
+═══════════════════════════════════════════ -->
+<div class="phone">
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="time" id="clock">9:41</span>
+    <div class="status-icons">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="2" width="3" height="10" rx="1"/><rect x="9" y="0" width="3" height="12" rx="1"/><rect x="13.5" y="1" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.5A7.47 7.47 0 0 0 1.5 5.7L0 4.2A9.48 9.48 0 0 1 8 .5a9.48 9.48 0 0 1 8 3.7l-1.5 1.5A7.47 7.47 0 0 0 8 2.5z"/><path d="M8 6a3.47 3.47 0 0 0-2.5 1.05L4 5.6A5.48 5.48 0 0 1 8 4a5.48 5.48 0 0 1 4 1.6l-1.5 1.45A3.47 3.47 0 0 0 8 6z"/><circle cx="8" cy="10" r="1.5"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" opacity=".35"/><rect x="1" y="2" width="18" height="8" rx="1.5"/><rect x="22.5" y="4" width="2" height="4" rx="1"/></svg>
+    </div>
+  </div>
+
+  <!-- SCREENS -->
+  <div class="screens">
+
+    <!-- ── HOME SCREEN ──────────────────── -->
+    <div class="screen active" id="screen-home">
+
+      <div class="greeting-bar">
+        <div class="greeting-text">
+          <div class="greeting-hey">Good morning 👋</div>
+          <div class="greeting-name">Haseeb</div>
+        </div>
+        <button class="notif-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </button>
+      </div>
+
+      <div class="map-wrap">
+        <canvas id="map-canvas"></canvas>
+        <div class="map-overlay"></div>
+      </div>
+
+      <div class="booking-card">
+        <div class="location-row" onclick="showToast('Enter pickup location')">
+          <span class="loc-dot pickup"></span>
+          <div class="loc-fields">
+            <div class="loc-label">Pickup</div>
+            <div class="loc-value">Himayatnagar, Hyderabad</div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text3)"><path d="m9 18 6-6-6-6"/></svg>
+        </div>
+        <div class="location-row" id="drop-row" onclick="goToRideOptions()">
+          <span class="loc-dot drop"></span>
+          <div class="loc-fields">
+            <div class="loc-label">Drop</div>
+            <div class="loc-value placeholder">Where to?</div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text3)"><path d="m9 18 6-6-6-6"/></svg>
+        </div>
+      </div>
+
+      <div class="sec-head" style="padding-top:18px;">
+        <div class="sec-title">Quick Destinations</div>
+      </div>
+      <div class="quick-chips">
+        <button class="chip" onclick="setDrop('Home')"><span class="chip-icon">🏠</span>Home</button>
+        <button class="chip" onclick="setDrop('Work')"><span class="chip-icon">💼</span>Work</button>
+        <button class="chip" onclick="setDrop('Airport')"><span class="chip-icon">✈️</span>Airport</button>
+        <button class="chip" onclick="setDrop('Hospital')"><span class="chip-icon">🏥</span>Hospital</button>
+        <button class="chip" onclick="setDrop('Mall')"><span class="chip-icon">🛍️</span>Mall</button>
+      </div>
+
+      <div class="sec-head">
+        <div class="sec-title">Recent Rides</div>
+        <span class="sec-link" onclick="showScreen('history')">See All</span>
+      </div>
+
+      <div class="ride-item" onclick="reBookRide('HITEC City')">
+        <div class="ride-thumb">🏢</div>
+        <div class="ride-info">
+          <div class="ride-dest">HITEC City</div>
+          <div class="ride-meta">Yesterday · 12.4 km · Auto</div>
+        </div>
+        <div class="ride-fare">₹142</div>
+      </div>
+      <div class="ride-item" onclick="reBookRide('Rajiv Gandhi Airport')">
+        <div class="ride-thumb">✈️</div>
+        <div class="ride-info">
+          <div class="ride-dest">Rajiv Gandhi Airport</div>
+          <div class="ride-meta">Mon 8 Sep · 34.1 km · Prime</div>
+        </div>
+        <div class="ride-fare">₹680</div>
+      </div>
+      <div class="ride-item" onclick="reBookRide('Banjara Hills')">
+        <div class="ride-thumb">🌆</div>
+        <div class="ride-info">
+          <div class="ride-dest">Banjara Hills Rd. No 12</div>
+          <div class="ride-meta">Sun 7 Sep · 6.8 km · Mini</div>
+        </div>
+        <div class="ride-fare">₹89</div>
+      </div>
+      <div style="height:20px;"></div>
+    </div>
+
+    <!-- ── RIDE OPTIONS ──────────────────── -->
+    <div class="screen" id="screen-options">
+      <div class="topbar">
+        <button class="back-btn" onclick="showScreen('home')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div class="topbar-title">Choose a Ride</div>
+      </div>
+
+      <div class="route-summary">
+        <div class="route-pt">
+          <span>Himayatnagar</span>
+          <strong id="dest-label">HITEC City</strong>
+        </div>
+        <div class="route-arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </div>
+        <div class="route-pt" style="text-align:right;">
+          <span>12.4 km · 22 min</span>
+          <strong>ETA 10:03 AM</strong>
+        </div>
+      </div>
+
+      <div class="ride-opt selected" id="opt-auto" onclick="selectRide(this,'Auto','₹142','5 min away')">
+        <div class="ride-opt-icon">🛺</div>
+        <div class="ride-opt-info">
+          <div class="ride-opt-name">Auto</div>
+          <div class="ride-opt-desc">Affordable · 3 seats · Open</div>
+        </div>
+        <div class="ride-opt-right">
+          <div class="ride-opt-fare">₹142</div>
+          <div class="ride-opt-eta">5 min</div>
+        </div>
+      </div>
+
+      <div class="ride-opt" id="opt-mini" onclick="selectRide(this,'Mini','₹198','3 min away')">
+        <div class="ride-opt-icon">🚗</div>
+        <div class="ride-opt-info">
+          <div class="ride-opt-name">Mini</div>
+          <div class="ride-opt-desc">Compact · 4 seats · AC</div>
+        </div>
+        <div class="ride-opt-right">
+          <div class="ride-opt-fare">₹198</div>
+          <div class="ride-opt-eta">3 min</div>
+        </div>
+      </div>
+
+      <div class="ride-opt" id="opt-sedan" onclick="selectRide(this,'Sedan','₹264','7 min away')">
+        <div class="ride-opt-icon">🚙</div>
+        <div class="ride-opt-info">
+          <div class="ride-opt-name">Sedan</div>
+          <div class="ride-opt-desc">Comfortable · 4 seats · AC</div>
+        </div>
+        <div class="ride-opt-right">
+          <div class="ride-opt-fare">₹264<span class="surge-badge">1.2x</span></div>
+          <div class="ride-opt-eta">7 min</div>
+        </div>
+      </div>
+
+      <div class="ride-opt" id="opt-suv" onclick="selectRide(this,'Prime SUV','₹420','9 min away')">
+        <div class="ride-opt-icon">🚐</div>
+        <div class="ride-opt-info">
+          <div class="ride-opt-name">Prime SUV</div>
+          <div class="ride-opt-desc">Premium · 6 seats · Luxury</div>
+        </div>
+        <div class="ride-opt-right">
+          <div class="ride-opt-fare">₹420</div>
+          <div class="ride-opt-eta">9 min</div>
+        </div>
+      </div>
+
+      <div class="ride-opt" id="opt-bike" onclick="selectRide(this,'Bike','₹68','2 min away')">
+        <div class="ride-opt-icon">🏍️</div>
+        <div class="ride-opt-info">
+          <div class="ride-opt-name">Bike</div>
+          <div class="ride-opt-desc">Fastest · 1 seat · Budget</div>
+        </div>
+        <div class="ride-opt-right">
+          <div class="ride-opt-fare">₹68</div>
+          <div class="ride-opt-eta">2 min</div>
+        </div>
+      </div>
+
+      <div class="cta-wrap">
+        <button class="cta-btn" onclick="bookRide()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Book Auto · ₹142
+        </button>
+      </div>
+    </div>
+
+    <!-- ── DRIVER FOUND ──────────────────── -->
+    <div class="screen" id="screen-driver">
+      <div class="topbar">
+        <button class="back-btn" onclick="showScreen('options')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div class="topbar-title">Driver Found!</div>
+      </div>
+
+      <div class="eta-bar">
+        <div>
+          <div class="eta-label">Arriving in</div>
+          <div class="eta-value" id="eta-display">5 min</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="eta-otp-label">Your OTP</div>
+          <div class="eta-otp">4821</div>
+        </div>
+      </div>
+
+      <div class="driver-card">
+        <div class="driver-top">
+          <div class="driver-avatar">👨</div>
+          <div style="flex:1;">
+            <div class="driver-name">Mohammed Rafi</div>
+            <div class="driver-vehicle">🛺 TS 09 EA 4471 · Yellow Auto</div>
+            <div class="driver-rating">★ 4.87 <span style="color:var(--text2);font-weight:400;">· 2,341 rides</span></div>
+          </div>
+        </div>
+        <div class="driver-actions">
+          <button class="driver-action-btn" onclick="showToast('Calling driver…')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            Call
+          </button>
+          <button class="driver-action-btn" onclick="showToast('Opening chat…')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Chat
+          </button>
+          <button class="driver-action-btn" onclick="showToast('SOS sent to emergency contacts')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            SOS
+          </button>
+        </div>
+      </div>
+
+      <div class="tracking-map-wrap">
+        <canvas id="driver-canvas"></canvas>
+      </div>
+
+      <div class="cta-wrap" style="padding-top:12px;">
+        <button class="cta-btn" onclick="startTracking()">
+          Driver Arrived · Start Ride
+        </button>
+        <button class="cta-btn secondary" style="margin-top:10px;" onclick="showScreen('options')">Cancel Ride</button>
+      </div>
+    </div>
+
+    <!-- ── TRACKING ──────────────────────── -->
+    <div class="screen" id="screen-tracking">
+      <div class="topbar">
+        <div class="topbar-title" style="margin:0 auto;">Ride in Progress</div>
+      </div>
+
+      <div class="tracking-map-wrap">
+        <canvas id="track-canvas"></canvas>
+      </div>
+
+      <div class="tracking-info-row">
+        <div class="tracking-stat">
+          <div class="ts-label">Distance</div>
+          <div class="ts-val" id="track-dist">0.0 km</div>
+        </div>
+        <div class="tracking-stat">
+          <div class="ts-label">Time Left</div>
+          <div class="ts-val" id="track-time">22 min</div>
+        </div>
+        <div class="tracking-stat">
+          <div class="ts-label">Speed</div>
+          <div class="ts-val" id="track-speed">0 km/h</div>
+        </div>
+      </div>
+
+      <div class="driver-card">
+        <div class="driver-top">
+          <div class="driver-avatar" style="width:44px;height:44px;font-size:1.1rem;">👨</div>
+          <div>
+            <div class="driver-name" style="font-size:.92rem;">Mohammed Rafi</div>
+            <div class="driver-vehicle">TS 09 EA 4471</div>
+          </div>
+          <div style="margin-left:auto; text-align:right;">
+            <div style="font-family:'DM Mono',monospace; font-size:1.1rem; font-weight:600; color:var(--text);" id="track-fare">₹0</div>
+            <div style="font-size:.75rem; color:var(--text2);">Running fare</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-wrap" style="padding-top:0;">
+        <button class="cta-btn" onclick="endRide()">End Ride & Pay</button>
+      </div>
+    </div>
+
+    <!-- ── PAYMENT ────────────────────────── -->
+    <div class="screen" id="screen-payment">
+      <div class="topbar">
+        <button class="back-btn" onclick="showScreen('tracking')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div class="topbar-title">Payment</div>
+      </div>
+
+      <!-- FARE SUMMARY -->
+      <div class="fare-summary-card">
+        <div class="fare-total-label">Amount to Pay</div>
+        <div class="fare-total-amount" id="pay-total">₹142</div>
+        <div class="fare-breakdown">
+          <div class="fare-row"><span>Base fare</span><span>₹50.00</span></div>
+          <div class="fare-row"><span>Distance (12.4 km × ₹7.2)</span><span>₹89.28</span></div>
+          <div class="fare-row"><span>Wait charge</span><span>₹0.00</span></div>
+          <div class="fare-row"><span>Platform fee</span><span>₹5.00</span></div>
+          <div class="fare-row"><span>GST (5%)</span><span>₹7.21</span></div>
+          <div class="fare-row total"><span>Total</span><span>₹142.00</span></div>
+        </div>
+      </div>
+
+      <!-- UPI -->
+      <div class="payment-section-title">Pay via UPI</div>
+      <div class="pay-method selected" id="pm-upi" onclick="selectPayMethod('upi')">
+        <div class="pay-method-icon" style="background:rgba(0,212,170,0.12);">💳</div>
+        <div class="pay-method-info">
+          <div class="pay-method-name">UPI / BHIM</div>
+          <div class="pay-method-sub">haseeb@ybl · Instant transfer</div>
+        </div>
+        <div class="pay-check">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#04120E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+      </div>
+      <!-- Merchant UPI highlight -->
+      <div class="upi-merchant-box">
+        <div class="upi-icon">🏦</div>
+        <div class="upi-mid-info">
+          <div class="upi-mid-label">Merchant UPI ID (QuickRide)</div>
+          <div class="upi-mid-id">haseeb@ybl</div>
+        </div>
+        <button onclick="copyUPI()" style="padding:6px 12px; background:var(--adim); border:1px solid var(--border); border-radius:8px; font-size:.75rem; font-weight:600; color:var(--accent); cursor:pointer;">Copy</button>
+      </div>
+
+      <!-- CARDS -->
+      <div class="payment-section-title">Debit / Credit Card</div>
+      <div class="pay-method" id="pm-card" onclick="selectPayMethod('card')">
+        <div class="pay-method-icon" style="background:rgba(99,102,241,0.12);">💳</div>
+        <div class="pay-method-info">
+          <div class="pay-method-name">Add New Card</div>
+          <div class="pay-method-sub">Visa, Mastercard, RuPay</div>
+        </div>
+        <div class="pay-check"></div>
+      </div>
+      <div class="card-form" id="card-form">
+        <div class="card-visual">
+          <div class="card-chip">▪️</div>
+          <div class="card-num-display" id="card-num-display">•••• •••• •••• ••••</div>
+          <div class="card-bottom">
+            <div>
+              <div class="card-holder-label">Cardholder</div>
+              <div class="card-holder-val" id="card-holder-display">YOUR NAME</div>
+            </div>
+            <div>
+              <div class="card-exp-label">Expires</div>
+              <div class="card-exp-val" id="card-exp-display">MM/YY</div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Card Number</label>
+          <input class="form-input" type="text" maxlength="19" placeholder="1234 5678 9012 3456" oninput="fmtCard(this)" id="card-num-input">
+        </div>
+        <div class="form-group">
+          <label>Cardholder Name</label>
+          <input class="form-input" type="text" placeholder="As on card" oninput="document.getElementById('card-holder-display').textContent=this.value.toUpperCase()||'YOUR NAME'">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Expiry</label>
+            <input class="form-input" type="text" placeholder="MM/YY" maxlength="5" oninput="fmtExp(this); document.getElementById('card-exp-display').textContent=this.value||'MM/YY'">
+          </div>
+          <div class="form-group">
+            <label>CVV</label>
+            <input class="form-input" type="password" placeholder="•••" maxlength="4">
+          </div>
+        </div>
+      </div>
+
+      <!-- WALLETS -->
+      <div class="payment-section-title">Wallets</div>
+      <div class="wallet-grid">
+        <button class="wallet-btn" onclick="selectWallet(this,'paytm')">
+          <span class="wallet-logo">💰</span>
+          <span class="wallet-name">Paytm</span>
+        </button>
+        <button class="wallet-btn" onclick="selectWallet(this,'phonepe')">
+          <span class="wallet-logo">📱</span>
+          <span class="wallet-name">PhonePe</span>
+        </button>
+        <button class="wallet-btn" onclick="selectWallet(this,'gpay')">
+          <span class="wallet-logo">🔵</span>
+          <span class="wallet-name">Google Pay</span>
+        </button>
+        <button class="wallet-btn" onclick="selectWallet(this,'amazon')">
+          <span class="wallet-logo">🟡</span>
+          <span class="wallet-name">Amazon Pay</span>
+        </button>
+      </div>
+
+      <!-- CASH -->
+      <div class="payment-section-title">Other</div>
+      <div class="pay-method" id="pm-cash" onclick="selectPayMethod('cash')">
+        <div class="pay-method-icon" style="background:rgba(245,166,35,0.12);">💵</div>
+        <div class="pay-method-info">
+          <div class="pay-method-name">Cash</div>
+          <div class="pay-method-sub">Pay driver directly</div>
+        </div>
+        <div class="pay-check"></div>
+      </div>
+
+      <div class="pay-method" id="pm-net" onclick="selectPayMethod('net')">
+        <div class="pay-method-icon" style="background:rgba(139,92,246,0.12);">🏦</div>
+        <div class="pay-method-info">
+          <div class="pay-method-name">Net Banking</div>
+          <div class="pay-method-sub">All major banks supported</div>
+        </div>
+        <div class="pay-check"></div>
+      </div>
+
+      <div class="cta-wrap">
+        <button class="cta-btn" id="pay-btn" onclick="processPayment()">
+          Pay ₹142 via UPI
+        </button>
+      </div>
+      <div style="height:12px;"></div>
+    </div>
+
+    <!-- ── TRIP COMPLETE ──────────────────── -->
+    <div class="screen" id="screen-complete">
+      <div class="complete-hero">
+        <div class="complete-icon">✅</div>
+        <div class="complete-title">Trip Complete!</div>
+        <div class="complete-sub">Payment of ₹142 received · Thank you for riding with us</div>
+      </div>
+
+      <div style="padding:0 16px 12px; display:flex; gap:10px;">
+        <button style="flex:1; padding:12px; background:var(--surf2); border:1px solid var(--border); border-radius:var(--r); color:var(--text); font-size:.85rem; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="showToast('Rating submitted!')">
+          ⭐ Rate Driver
+        </button>
+        <button style="flex:1; padding:12px; background:var(--surf2); border:1px solid var(--border); border-radius:var(--r); color:var(--text); font-size:.85rem; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="showToast('Receipt sent to your email')">
+          📩 Receipt
+        </button>
+      </div>
+
+      <div class="receipt-card">
+        <div class="receipt-row"><span class="rk">Route</span><span class="rv" style="font-family:inherit; font-size:.82rem;">Himayatnagar → HITEC City</span></div>
+        <div class="receipt-row"><span class="rk">Driver</span><span class="rv" style="font-family:inherit;">Mohammed Rafi</span></div>
+        <div class="receipt-row"><span class="rk">Distance</span><span class="rv">12.4 km</span></div>
+        <div class="receipt-row"><span class="rk">Duration</span><span class="rv">28 min</span></div>
+        <div class="receipt-row"><span class="rk">Ride Type</span><span class="rv" style="font-family:inherit;">Auto</span></div>
+        <div class="receipt-row"><span class="rk">Base Fare</span><span class="rv">₹50.00</span></div>
+        <div class="receipt-row"><span class="rk">Distance Fare</span><span class="rv">₹89.28</span></div>
+        <div class="receipt-row"><span class="rk">GST (5%)</span><span class="rv">₹7.21</span></div>
+        <div class="receipt-row total"><span class="rk">Total Paid</span><span class="rv">₹142.00</span></div>
+        <div class="receipt-row"><span class="rk">Payment</span><span class="rv" style="font-family:inherit; color:var(--success);">✓ UPI · haseeb@ybl</span></div>
+      </div>
+
+      <div class="cta-wrap">
+        <button class="cta-btn" onclick="goHome()">Book Another Ride</button>
+      </div>
+    </div>
+
+    <!-- ── HISTORY ─────────────────────────── -->
+    <div class="screen" id="screen-history">
+      <div class="topbar">
+        <div class="topbar-title">My Rides</div>
+      </div>
+
+      <div class="history-filter">
+        <button class="filter-chip active" onclick="filterRides(this,'all')">All</button>
+        <button class="filter-chip" onclick="filterRides(this,'completed')">Completed</button>
+        <button class="filter-chip" onclick="filterRides(this,'cancelled')">Cancelled</button>
+        <button class="filter-chip" onclick="filterRides(this,'upcoming')">Upcoming</button>
+      </div>
+
+      <div class="history-item">
+        <div class="hi-top">
+          <div><div class="hi-route">Himayatnagar → HITEC City</div><div class="hi-date">Today · 9:41 AM</div></div>
+          <div class="hi-fare">₹142</div>
+        </div>
+        <div class="hi-bottom">
+          <div class="hi-type">🛺 Auto · 12.4 km</div>
+          <span class="hi-status completed">Completed</span>
+        </div>
+      </div>
+      <div class="history-item">
+        <div class="hi-top">
+          <div><div class="hi-route">Himayatnagar → Rajiv Gandhi Airport</div><div class="hi-date">Mon 8 Sep · 6:20 AM</div></div>
+          <div class="hi-fare">₹680</div>
+        </div>
+        <div class="hi-bottom">
+          <div class="hi-type">🚐 Prime SUV · 34.1 km</div>
+          <span class="hi-status completed">Completed</span>
+        </div>
+      </div>
+      <div class="history-item">
+        <div class="hi-top">
+          <div><div class="hi-route">Himayatnagar → Banjara Hills Rd 12</div><div class="hi-date">Sun 7 Sep · 7:15 PM</div></div>
+          <div class="hi-fare">₹89</div>
+        </div>
+        <div class="hi-bottom">
+          <div class="hi-type">🚗 Mini · 6.8 km</div>
+          <span class="hi-status completed">Completed</span>
+        </div>
+      </div>
+      <div class="history-item">
+        <div class="hi-top">
+          <div><div class="hi-route">HITEC City → Gachibowli</div><div class="hi-date">Fri 5 Sep · 8:50 PM</div></div>
+          <div class="hi-fare">₹0</div>
+        </div>
+        <div class="hi-bottom">
+          <div class="hi-type">🚗 Mini · 4.2 km</div>
+          <span class="hi-status cancelled">Cancelled</span>
+        </div>
+      </div>
+      <div class="history-item">
+        <div class="hi-top">
+          <div><div class="hi-route">Secunderabad Stn → Himayatnagar</div><div class="hi-date">Wed 3 Sep · 2:10 PM</div></div>
+          <div class="hi-fare">₹220</div>
+        </div>
+        <div class="hi-bottom">
+          <div class="hi-type">🚙 Sedan · 9.6 km</div>
+          <span class="hi-status completed">Completed</span>
+        </div>
+      </div>
+      <div class="history-item">
+        <div class="hi-top">
+          <div><div class="hi-route">Himayatnagar → Charminar</div><div class="hi-date">Mon 1 Sep · 11:30 AM</div></div>
+          <div class="hi-fare">₹310</div>
+        </div>
+        <div class="hi-bottom">
+          <div class="hi-type">🚙 Sedan · 14.2 km</div>
+          <span class="hi-status completed">Completed</span>
+        </div>
+      </div>
+      <div style="height:16px;"></div>
+    </div>
+
+    <!-- ── OFFERS ──────────────────────────── -->
+    <div class="screen" id="screen-offers">
+      <div class="topbar">
+        <div class="topbar-title">Offers & Discounts</div>
+      </div>
+
+      <div class="offer-card">
+        <div class="offer-bg" style="background:linear-gradient(135deg, #0D2B52, #1A4A8A);">
+          <div style="position:relative;z-index:1;">
+            <div class="offer-tag" style="background:rgba(0,212,170,0.25);color:#00D4AA;">FIRST RIDE</div>
+            <div class="offer-title">₹50 OFF Your First Ride</div>
+            <div class="offer-desc">Use code on any ride above ₹100</div>
+          </div>
+          <div style="position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.6;">🛺</div>
+        </div>
+        <div class="offer-code">🏷️ QUICKFIRST50 <button style="margin-left:auto; font-size:.75rem; color:var(--accent); font-weight:600; background:none; border:none; cursor:pointer;" onclick="copyCode('QUICKFIRST50')">Copy</button></div>
+        <div style="padding:8px 16px 12px; font-size:.78rem; color:var(--text2);">Valid till 30 Sep 2026 · T&C apply</div>
+      </div>
+
+      <div class="offer-card">
+        <div class="offer-bg" style="background:linear-gradient(135deg, #3A0D52, #6A1A8A);">
+          <div style="position:relative;z-index:1;">
+            <div class="offer-tag" style="background:rgba(245,166,35,0.25);color:#F5A623;">WEEKEND DEAL</div>
+            <div class="offer-title">20% OFF on Weekends</div>
+            <div class="offer-desc">Auto & Mini rides · Sat & Sun only</div>
+          </div>
+          <div style="position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.6;">🎉</div>
+        </div>
+        <div class="offer-code">🏷️ WEEKEND20 <button style="margin-left:auto; font-size:.75rem; color:var(--accent); font-weight:600; background:none; border:none; cursor:pointer;" onclick="copyCode('WEEKEND20')">Copy</button></div>
+        <div style="padding:8px 16px 12px; font-size:.78rem; color:var(--text2);">Valid every Sat-Sun till Oct 2026</div>
+      </div>
+
+      <div class="offer-card">
+        <div class="offer-bg" style="background:linear-gradient(135deg, #0D3A1A, #1A6A2A);">
+          <div style="position:relative;z-index:1;">
+            <div class="offer-tag" style="background:rgba(34,200,122,0.25);color:#22C87A;">AIRPORT SPECIAL</div>
+            <div class="offer-title">Flat ₹100 OFF Airport Rides</div>
+            <div class="offer-desc">Prime SUV &amp; Sedan to/from airport</div>
+          </div>
+          <div style="position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.6;">✈️</div>
+        </div>
+        <div class="offer-code">🏷️ AIRPORT100 <button style="margin-left:auto; font-size:.75rem; color:var(--accent); font-weight:600; background:none; border:none; cursor:pointer;" onclick="copyCode('AIRPORT100')">Copy</button></div>
+        <div style="padding:8px 16px 12px; font-size:.78rem; color:var(--text2);">Valid till 15 Oct 2026 · Min fare ₹400</div>
+      </div>
+      <div style="height:16px;"></div>
+    </div>
+
+    <!-- ── PROFILE ──────────────────────────── -->
+    <div class="screen" id="screen-profile">
+      <div class="profile-hero">
+        <div class="profile-avatar">H</div>
+        <div class="profile-name">Haseeb</div>
+        <div class="profile-email">mohammadhaseeb009@gmail.com</div>
+        <div class="profile-stats">
+          <div class="pstat"><div class="pstat-val">47</div><div class="pstat-label">Rides</div></div>
+          <div class="pstat" style="border-left:1px solid var(--border);border-right:1px solid var(--border);"><div class="pstat-val">₹6,840</div><div class="pstat-label">Spent</div></div>
+          <div class="pstat"><div class="pstat-val">4.9★</div><div class="pstat-label">Rating</div></div>
+        </div>
+      </div>
+
+      <div class="sec-head"><div class="sec-title">Payment Account</div></div>
+      <div class="payment-account-row">
+        <div class="par-label">Linked UPI / Merchant ID</div>
+        <div class="par-id">haseeb@ybl</div>
+        <div class="par-verified">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Verified · YES Bank UPI
+        </div>
+      </div>
+
+      <div class="sec-head" style="padding-top:4px;"><div class="sec-title">Account</div></div>
+      <div class="menu-item" onclick="showToast('Opening profile editor…')">
+        <div class="menu-icon">👤</div>
+        <div class="menu-label">Edit Profile</div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="showToast('Opening saved places…')">
+        <div class="menu-icon">📍</div>
+        <div class="menu-label">Saved Places</div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="showToast('Opening payment settings…')">
+        <div class="menu-icon">💳</div>
+        <div class="menu-label">Payment Methods</div>
+        <div class="menu-badge">haseeb@ybl</div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="showToast('Opening emergency contacts…')">
+        <div class="menu-icon">🚨</div>
+        <div class="menu-label">Emergency Contacts</div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="showToast('Opening notifications…')">
+        <div class="menu-icon">🔔</div>
+        <div class="menu-label">Notifications</div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="showToast('Opening help center…')">
+        <div class="menu-icon">❓</div>
+        <div class="menu-label">Help &amp; Support</div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="showToast('Signed out')">
+        <div class="menu-icon">🚪</div>
+        <div class="menu-label" style="color:var(--danger);">Sign Out</div>
+      </div>
+      <div style="height:16px;"></div>
+    </div>
+
+  </div><!-- /screens -->
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" id="nav-home" onclick="navTo('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="nav-btn" id="nav-history" onclick="navTo('history')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Rides</span>
+    </button>
+    <button class="nav-btn" id="nav-offers" onclick="navTo('offers')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      <span>Offers</span>
+      <span class="nav-pip"></span>
+    </button>
+    <button class="nav-btn" id="nav-profile" onclick="navTo('profile')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Account</span>
+    </button>
+  </nav>
+
+</div><!-- /phone -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ─── CLOCK ───────────────────────────── */
+function updateClock() {
+  const now = new Date();
+  const h = now.getHours().toString().padStart(2,'0');
+  const m = now.getMinutes().toString().padStart(2,'0');
+  document.getElementById('clock').textContent = h + ':' + m;
+}
+updateClock();
+setInterval(updateClock, 10000);
+
+/* ─── NAVIGATION ──────────────────────── */
+const NAV_SCREENS = { home:'home', history:'history', offers:'offers', profile:'profile' };
+let prevScreen = null;
+
+function showScreen(id) {
+  const prev = document.querySelector('.screen.active');
+  if (prev) {
+    prev.classList.remove('active');
+    prev.classList.add('slide-left');
+    setTimeout(() => prev.classList.remove('slide-left'), 300);
+  }
+  document.getElementById('screen-' + id).classList.add('active');
+  document.getElementById('screen-' + id).scrollTop = 0;
+  // Redraw canvases for screens that need it
+  if (id === 'home') setTimeout(drawHomeMap, 50);
+  if (id === 'driver') setTimeout(drawDriverMap, 50);
+  if (id === 'tracking') setTimeout(() => { drawTrackMap(); startRideSim(); }, 50);
+}
+
+function navTo(tab) {
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('nav-' + tab).classList.add('active');
+  showScreen(tab);
+}
+
+/* ─── HOME MAP CANVAS ─────────────────── */
+function drawHomeMap() {
+  const canvas = document.getElementById('map-canvas');
+  if (!canvas) return;
+  const W = canvas.offsetWidth, H = canvas.offsetHeight;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  const dark = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() === '#06091A' ||
+               window.matchMedia('(prefers-color-scheme:dark)').matches;
+
+  // Background
+  ctx.fillStyle = dark ? '#06091A' : '#E8EEF8';
+  ctx.fillRect(0,0,W,H);
+
+  // Road grid
+  const roadColor = dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)';
+  const mainRoad  = dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.10)';
+  ctx.strokeStyle = roadColor; ctx.lineWidth = 1;
+  for (let x = 40; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for (let y = 40; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  // Main roads
+  ctx.strokeStyle = mainRoad; ctx.lineWidth = 3;
+  [[0,H*.35,W,H*.35],[0,H*.65,W,H*.65],[W*.25,0,W*.25,H],[W*.6,0,W*.6,H]].forEach(([x1,y1,x2,y2]) => {
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  });
+
+  // Route line
+  const accentColor = dark ? '#00D4AA' : '#00A88A';
+  ctx.shadowColor = accentColor; ctx.shadowBlur = 8;
+  ctx.strokeStyle = accentColor; ctx.lineWidth = 3;
+  ctx.setLineDash([8,4]);
+  ctx.beginPath();
+  ctx.moveTo(W*.25, H*.65);
+  ctx.bezierCurveTo(W*.25, H*.35, W*.6, H*.35, W*.6, H*.15);
+  ctx.stroke();
+  ctx.setLineDash([]); ctx.shadowBlur = 0;
+
+  // Pickup pin
+  drawPin(ctx, W*.25, H*.65, dark ? '#00D4AA' : '#00A88A', '📍');
+  // Drop pin
+  drawPin(ctx, W*.6, H*.15, dark ? '#F5A623' : '#C8800A', '🏁');
+}
+
+function drawPin(ctx, x, y, color, emoji) {
+  ctx.fillStyle = color;
+  ctx.shadowColor = color; ctx.shadowBlur = 12;
+  ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI*2); ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI*2); ctx.fill();
+}
+
+/* ─── DRIVER MAP ──────────────────────── */
+function drawDriverMap() {
+  const canvas = document.getElementById('driver-canvas');
+  if (!canvas) return;
+  const W = canvas.offsetWidth, H = canvas.offsetHeight;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  const dark = !window.matchMedia('(prefers-color-scheme:light)').matches;
+  ctx.fillStyle = dark ? '#06091A' : '#E8EEF8';
+  ctx.fillRect(0,0,W,H);
+  const roadColor = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)';
+  ctx.strokeStyle = roadColor; ctx.lineWidth = 2;
+  for (let x=50;x<W;x+=50){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for (let y=50;y<H;y+=50){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  const ac = dark ? '#00D4AA' : '#00A88A';
+  ctx.strokeStyle = ac; ctx.lineWidth = 2; ctx.setLineDash([6,4]);
+  ctx.shadowColor = ac; ctx.shadowBlur = 6;
+  ctx.beginPath(); ctx.moveTo(W*.15,H*.8); ctx.lineTo(W*.5,H*.5); ctx.stroke();
+  ctx.setLineDash([]); ctx.shadowBlur=0;
+  // Car emoji as text
+  ctx.font='22px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('🛺', W*.15, H*.8);
+  drawPin(ctx, W*.5, H*.5, ac, '');
+}
+
+/* ─── TRACKING MAP ────────────────────── */
+let trackT = 0, trackAnim = null;
+function drawTrackMap() {
+  const canvas = document.getElementById('track-canvas');
+  if (!canvas) return;
+  const W = canvas.offsetWidth, H = canvas.offsetHeight;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  const dark = !window.matchMedia('(prefers-color-scheme:light)').matches;
+  ctx.fillStyle = dark ? '#06091A' : '#E8EEF8';
+  ctx.fillRect(0,0,W,H);
+  const roadColor = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)';
+  ctx.strokeStyle = roadColor; ctx.lineWidth=2;
+  for(let x=50;x<W;x+=50){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=50;y<H;y+=50){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  const ac = dark ? '#00D4AA' : '#00A88A';
+  ctx.strokeStyle = dark?'rgba(0,212,170,0.25)':'rgba(0,168,138,0.2)'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(W*.1,H*.9); ctx.bezierCurveTo(W*.1,H*.4,W*.8,H*.4,W*.9,H*.1); ctx.stroke();
+  // Progress
+  const t = Math.min(trackT, 1);
+  const px = cubicBezier(W*.1,W*.1,W*.8,W*.9,t);
+  const py = cubicBezier(H*.9,H*.4,H*.4,H*.1,t);
+  ctx.strokeStyle = ac; ctx.lineWidth=4; ctx.shadowColor=ac; ctx.shadowBlur=8;
+  ctx.beginPath(); ctx.moveTo(W*.1,H*.9); ctx.bezierCurveTo(W*.1,H*.4,W*.8,H*.4,px,py); ctx.stroke();
+  ctx.shadowBlur=0;
+  ctx.font='20px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('🛺',px,py);
+  drawPin(ctx,W*.9,H*.1,ac,'');
+}
+
+function cubicBezier(p0,p1,p2,p3,t) {
+  return Math.pow(1-t,3)*p0 + 3*Math.pow(1-t,2)*t*p1 + 3*(1-t)*t*t*p2 + t*t*t*p3;
+}
+
+let rideInterval = null;
+function startRideSim() {
+  trackT = 0;
+  clearInterval(rideInterval);
+  let km=0, mins=22, fare=0;
+  rideInterval = setInterval(() => {
+    if (trackT >= 1) { clearInterval(rideInterval); return; }
+    trackT = Math.min(trackT + 0.008, 1);
+    km = +(12.4 * trackT).toFixed(1);
+    mins = Math.max(0, Math.round(22 * (1 - trackT)));
+    fare = Math.round(50 + km * 7.2);
+    const spd = trackT > 0 && trackT < 1 ? Math.round(20 + Math.random()*15) : 0;
+    const tDist = document.getElementById('track-dist');
+    const tTime = document.getElementById('track-time');
+    const tSpeed = document.getElementById('track-speed');
+    const tFare = document.getElementById('track-fare');
+    if (tDist) tDist.textContent = km + ' km';
+    if (tTime) tTime.textContent = mins + ' min';
+    if (tSpeed) tSpeed.textContent = spd + ' km/h';
+    if (tFare) tFare.textContent = '₹' + fare;
+    drawTrackMap();
+  }, 100);
+}
+
+/* ─── RIDE BOOKING FLOW ───────────────── */
+let selectedRide = { name:'Auto', fare:'₹142', eta:'5 min' };
+
+function setDrop(dest) {
+  const el = document.querySelector('#screen-home .loc-value.placeholder');
+  if (el) { el.textContent = dest; el.classList.remove('placeholder'); }
+  goToRideOptions(dest);
+}
+
+function goToRideOptions(dest) {
+  dest = dest || 'HITEC City';
+  document.getElementById('dest-label').textContent = dest;
+  showScreen('options');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+}
+
+function reBookRide(dest) {
+  document.getElementById('dest-label').textContent = dest;
+  showScreen('options');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+}
+
+function selectRide(el, name, fare, eta) {
+  document.querySelectorAll('.ride-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedRide = { name, fare, eta };
+  const btn = document.querySelector('#screen-options .cta-btn');
+  if (btn) btn.textContent = 'Book ' + name + ' · ' + fare;
+}
+
+function bookRide() {
+  showScreen('driver');
+  document.getElementById('eta-display').textContent = selectedRide.eta;
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  setTimeout(drawDriverMap, 100);
+}
+
+function startTracking() {
+  showScreen('tracking');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+}
+
+function endRide() {
+  clearInterval(rideInterval);
+  const km = document.getElementById('track-dist')?.textContent || '12.4 km';
+  showScreen('payment');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+}
+
+function goHome() {
+  navTo('home');
+}
+
+/* ─── PAYMENT LOGIC ───────────────────── */
+let activePayMethod = 'upi';
+
+function selectPayMethod(method) {
+  activePayMethod = method;
+  document.querySelectorAll('.pay-method').forEach(m => {
+    m.classList.remove('selected');
+    m.querySelector('.pay-check').innerHTML = '';
+  });
+  const checkSVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#04120E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+  const target = document.getElementById('pm-' + method);
+  if (target) { target.classList.add('selected'); target.querySelector('.pay-check').innerHTML = checkSVG; }
+
+  // Show/hide card form
+  const cf = document.getElementById('card-form');
+  if (cf) cf.classList.toggle('visible', method === 'card');
+
+  // Update UPI merchant display
+  const upiBox = document.querySelector('.upi-merchant-box');
+  if (upiBox) upiBox.style.display = method === 'upi' ? 'flex' : 'none';
+
+  // Update pay button
+  const labels = { upi:'UPI · haseeb@ybl', card:'Saved Card', cash:'Cash', net:'Net Banking' };
+  const btn = document.getElementById('pay-btn');
+  if (btn) btn.textContent = 'Pay ₹142 via ' + (labels[method] || method);
+
+  // Deselect wallet buttons
+  document.querySelectorAll('.wallet-btn').forEach(w => w.classList.remove('selected'));
+}
+
+function selectWallet(el, wallet) {
+  activePayMethod = wallet;
+  document.querySelectorAll('.pay-method').forEach(m => { m.classList.remove('selected'); m.querySelector('.pay-check').innerHTML = ''; });
+  document.querySelectorAll('.wallet-btn').forEach(w => w.classList.remove('selected'));
+  el.classList.add('selected');
+  const cf = document.getElementById('card-form');
+  if (cf) cf.classList.remove('visible');
+  const upiBox = document.querySelector('.upi-merchant-box');
+  if (upiBox) upiBox.style.display = 'none';
+  const names = { paytm:'Paytm Wallet', phonepe:'PhonePe', gpay:'Google Pay', amazon:'Amazon Pay' };
+  const btn = document.getElementById('pay-btn');
+  if (btn) btn.textContent = 'Pay ₹142 via ' + (names[wallet]||wallet);
+}
+
+function processPayment() {
+  showToast('Processing payment…');
+  setTimeout(() => {
+    showToast('✅ Payment successful!');
+    setTimeout(() => showScreen('complete'), 800);
+  }, 1600);
+}
+
+function copyUPI() {
+  if (navigator.clipboard) navigator.clipboard.writeText('haseeb@ybl');
+  showToast('Copied: haseeb@ybl');
+}
+
+function copyCode(code) {
+  if (navigator.clipboard) navigator.clipboard.writeText(code);
+  showToast('Code copied: ' + code);
+}
+
+/* ─── CARD FORMATTING ─────────────────── */
+function fmtCard(input) {
+  let v = input.value.replace(/\D/g,'').slice(0,16);
+  input.value = v.replace(/(.{4})/g,'$1 ').trim();
+  const display = document.getElementById('card-num-display');
+  if (display) {
+    const padded = (v + '0000000000000000').slice(0,16);
+    display.textContent = padded.replace(/(.{4})/g,'$1 ').trim().replace(/\d(?=\d{5})/g, '•');
+  }
+}
+function fmtExp(input) {
+  let v = input.value.replace(/\D/g,'');
+  if (v.length >= 3) v = v.slice(0,2) + '/' + v.slice(2,4);
+  input.value = v;
+}
+
+/* ─── HISTORY FILTER ──────────────────── */
+function filterRides(el, filter) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  showToast('Showing ' + filter + ' rides');
+}
+
+/* ─── TOAST ───────────────────────────── */
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ─── INIT ────────────────────────────── */
+window.addEventListener('load', () => {
+  setTimeout(drawHomeMap, 100);
+  // Initialize UPI check mark
+  const checkSVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#04120E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+  const upiCheck = document.querySelector('#pm-upi .pay-check');
+  if (upiCheck) upiCheck.innerHTML = checkSVG;
+});
+
+window.addEventListener('resize', () => {
+  const active = document.querySelector('.screen.active');
+  if (!active) return;
+  const id = active.id.replace('screen-','');
+  if (id === 'home') drawHomeMap();
+  if (id === 'driver') drawDriverMap();
+  if (id === 'tracking') drawTrackMap();
+});
+</script>
+</body>
+</html>
