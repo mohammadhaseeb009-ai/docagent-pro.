@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QuickRide Admin — Peddapalli</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────── */
+:root {
+  --bg:      #06091A;
+  --surf:    #0D1427;
+  --surf2:   #152038;
+  --surf3:   #1C2D4C;
+  --accent:  #00D4AA;
+  --accent2: #00B891;
+  --amber:   #F5A623;
+  --danger:  #FF4D6A;
+  --success: #22C87A;
+  --info:    #3B9EFF;
+  --txt:     #E8EDF7;
+  --txt2:    #8A9BBF;
+  --txt3:    #4D6080;
+  --border:  #1F3050;
+  --r:       10px;
+  --cr:      14px;
+  --sh:      0 4px 24px rgba(0,0,0,.4);
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:    #F0F4FF;
+    --surf:  #FFFFFF;
+    --surf2: #EBF0FA;
+    --surf3: #DDE5F5;
+    --txt:   #0D1427;
+    --txt2:  #4A5A78;
+    --txt3:  #8A9BBF;
+    --border:#C8D4EC;
+    --sh:    0 4px 24px rgba(0,50,100,.10);
+  }
+}
+:root[data-theme="light"] {
+  --bg:    #F0F4FF;
+  --surf:  #FFFFFF;
+  --surf2: #EBF0FA;
+  --surf3: #DDE5F5;
+  --txt:   #0D1427;
+  --txt2:  #4A5A78;
+  --txt3:  #8A9BBF;
+  --border:#C8D4EC;
+  --sh:    0 4px 24px rgba(0,50,100,.10);
+}
+
+/* ─── RESET ─────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%}
+body{
+  min-height:100%;background:var(--bg);color:var(--txt);
+  font-family:'DM Sans',system-ui,sans-serif;
+  font-size:15px;line-height:1.5;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select{
+  font-family:inherit;font-size:inherit;
+  background:var(--surf2);color:var(--txt);
+  border:1px solid var(--border);border-radius:var(--r);
+  padding:.5rem .8rem;outline:none;
+}
+input:focus,select:focus{border-color:var(--accent)}
+
+/* ─── ADMIN LAYOUT ───────────────────────────── */
+.admin-shell{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{
+  width:240px;flex-shrink:0;background:var(--surf);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-logo{
+  padding:1.4rem 1.2rem 1rem;
+  display:flex;align-items:center;gap:.6rem;
+  border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.sb-logo-icon{font-size:1.5rem}
+.sb-logo-name{
+  font-family:'Outfit',sans-serif;font-weight:800;font-size:1.1rem;
+  color:var(--accent);letter-spacing:-.02em;
+}
+.sb-logo-badge{
+  font-size:.6rem;font-weight:700;letter-spacing:.07em;
+  background:rgba(0,212,170,.15);color:var(--accent);
+  border-radius:4px;padding:.1rem .35rem;text-transform:uppercase;margin-left:auto;
+}
+.sb-section{padding:.7rem .8rem .3rem;font-size:.65rem;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--txt3)}
+.sb-item{
+  display:flex;align-items:center;gap:.65rem;
+  padding:.6rem 1rem;margin:.15rem .5rem;border-radius:var(--r);
+  font-size:.88rem;font-weight:500;color:var(--txt2);cursor:pointer;
+  transition:background .15s,color .15s;
+}
+.sb-item:hover{background:var(--surf2);color:var(--txt)}
+.sb-item.active{background:rgba(0,212,170,.12);color:var(--accent)}
+.sb-item svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0}
+.sb-foot{
+  margin-top:auto;border-top:1px solid var(--border);
+  padding:1rem 1.2rem;display:flex;align-items:center;gap:.7rem;
+}
+.sb-ava{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),#0098d4);
+  display:grid;place-items:center;font-size:.75rem;font-weight:700;color:#06091A;flex-shrink:0;
+}
+.sb-name{font-size:.82rem;font-weight:600}
+.sb-role{font-size:.7rem;color:var(--txt3)}
+
+/* TOPBAR */
+.main-col{flex:1;display:flex;flex-direction:column;min-width:0}
+.topbar{
+  background:var(--surf);border-bottom:1px solid var(--border);
+  padding:.75rem 1.5rem;display:flex;align-items:center;gap:1rem;
+  position:sticky;top:0;z-index:50;
+}
+.topbar-title{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.15rem;flex:1}
+.topbar-search{
+  display:flex;align-items:center;gap:.5rem;
+  background:var(--surf2);border:1px solid var(--border);
+  border-radius:var(--r);padding:.4rem .75rem;
+}
+.topbar-search input{
+  border:none;background:transparent;padding:0;width:180px;
+  font-size:.85rem;color:var(--txt);
+}
+.topbar-search svg{width:15px;height:15px;stroke:var(--txt3);fill:none;stroke-width:2;flex-shrink:0}
+.topbar-actions{display:flex;align-items:center;gap:.6rem}
+.icon-btn{
+  width:36px;height:36px;border-radius:var(--r);
+  background:var(--surf2);border:1px solid var(--border);
+  display:grid;place-items:center;transition:background .15s;
+  position:relative;
+}
+.icon-btn:hover{background:var(--surf3)}
+.icon-btn svg{width:18px;height:18px;stroke:var(--txt2);fill:none;stroke-width:1.8}
+.badge-dot{
+  position:absolute;top:5px;right:5px;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--danger);border:2px solid var(--surf);
+}
+.theme-btn{
+  width:36px;height:36px;border-radius:var(--r);
+  background:var(--surf2);border:1px solid var(--border);
+  display:grid;place-items:center;font-size:.9rem;cursor:pointer;
+}
+
+/* PAGE BODY */
+.page-body{padding:1.4rem 1.5rem;flex:1}
+.page-section{display:none}
+.page-section.active{display:block}
+
+/* STAT CARDS */
+.stat-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.4rem;
+}
+@media(max-width:900px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:540px){.stat-grid{grid-template-columns:1fr}}
+.stat-card{
+  background:var(--surf);border:1px solid var(--border);
+  border-radius:var(--cr);padding:1.1rem 1.2rem;
+  position:relative;overflow:hidden;
+}
+.stat-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--card-accent,var(--accent));
+}
+.stat-label{font-size:.72rem;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--txt3);margin-bottom:.4rem}
+.stat-val{
+  font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;
+  color:var(--txt);letter-spacing:-.02em;font-variant-numeric:tabular-nums;
+  margin-bottom:.2rem;
+}
+.stat-sub{font-size:.75rem;color:var(--txt2)}
+.stat-trend{
+  display:inline-flex;align-items:center;gap:.2rem;
+  font-size:.72rem;font-weight:600;margin-left:.35rem;
+}
+.trend-up{color:var(--success)}
+.trend-dn{color:var(--danger)}
+
+/* CHARTS ROW */
+.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:1rem;margin-bottom:1.4rem}
+@media(max-width:720px){.charts-row{grid-template-columns:1fr}}
+.chart-card{
+  background:var(--surf);border:1px solid var(--border);
+  border-radius:var(--cr);padding:1.1rem 1.2rem;
+}
+.chart-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.chart-title{font-family:'Outfit',sans-serif;font-weight:700;font-size:.95rem}
+.chart-sub{font-size:.72rem;color:var(--txt3);margin-top:.15rem}
+.chart-tabs{display:flex;gap:.3rem}
+.chtab{
+  font-size:.72rem;font-weight:600;padding:.2rem .55rem;border-radius:6px;
+  cursor:pointer;color:var(--txt3);transition:all .15s;
+}
+.chtab.on{background:rgba(0,212,170,.12);color:var(--accent)}
+canvas.chart{display:block}
+
+/* DONUT LABELS */
+.donut-legend{display:flex;flex-direction:column;gap:.5rem;margin-top:.75rem}
+.dleg-row{display:flex;align-items:center;gap:.5rem;font-size:.8rem}
+.dleg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.dleg-lbl{flex:1;color:var(--txt2)}
+.dleg-val{font-family:'DM Mono',monospace;font-size:.8rem;font-variant-numeric:tabular-nums}
+
+/* TABLES */
+.section-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:.85rem;
+}
+.section-title{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem}
+.section-sub{font-size:.75rem;color:var(--txt3);margin-top:.1rem}
+.tbl-wrap{
+  background:var(--surf);border:1px solid var(--border);
+  border-radius:var(--cr);overflow:hidden;margin-bottom:1.4rem;
+}
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+thead th{
+  background:var(--surf2);padding:.65rem 1rem;
+  font-size:.68rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--txt3);text-align:left;
+  border-bottom:1px solid var(--border);
+}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surf2)}
+td{padding:.7rem 1rem;vertical-align:middle}
+.cell-mono{font-family:'DM Mono',monospace;font-size:.82rem;font-variant-numeric:tabular-nums}
+.cell-name{font-weight:600;font-size:.88rem}
+.cell-sub{font-size:.72rem;color:var(--txt3)}
+
+/* BADGES */
+.badge{
+  display:inline-block;padding:.15rem .55rem;border-radius:20px;
+  font-size:.68rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+}
+.badge-success{background:rgba(34,200,122,.12);color:var(--success)}
+.badge-amber{background:rgba(245,166,35,.12);color:var(--amber)}
+.badge-danger{background:rgba(255,77,106,.12);color:var(--danger)}
+.badge-info{background:rgba(59,158,255,.12);color:var(--info)}
+.badge-accent{background:rgba(0,212,170,.12);color:var(--accent)}
+
+/* ACTION BUTTONS */
+.btn{
+  padding:.45rem .9rem;border-radius:var(--r);font-size:.8rem;font-weight:600;
+  cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:.35rem;
+}
+.btn-accent{background:var(--accent);color:#06091A}
+.btn-accent:hover{background:var(--accent2)}
+.btn-ghost{background:var(--surf2);border:1px solid var(--border);color:var(--txt)}
+.btn-ghost:hover{background:var(--surf3)}
+.btn-danger{background:rgba(255,77,106,.1);border:1px solid rgba(255,77,106,.3);color:var(--danger)}
+.btn-danger:hover{background:rgba(255,77,106,.2)}
+
+/* DRIVER / USER CARDS */
+.driver-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem;margin-bottom:1.4rem}
+@media(max-width:900px){.driver-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:540px){.driver-grid{grid-template-columns:1fr}}
+.driver-card{
+  background:var(--surf);border:1px solid var(--border);
+  border-radius:var(--cr);padding:1.1rem;
+}
+.dcard-top{display:flex;align-items:center;gap:.7rem;margin-bottom:.75rem}
+.dcard-ava{
+  width:46px;height:46px;border-radius:50%;
+  display:grid;place-items:center;font-size:1.2rem;flex-shrink:0;
+  border:2px solid var(--border);
+}
+.dcard-name{font-weight:700;font-size:.92rem}
+.dcard-id{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--txt3);margin-top:.1rem}
+.dcard-stats{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.ds-box{background:var(--surf2);border-radius:8px;padding:.5rem .65rem}
+.ds-val{font-family:'DM Mono',monospace;font-size:.95rem;font-weight:500;
+  font-variant-numeric:tabular-nums;color:var(--txt)}
+.ds-lbl{font-size:.65rem;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em}
+.dcard-foot{margin-top:.75rem;display:flex;align-items:center;justify-content:space-between}
+.dcard-plate{
+  font-family:'DM Mono',monospace;font-size:.75rem;
+  background:var(--amber);color:#06091A;padding:.15rem .45rem;border-radius:4px;font-weight:500;
+}
+
+/* MAP CARD */
+.map-card{
+  background:var(--surf);border:1px solid var(--border);border-radius:var(--cr);
+  padding:1.1rem 1.2rem;margin-bottom:1.4rem;
+}
+.live-map-wrap{
+  border-radius:var(--r);overflow:hidden;background:#0A1428;
+  height:320px;position:relative;margin-top:.75rem;
+}
+.live-map-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:1.5rem;right:1.5rem;
+  background:var(--surf);border:1px solid var(--border);border-radius:var(--r);
+  padding:.6rem 1.1rem;font-size:.84rem;font-weight:500;z-index:999;
+  box-shadow:var(--sh);transform:translateY(80px);opacity:0;
+  transition:transform .3s cubic-bezier(.22,1,.36,1),opacity .3s;
+}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* MOBILE SIDEBAR TOGGLE */
+.mob-menu-btn{display:none}
+@media(max-width:720px){
+  .sidebar{
+    position:fixed;left:0;top:0;bottom:0;z-index:200;
+    transform:translateX(-100%);transition:transform .25s;
+  }
+  .sidebar.open{transform:translateX(0)}
+  .mob-menu-btn{display:grid;place-items:center}
+  .page-body{padding:1rem}
+}
+
+/* FORMS */
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:1rem}
+@media(max-width:540px){.form-grid{grid-template-columns:1fr}}
+.form-field{display:flex;flex-direction:column;gap:.3rem}
+.form-label{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--txt3)}
+.form-field input,.form-field select{width:100%;border-radius:var(--r)}
+
+/* TABS */
+.tab-bar{display:flex;gap:.3rem;background:var(--surf2);border-radius:var(--r);
+  padding:.3rem;margin-bottom:1.1rem;border:1px solid var(--border)}
+.tab{
+  flex:1;text-align:center;padding:.45rem .7rem;border-radius:8px;
+  font-size:.82rem;font-weight:600;cursor:pointer;color:var(--txt3);transition:all .15s;
+}
+.tab.on{background:var(--surf);color:var(--txt);box-shadow:0 1px 4px rgba(0,0,0,.2)}
+
+/* MODAL */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(6,9,26,.8);backdrop-filter:blur(4px);
+  display:none;align-items:center;justify-content:center;z-index:300;padding:1rem;
+}
+.modal-bg.open{display:flex}
+.modal{
+  background:var(--surf);border:1px solid var(--border);border-radius:18px;
+  padding:1.5rem;width:100%;max-width:440px;box-shadow:var(--sh);
+}
+.modal-title{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.1rem;margin-bottom:.3rem}
+.modal-sub{font-size:.82rem;color:var(--txt2);margin-bottom:1.2rem}
+.modal-foot{display:flex;justify-content:flex-end;gap:.6rem;margin-top:1.2rem}
+</style>
+</head>
+<body>
+<div class="admin-shell">
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<nav class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <span class="sb-logo-icon">🛺</span>
+    <span class="sb-logo-name">QuickRide</span>
+    <span class="sb-logo-badge">Admin</span>
+  </div>
+
+  <div class="sb-section">Overview</div>
+  <div class="sb-item active" onclick="showSection('dashboard',this)">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Dashboard
+  </div>
+  <div class="sb-item" onclick="showSection('live',this)">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+    Live Rides
+  </div>
+
+  <div class="sb-section">Management</div>
+  <div class="sb-item" onclick="showSection('rides',this)">
+    <svg viewBox="0 0 24 24"><path d="M1 3h15l3 9H4L1 3z"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+    Rides
+  </div>
+  <div class="sb-item" onclick="showSection('drivers',this)">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    Drivers
+  </div>
+  <div class="sb-item" onclick="showSection('users',this)">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Users
+  </div>
+  <div class="sb-item" onclick="showSection('payments',this)">
+    <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+    Payments
+  </div>
+
+  <div class="sb-section">Analytics</div>
+  <div class="sb-item" onclick="showSection('analytics',this)">
+    <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Analytics
+  </div>
+  <div class="sb-item" onclick="showSection('reports',this)">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    Reports
+  </div>
+
+  <div class="sb-section">System</div>
+  <div class="sb-item" onclick="showSection('settings',this)">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    Settings
+  </div>
+
+  <div class="sb-foot">
+    <div class="sb-ava">SA</div>
+    <div>
+      <div class="sb-name">Super Admin</div>
+      <div class="sb-role">haseeb@ybl · Admin</div>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════ MAIN COLUMN ═══════════ -->
+<div class="main-col">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <button class="icon-btn mob-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <span class="topbar-title" id="pageTitle">Dashboard</span>
+    <div class="topbar-search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search rides, drivers…" id="globalSearch" oninput="handleSearch(this.value)">
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" onclick="showToast('No new alerts')">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div class="badge-dot"></div>
+      </button>
+      <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">🌗</button>
+      <button class="btn btn-accent" onclick="openAddRideModal()">+ New Ride</button>
+    </div>
+  </header>
+
+  <!-- ═══════════ PAGE BODY ═══════════ -->
+  <div class="page-body">
+
+    <!-- ════════ SECTION: DASHBOARD ════════ -->
+    <div class="page-section active" id="sec-dashboard">
+
+      <!-- STAT CARDS -->
+      <div class="stat-grid">
+        <div class="stat-card" style="--card-accent:#00D4AA">
+          <div class="stat-label">Total Rides Today</div>
+          <div class="stat-val" id="sc-rides">284</div>
+          <div class="stat-sub">
+            vs yesterday 241
+            <span class="stat-trend trend-up">↑ 17.8%</span>
+          </div>
+        </div>
+        <div class="stat-card" style="--card-accent:#22C87A">
+          <div class="stat-label">Revenue Today</div>
+          <div class="stat-val" id="sc-rev">₹38,420</div>
+          <div class="stat-sub">
+            vs yesterday ₹31,800
+            <span class="stat-trend trend-up">↑ 20.8%</span>
+          </div>
+        </div>
+        <div class="stat-card" style="--card-accent:#F5A623">
+          <div class="stat-label">Active Drivers</div>
+          <div class="stat-val" id="sc-drivers">47</div>
+          <div class="stat-sub">
+            of 63 registered
+            <span class="stat-trend trend-up">↑ 74.6% online</span>
+          </div>
+        </div>
+        <div class="stat-card" style="--card-accent:#3B9EFF">
+          <div class="stat-label">Registered Users</div>
+          <div class="stat-val" id="sc-users">1,842</div>
+          <div class="stat-sub">
+            +12 new today
+            <span class="stat-trend trend-up">↑</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHARTS -->
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-hdr">
+            <div>
+              <div class="chart-title">Revenue — Last 7 Days</div>
+              <div class="chart-sub">Peddapalli District · Daily earnings in ₹</div>
+            </div>
+            <div class="chart-tabs">
+              <div class="chtab on" onclick="setChartTab(this,'week')">Week</div>
+              <div class="chtab" onclick="setChartTab(this,'month')">Month</div>
+            </div>
+          </div>
+          <canvas class="chart" id="revenueChart" width="560" height="200"></canvas>
+        </div>
+        <div class="chart-card">
+          <div class="chart-hdr">
+            <div>
+              <div class="chart-title">Ride Types</div>
+              <div class="chart-sub">By vehicle category</div>
+            </div>
+          </div>
+          <canvas class="chart" id="donutChart" width="200" height="160" style="margin:0 auto;display:block"></canvas>
+          <div class="donut-legend" id="donutLegend"></div>
+        </div>
+      </div>
+
+      <!-- RECENT RIDES TABLE -->
+      <div>
+        <div class="section-hdr">
+          <div>
+            <div class="section-title">Recent Rides</div>
+            <div class="section-sub">Last 10 completed trips in Peddapalli</div>
+          </div>
+          <button class="btn btn-ghost" onclick="showSection('rides',null)">View All →</button>
+        </div>
+        <div class="tbl-wrap">
+          <table id="recentRidesTable">
+            <thead>
+              <tr>
+                <th>Ride ID</th>
+                <th>Passenger</th>
+                <th>Route</th>
+                <th>Driver</th>
+                <th>Fare</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="recentRidesTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /dashboard -->
+
+    <!-- ════════ SECTION: LIVE RIDES ════════ -->
+    <div class="page-section" id="sec-live">
+      <div class="map-card">
+        <div class="section-hdr" style="margin-bottom:0">
+          <div>
+            <div class="section-title">Live Ride Map — Peddapalli District</div>
+            <div class="section-sub">Real-time driver positions</div>
+          </div>
+          <span class="badge badge-success" id="liveBadge">● 8 ACTIVE</span>
+        </div>
+        <div class="live-map-wrap">
+          <canvas id="liveMapCanvas"></canvas>
+        </div>
+      </div>
+      <div>
+        <div class="section-hdr">
+          <div class="section-title">Active Trips</div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Driver</th><th>Passenger</th><th>From</th><th>To</th><th>ETA</th><th>Fare</th><th>Action</th></tr></thead>
+            <tbody id="liveRidesTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ SECTION: RIDES ════════ -->
+    <div class="page-section" id="sec-rides">
+      <div class="section-hdr">
+        <div>
+          <div class="section-title">All Rides</div>
+          <div class="section-sub">Peddapalli District ride history</div>
+        </div>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <select id="rideFilter" onchange="filterRides()" style="font-size:.8rem;padding:.4rem .7rem">
+            <option value="all">All Status</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+            <option value="Active">Active</option>
+          </select>
+          <button class="btn btn-accent" onclick="showToast('Exported as CSV')">Export CSV</button>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Ride ID</th><th>Date & Time</th><th>Passenger</th><th>Route</th><th>Driver</th><th>Vehicle</th><th>Fare</th><th>Payment</th><th>Status</th></tr></thead>
+          <tbody id="allRidesTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ════════ SECTION: DRIVERS ════════ -->
+    <div class="page-section" id="sec-drivers">
+      <div class="section-hdr">
+        <div>
+          <div class="section-title">Driver Management</div>
+          <div class="section-sub">63 registered drivers in Peddapalli District</div>
+        </div>
+        <button class="btn btn-accent" onclick="openAddDriverModal()">+ Add Driver</button>
+      </div>
+      <div class="tab-bar">
+        <div class="tab on" onclick="filterDrivers('all',this)">All Drivers</div>
+        <div class="tab" onclick="filterDrivers('online',this)">Online</div>
+        <div class="tab" onclick="filterDrivers('offline',this)">Offline</div>
+        <div class="tab" onclick="filterDrivers('suspended',this)">Suspended</div>
+      </div>
+      <div class="driver-grid" id="driverGrid"></div>
+    </div>
+
+    <!-- ════════ SECTION: USERS ════════ -->
+    <div class="page-section" id="sec-users">
+      <div class="section-hdr">
+        <div>
+          <div class="section-title">User Management</div>
+          <div class="section-sub">1,842 registered passengers</div>
+        </div>
+        <button class="btn btn-accent" onclick="showToast('Export started')">Export Users</button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>User</th><th>Phone</th><th>Joined</th><th>Total Rides</th><th>Spent</th><th>Rating</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="usersTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ════════ SECTION: PAYMENTS ════════ -->
+    <div class="page-section" id="sec-payments">
+      <div class="section-hdr">
+        <div>
+          <div class="section-title">Payment Transactions</div>
+          <div class="section-sub">UPI · Cash · Online — all methods</div>
+        </div>
+        <span style="font-family:'DM Mono',monospace;font-size:.82rem;color:var(--accent)">Merchant: haseeb@ybl</span>
+      </div>
+      <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:1.1rem">
+        <div class="stat-card" style="--card-accent:#00D4AA">
+          <div class="stat-label">UPI Collected</div>
+          <div class="stat-val" style="font-size:1.6rem">₹22,840</div>
+          <div class="stat-sub">59.4% of total</div>
+        </div>
+        <div class="stat-card" style="--card-accent:#F5A623">
+          <div class="stat-label">Cash Collected</div>
+          <div class="stat-val" style="font-size:1.6rem">₹12,380</div>
+          <div class="stat-sub">32.2% of total</div>
+        </div>
+        <div class="stat-card" style="--card-accent:#3B9EFF">
+          <div class="stat-label">Online / Card</div>
+          <div class="stat-val" style="font-size:1.6rem">₹3,200</div>
+          <div class="stat-sub">8.3% of total</div>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Txn ID</th><th>Ride ID</th><th>User</th><th>Amount</th><th>Method</th><th>UPI Ref</th><th>Time</th><th>Status</th></tr></thead>
+          <tbody id="paymentsTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ════════ SECTION: ANALYTICS ════════ -->
+    <div class="page-section" id="sec-analytics">
+      <div class="section-title" style="margin-bottom:1rem">Analytics — Peddapalli District</div>
+      <div class="charts-row" style="grid-template-columns:1fr 1fr">
+        <div class="chart-card">
+          <div class="chart-title" style="margin-bottom:.7rem">Rides per Hour (Today)</div>
+          <canvas class="chart" id="hourlyChart" width="400" height="200"></canvas>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title" style="margin-bottom:.7rem">Top Pickup Locations</div>
+          <div id="pickupList" style="margin-top:.5rem"></div>
+        </div>
+      </div>
+      <div class="charts-row" style="margin-top:1rem;grid-template-columns:1fr">
+        <div class="chart-card">
+          <div class="chart-title" style="margin-bottom:.7rem">Monthly Revenue Trend (2026)</div>
+          <canvas class="chart" id="monthlyChart" width="800" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ SECTION: REPORTS ════════ -->
+    <div class="page-section" id="sec-reports">
+      <div class="section-title" style="margin-bottom:1rem">Generate Reports</div>
+      <div class="chart-card" style="max-width:540px">
+        <div class="form-grid">
+          <div class="form-field">
+            <label class="form-label">Report Type</label>
+            <select><option>Daily Summary</option><option>Driver Performance</option><option>Revenue Report</option><option>Complaint Summary</option></select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Date Range</label>
+            <select><option>Today</option><option>Last 7 Days</option><option>This Month</option><option>Custom</option></select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Format</label>
+            <select><option>PDF</option><option>CSV</option><option>Excel</option></select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Zone</label>
+            <select><option>All Zones</option><option>Peddapalli Town</option><option>Godavarikhani</option><option>Ramagundam</option><option>Manthani</option></select>
+          </div>
+        </div>
+        <button class="btn btn-accent" onclick="showToast('Report generation started — email will be sent to mohammadhaseeb009@gmail.com')">Generate Report</button>
+      </div>
+    </div>
+
+    <!-- ════════ SECTION: SETTINGS ════════ -->
+    <div class="page-section" id="sec-settings">
+      <div class="section-title" style="margin-bottom:1rem">System Settings</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;max-width:700px">
+        <div class="chart-card">
+          <div class="chart-title" style="margin-bottom:.9rem">Fare Configuration</div>
+          <div class="form-field" style="margin-bottom:.7rem">
+            <label class="form-label">Base Fare (₹)</label>
+            <input type="number" value="30" style="width:100%">
+          </div>
+          <div class="form-field" style="margin-bottom:.7rem">
+            <label class="form-label">Per Km Rate (₹)</label>
+            <input type="number" value="12" style="width:100%">
+          </div>
+          <div class="form-field" style="margin-bottom:.9rem">
+            <label class="form-label">Surge Multiplier</label>
+            <input type="number" value="1.3" step="0.1" style="width:100%">
+          </div>
+          <button class="btn btn-accent" onclick="showToast('Fare settings saved')">Save Fares</button>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title" style="margin-bottom:.9rem">Payment Gateway</div>
+          <div class="form-field" style="margin-bottom:.7rem">
+            <label class="form-label">Merchant UPI ID</label>
+            <input type="text" value="haseeb@ybl" style="width:100%">
+          </div>
+          <div class="form-field" style="margin-bottom:.7rem">
+            <label class="form-label">Business Name</label>
+            <input type="text" value="QuickRide Peddapalli" style="width:100%">
+          </div>
+          <div class="form-field" style="margin-bottom:.9rem">
+            <label class="form-label">Settlement Bank</label>
+            <input type="text" value="YES Bank · ****4892" style="width:100%">
+          </div>
+          <button class="btn btn-accent" onclick="showToast('Payment settings saved')">Save Settings</button>
+        </div>
+        <div class="chart-card" style="grid-column:1/-1">
+          <div class="chart-title" style="margin-bottom:.9rem">Notification & Alerts</div>
+          <div style="display:flex;flex-direction:column;gap:.7rem">
+            <label style="display:flex;align-items:center;gap:.7rem;cursor:pointer;font-size:.88rem">
+              <input type="checkbox" checked> SMS alerts for driver sign-ups
+            </label>
+            <label style="display:flex;align-items:center;gap:.7rem;cursor:pointer;font-size:.88rem">
+              <input type="checkbox" checked> Email daily revenue summary
+            </label>
+            <label style="display:flex;align-items:center;gap:.7rem;cursor:pointer;font-size:.88rem">
+              <input type="checkbox" checked> Alert when driver rating drops below 3.5
+            </label>
+            <label style="display:flex;align-items:center;gap:.7rem;cursor:pointer;font-size:.88rem">
+              <input type="checkbox"> SMS for cancelled rides above 20/day
+            </label>
+          </div>
+          <button class="btn btn-accent" style="margin-top:1rem" onclick="showToast('Notification settings saved')">Save Preferences</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page-body -->
+</div><!-- /main-col -->
+
+</div><!-- /admin-shell -->
+
+<!-- ADD DRIVER MODAL -->
+<div class="modal-bg" id="addDriverModal">
+  <div class="modal">
+    <div class="modal-title">Register New Driver</div>
+    <div class="modal-sub">Peddapalli District · QuickRide</div>
+    <div class="form-grid">
+      <div class="form-field">
+        <label class="form-label">Full Name *</label>
+        <input type="text" id="dnName" placeholder="Ravi Kumar">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Phone *</label>
+        <input type="tel" id="dnPhone" placeholder="98765 43210">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Vehicle Type</label>
+        <select id="dnType">
+          <option>Auto Rickshaw</option>
+          <option>Mini Car</option>
+          <option>Sedan</option>
+          <option>Bike</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Number Plate *</label>
+        <input type="text" id="dnPlate" placeholder="TS 09 AB 1234">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Licence No.</label>
+        <input type="text" placeholder="TS0920240012345">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Zone</label>
+        <select>
+          <option>Peddapalli Town</option>
+          <option>Godavarikhani</option>
+          <option>Ramagundam</option>
+          <option>Manthani</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('addDriverModal')">Cancel</button>
+      <button class="btn btn-accent" onclick="addDriverFromModal()">Register Driver</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD RIDE MODAL -->
+<div class="modal-bg" id="addRideModal">
+  <div class="modal">
+    <div class="modal-title">Book a Ride</div>
+    <div class="modal-sub">Manual dispatch — admin override</div>
+    <div class="form-grid">
+      <div class="form-field" style="grid-column:1/-1">
+        <label class="form-label">Passenger Name / Phone</label>
+        <input type="text" placeholder="Search passenger…">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Pickup</label>
+        <input type="text" placeholder="Peddapalli Railway Station">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Drop</label>
+        <input type="text" placeholder="Godavarikhani SCCL Colony">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Assign Driver</label>
+        <select><option>Auto-assign</option><option>Suresh (TS09AB1234)</option><option>Raju (TS09CD5678)</option></select>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Vehicle Type</label>
+        <select><option>Auto Rickshaw</option><option>Mini Car</option><option>Sedan</option></select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('addRideModal')">Cancel</button>
+      <button class="btn btn-accent" onclick="dispatchRide()">Dispatch Ride</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════ DATA ════════════════════════════════════════ */
+const RIDES = [
+  {id:'QR-2841',date:'13 Sep 2026, 09:18',user:'Ravi Kumar',phone:'9876543210',from:'Peddapalli Rly Stn',to:'Collectorate',driver:'Suresh M.',vehicle:'Auto',fare:82,payment:'UPI',status:'Completed'},
+  {id:'QR-2840',date:'13 Sep 2026, 09:05',user:'Meena Devi',phone:'9000123456',from:'Main Bazaar',to:'Govt Hospital',driver:'Raju K.',vehicle:'Mini Car',fare:55,payment:'Cash',status:'Completed'},
+  {id:'QR-2839',date:'13 Sep 2026, 08:52',user:'Arjun Reddy',phone:'9123456789',from:'Bus Stand',to:'SCCL Colony',driver:'Venkat R.',vehicle:'Auto',fare:210,payment:'UPI',status:'Completed'},
+  {id:'QR-2838',date:'13 Sep 2026, 08:40',user:'Fatima B.',phone:'9988776655',from:'Godavarikhani',to:'Ramagundam',driver:'Imran S.',vehicle:'Sedan',fare:180,payment:'UPI',status:'Completed'},
+  {id:'QR-2837',date:'13 Sep 2026, 08:25',user:'Priya T.',phone:'9876001122',from:'Peddapalli Town',to:'Manthani',driver:'Suresh M.',vehicle:'Auto',fare:320,payment:'Cash',status:'Cancelled'},
+  {id:'QR-2836',date:'13 Sep 2026, 08:10',user:'Kiran Rao',phone:'9012345678',from:'Housing Board',to:'Bus Stand',driver:'Raju K.',vehicle:'Bike',fare:40,payment:'UPI',status:'Completed'},
+  {id:'QR-2835',date:'13 Sep 2026, 07:58',user:'Sravani P.',phone:'9876543999',from:'Collectorate',to:'Railway Station',driver:'Venkat R.',vehicle:'Auto',fare:68,payment:'Cash',status:'Completed'},
+  {id:'QR-2834',date:'13 Sep 2026, 07:42',user:'Raju Sharma',phone:'9701234567',from:'SCCL Colony',to:'Karimnagar',driver:'Imran S.',vehicle:'Sedan',fare:480,payment:'UPI',status:'Completed'},
+  {id:'QR-2833',date:'13 Sep 2026, 07:30',user:'Lakshmi V.',phone:'9800123456',from:'Main Bazaar',to:'Housing Board',driver:'Suresh M.',vehicle:'Auto',fare:45,payment:'Cash',status:'Completed'},
+  {id:'QR-2832',date:'13 Sep 2026, 07:15',user:'Mohan Das',phone:'9654321098',from:'Ramagundam',to:'Peddapalli',driver:'Raju K.',vehicle:'Mini Car',fare:220,payment:'UPI',status:'Completed'},
+];
+
+const DRIVERS = [
+  {id:'D-001',name:'Suresh Mallikarjuna',avatar:'🧔',vehicle:'Auto Rickshaw',plate:'TS 09 AB 1234',rating:4.8,rides:1240,status:'online',earnings:'₹4,280',zone:'Peddapalli Town'},
+  {id:'D-002',name:'Raju Kumar',avatar:'👨',vehicle:'Mini Car',plate:'TS 09 CD 5678',rating:4.6,rides:890,status:'online',earnings:'₹3,100',zone:'Godavarikhani'},
+  {id:'D-003',name:'Venkat Rao',avatar:'🧑',vehicle:'Auto Rickshaw',plate:'TS 09 EF 9012',rating:4.5,rides:760,status:'offline',earnings:'₹0',zone:'Peddapalli Town'},
+  {id:'D-004',name:'Imran Sheikh',avatar:'👦',vehicle:'Sedan',plate:'TS 09 GH 3456',rating:4.9,rides:1540,status:'online',earnings:'₹5,600',zone:'Ramagundam'},
+  {id:'D-005',name:'Ramesh Babu',avatar:'🧔',vehicle:'Bike',plate:'TS 09 IJ 7890',rating:4.3,rides:430,status:'online',earnings:'₹1,200',zone:'Manthani'},
+  {id:'D-006',name:'Kavitha Reddy',avatar:'👩',vehicle:'Mini Car',plate:'TS 09 KL 2345',rating:4.7,rides:980,status:'suspended',earnings:'₹0',zone:'Godavarikhani'},
+];
+
+const USERS = [
+  {name:'Ravi Kumar',phone:'+91 98765 43210',joined:'Jan 2026',rides:48,spent:'₹4,230',rating:4.8,status:'Active'},
+  {name:'Meena Devi',phone:'+91 90001 23456',joined:'Feb 2026',rides:22,spent:'₹1,840',rating:4.5,status:'Active'},
+  {name:'Arjun Reddy',phone:'+91 91234 56789',joined:'Mar 2026',rides:61,spent:'₹7,890',rating:4.6,status:'Active'},
+  {name:'Fatima Begum',phone:'+91 99887 76655',joined:'Jan 2026',rides:35,spent:'₹5,120',rating:4.9,status:'Active'},
+  {name:'Priya Teja',phone:'+91 98760 01122',joined:'Apr 2026',rides:14,spent:'₹980',rating:4.2,status:'Active'},
+  {name:'Kiran Rao',phone:'+91 90123 45678',joined:'May 2026',rides:8,spent:'₹540',rating:4.7,status:'Blocked'},
+];
+
+const PAYMENTS = [
+  {txn:'TXN8472910',ride:'QR-2841',user:'Ravi Kumar',amount:'₹82',method:'UPI',ref:'YBL29181047',time:'09:18',status:'Success'},
+  {txn:'TXN8472909',ride:'QR-2840',user:'Meena Devi',amount:'₹55',method:'Cash',ref:'—',time:'09:05',status:'Collected'},
+  {txn:'TXN8472908',ride:'QR-2839',user:'Arjun Reddy',amount:'₹210',method:'UPI',ref:'YBL29181009',time:'08:52',status:'Success'},
+  {txn:'TXN8472907',ride:'QR-2838',user:'Fatima B.',amount:'₹180',method:'UPI',ref:'YBL29180998',time:'08:40',status:'Success'},
+  {txn:'TXN8472906',ride:'QR-2836',user:'Kiran Rao',amount:'₹40',method:'UPI',ref:'YBL29180881',time:'08:10',status:'Success'},
+  {txn:'TXN8472905',ride:'QR-2835',user:'Sravani P.',amount:'₹68',method:'Cash',ref:'—',time:'07:58',status:'Collected'},
+  {txn:'TXN8472904',ride:'QR-2834',user:'Raju Sharma',amount:'₹480',method:'UPI',ref:'YBL29180802',time:'07:42',status:'Success'},
+];
+
+const LIVE_RIDES = [
+  {driver:'Suresh M.',passenger:'Ramaiah K.',from:'Railway Station',to:'Bus Stand',eta:'3 min',fare:'₹65'},
+  {driver:'Raju K.',passenger:'Divya S.',from:'Main Bazaar',to:'Collectorate',eta:'6 min',fare:'₹90'},
+  {driver:'Imran S.',passenger:'Naveena T.',from:'SCCL Colony',to:'Godavarikhani',eta:'12 min',fare:'₹140'},
+  {driver:'Ramesh B.',passenger:'Arjun V.',from:'Housing Board',to:'Govt Hospital',eta:'8 min',fare:'₹55'},
+];
+
+/* ════ SECTION NAVIGATION ══════════════════════════ */
+const sectionMap = {
+  dashboard:'Dashboard', live:'Live Rides', rides:'All Rides',
+  drivers:'Drivers', users:'Users', payments:'Payments',
+  analytics:'Analytics', reports:'Reports', settings:'Settings'
+};
+function showSection(id, el) {
+  document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.getElementById('pageTitle').textContent = sectionMap[id] || id;
+  if (window.innerWidth <= 720) document.getElementById('sidebar').classList.remove('open');
+  if (id === 'live') { setTimeout(()=>drawLiveMap(), 100); }
+  if (id === 'analytics') { setTimeout(()=>{ drawHourlyChart(); drawMonthlyChart(); renderPickupList(); }, 100); }
+}
+
+/* ════ TABLE RENDERING ══════════════════════════════ */
+function statusBadge(s) {
+  const m = {Completed:'badge-success',Cancelled:'badge-danger',Active:'badge-accent',
+    Success:'badge-success',Collected:'badge-amber',Blocked:'badge-danger',
+    online:'badge-success',offline:'badge-info',suspended:'badge-danger'};
+  return `<span class="badge ${m[s]||'badge-info'}">${s}</span>`;
+}
+
+function renderRecentRides() {
+  const tb = document.getElementById('recentRidesTbody');
+  tb.innerHTML = RIDES.slice(0,10).map(r=>`
+    <tr>
+      <td class="cell-mono">${r.id}</td>
+      <td><div class="cell-name">${r.user}</div><div class="cell-sub">${r.phone}</div></td>
+      <td><div style="font-size:.82rem">${r.from}</div><div class="cell-sub">→ ${r.to}</div></td>
+      <td class="cell-name">${r.driver}</td>
+      <td class="cell-mono">₹${r.fare}</td>
+      <td>${statusBadge(r.status)}</td>
+    </tr>`).join('');
+}
+
+function renderAllRides(filter='all') {
+  const list = filter==='all' ? RIDES : RIDES.filter(r=>r.status===filter);
+  document.getElementById('allRidesTbody').innerHTML = list.map(r=>`
+    <tr>
+      <td class="cell-mono">${r.id}</td>
+      <td class="cell-sub">${r.date}</td>
+      <td><div class="cell-name">${r.user}</div></td>
+      <td style="font-size:.8rem">${r.from} → ${r.to}</td>
+      <td>${r.driver}</td>
+      <td class="cell-sub">${r.vehicle}</td>
+      <td class="cell-mono">₹${r.fare}</td>
+      <td><span class="badge badge-accent">${r.payment}</span></td>
+      <td>${statusBadge(r.status)}</td>
+    </tr>`).join('');
+}
+function filterRides() {
+  renderAllRides(document.getElementById('rideFilter').value);
+}
+
+function renderDriverGrid(filter='all') {
+  const list = filter==='all' ? DRIVERS : DRIVERS.filter(d=>d.status===filter);
+  document.getElementById('driverGrid').innerHTML = list.map(d=>`
+    <div class="driver-card">
+      <div class="dcard-top">
+        <div class="dcard-ava" style="background:${d.status==='online'?'rgba(34,200,122,.15)':d.status==='suspended'?'rgba(255,77,106,.15)':'rgba(59,158,255,.12)'}">${d.avatar}</div>
+        <div>
+          <div class="dcard-name">${d.name}</div>
+          <div class="dcard-id">${d.id} · ${d.zone}</div>
+        </div>
+        ${statusBadge(d.status)}
+      </div>
+      <div class="dcard-stats">
+        <div class="ds-box"><div class="ds-val">${d.rating}⭐</div><div class="ds-lbl">Rating</div></div>
+        <div class="ds-box"><div class="ds-val">${d.rides}</div><div class="ds-lbl">Rides</div></div>
+        <div class="ds-box" style="grid-column:1/-1"><div class="ds-val">${d.earnings}</div><div class="ds-lbl">Today's Earnings</div></div>
+      </div>
+      <div class="dcard-foot">
+        <span class="dcard-plate">${d.plate}</span>
+        <div style="display:flex;gap:.4rem">
+          <button class="btn btn-ghost" style="padding:.3rem .6rem;font-size:.72rem" onclick="showToast('Call: ${d.name}')">📞</button>
+          <button class="btn btn-ghost" style="padding:.3rem .6rem;font-size:.72rem" onclick="showToast('Viewing ${d.id} profile')">View</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function filterDrivers(f, el) {
+  document.querySelectorAll('#sec-drivers .tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  renderDriverGrid(f);
+}
+
+function renderUsers() {
+  document.getElementById('usersTbody').innerHTML = USERS.map(u=>`
+    <tr>
+      <td class="cell-name">${u.name}</td>
+      <td class="cell-mono" style="font-size:.78rem">${u.phone}</td>
+      <td class="cell-sub">${u.joined}</td>
+      <td class="cell-mono">${u.rides}</td>
+      <td class="cell-mono">${u.spent}</td>
+      <td>⭐ ${u.rating}</td>
+      <td>${statusBadge(u.status)}</td>
+      <td>
+        <button class="btn btn-ghost" style="padding:.3rem .6rem;font-size:.72rem" onclick="showToast('Viewing ${u.name}')">Details</button>
+        ${u.status==='Blocked'?`<button class="btn btn-accent" style="padding:.3rem .6rem;font-size:.72rem;margin-left:.3rem" onclick="showToast('${u.name} unblocked')">Unblock</button>`:''}
+      </td>
+    </tr>`).join('');
+}
+
+function renderPayments() {
+  document.getElementById('paymentsTbody').innerHTML = PAYMENTS.map(p=>`
+    <tr>
+      <td class="cell-mono" style="font-size:.75rem">${p.txn}</td>
+      <td class="cell-mono">${p.ride}</td>
+      <td>${p.user}</td>
+      <td class="cell-mono" style="font-weight:600">${p.amount}</td>
+      <td><span class="badge badge-accent">${p.method}</span></td>
+      <td class="cell-mono" style="font-size:.75rem;color:var(--txt3)">${p.ref}</td>
+      <td class="cell-sub">${p.time}</td>
+      <td>${statusBadge(p.status)}</td>
+    </tr>`).join('');
+}
+
+function renderLiveRides() {
+  document.getElementById('liveRidesTbody').innerHTML = LIVE_RIDES.map(r=>`
+    <tr>
+      <td class="cell-name">${r.driver}</td>
+      <td>${r.passenger}</td>
+      <td style="font-size:.82rem">${r.from}</td>
+      <td style="font-size:.82rem">${r.to}</td>
+      <td><span class="badge badge-amber">${r.eta}</span></td>
+      <td class="cell-mono">${r.fare}</td>
+      <td><button class="btn btn-ghost" style="padding:.3rem .6rem;font-size:.72rem" onclick="showToast('Tracking ride…')">Track</button></td>
+    </tr>`).join('');
+}
+
+/* ════ CHARTS ═══════════════════════════════════════ */
+const WEEK_REV = [24800, 31200, 28400, 35600, 29800, 38100, 38420];
+const WEEK_LABELS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun(Today)'];
+const MONTH_REV = [310000,290000,345000,380000,420000,390000,460000,510000,480000,520000,490000,0];
+const MONTH_LABELS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function drawBar(canvasId, labels, values, color='#00D4AA') {
+  const cv = document.getElementById(canvasId);
+  if (!cv) return;
+  const dpr = window.devicePixelRatio||1;
+  const W = cv.offsetWidth||cv.width; const H = cv.offsetHeight||cv.height;
+  cv.width = W*dpr; cv.height = H*dpr;
+  const c = cv.getContext('2d'); c.scale(dpr,dpr);
+  const isDark = document.documentElement.getAttribute('data-theme')==='light' ? false
+    : window.matchMedia('(prefers-color-scheme: dark)').matches || document.documentElement.getAttribute('data-theme')==='dark';
+  const txtCol = isDark ? '#8A9BBF' : '#4A5A78';
+  const gridCol = isDark ? 'rgba(31,48,80,.6)' : 'rgba(200,212,236,.6)';
+  const pad = {t:10,r:10,b:30,l:52};
+  const cw = W-pad.l-pad.r; const ch = H-pad.t-pad.b;
+  const max = Math.max(...values)*1.12;
+  const step = cw/labels.length;
+  c.strokeStyle = gridCol; c.lineWidth = 1;
+  for (let i=0;i<5;i++) {
+    const y = pad.t + ch*(1-i/4);
+    c.beginPath(); c.moveTo(pad.l,y); c.lineTo(pad.l+cw,y); c.stroke();
+    c.fillStyle = txtCol; c.font = '10px DM Mono, monospace'; c.textAlign='right';
+    c.fillText('₹'+(Math.round(max*i/4/1000))+'k', pad.l-4, y+4);
+  }
+  const barW = step*0.55; const gap = (step-barW)/2;
+  values.forEach((v,i)=>{
+    const bh = v/max*ch; const bx = pad.l+step*i+gap; const by = pad.t+ch-bh;
+    const grad = c.createLinearGradient(0,by,0,by+bh);
+    grad.addColorStop(0, color); grad.addColorStop(1, color+'55');
+    c.fillStyle = grad; c.beginPath();
+    c.roundRect ? c.roundRect(bx,by,barW,bh,3) : c.rect(bx,by,barW,bh);
+    c.fill();
+    c.fillStyle = txtCol; c.font = '9px DM Sans, sans-serif'; c.textAlign='center';
+    c.fillText(labels[i], pad.l+step*i+step/2, H-pad.b+12);
+  });
+}
+
+function drawHourlyChart() {
+  const vals = [2,4,8,14,22,18,16,20,24,28,22,18,14,10,12,16,20,18,14,10,8,6,4,2];
+  const lbls = Array.from({length:24},(_,i)=>i%6===0?(i+'h'):'');
+  drawBar('hourlyChart',lbls,vals,'#3B9EFF');
+}
+
+function drawMonthlyChart() {
+  const nonZero = MONTH_REV.map((v,i)=>i<9?v:0);
+  drawBar('monthlyChart',MONTH_LABELS,nonZero,'#22C87A');
+}
+
+function drawRevenueChart() {
+  drawBar('revenueChart',WEEK_LABELS,WEEK_REV,'#00D4AA');
+}
+
+function drawDonut() {
+  const cv = document.getElementById('donutChart');
+  if (!cv) return;
+  const dpr = window.devicePixelRatio||1;
+  cv.width = 200*dpr; cv.height = 160*dpr;
+  const c = cv.getContext('2d'); c.scale(dpr,dpr);
+  const cx=100,cy=75,R=58,r=34;
+  const data = [
+    {label:'Auto', val:48, color:'#00D4AA'},
+    {label:'Mini Car', val:28, color:'#3B9EFF'},
+    {label:'Sedan', val:14, color:'#F5A623'},
+    {label:'Bike', val:10, color:'#22C87A'},
+  ];
+  const total = data.reduce((s,d)=>s+d.val,0);
+  let a = -Math.PI/2;
+  data.forEach(d=>{
+    const slice = (d.val/total)*2*Math.PI;
+    c.beginPath(); c.moveTo(cx,cy);
+    c.arc(cx,cy,R,a,a+slice); c.arc(cx,cy,r,a+slice,a,true); c.closePath();
+    c.fillStyle = d.color; c.fill();
+    a += slice;
+  });
+  const isDark = document.documentElement.getAttribute('data-theme')==='light' ? false
+    : window.matchMedia('(prefers-color-scheme: dark)').matches || document.documentElement.getAttribute('data-theme')==='dark';
+  c.fillStyle = isDark?'#0D1427':'#FFFFFF';
+  c.beginPath(); c.arc(cx,cy,r-2,0,2*Math.PI); c.fill();
+  c.fillStyle = isDark?'#E8EDF7':'#0D1427';
+  c.font = 'bold 15px Outfit,sans-serif'; c.textAlign='center'; c.textBaseline='middle';
+  c.fillText('284', cx, cy-7);
+  c.font = '10px DM Sans,sans-serif'; c.fillStyle = isDark?'#8A9BBF':'#4A5A78';
+  c.fillText('rides today', cx, cy+10);
+  document.getElementById('donutLegend').innerHTML = data.map(d=>
+    `<div class="dleg-row"><div class="dleg-dot" style="background:${d.color}"></div><div class="dleg-lbl">${d.label}</div><div class="dleg-val">${d.val}%</div></div>`
+  ).join('');
+}
+
+function renderPickupList() {
+  const spots = [
+    {name:'Peddapalli Railway Station',count:48,pct:85},
+    {name:'Main Bazaar',count:42,pct:74},
+    {name:'Bus Stand',count:38,pct:67},
+    {name:'Collectorate',count:31,pct:55},
+    {name:'Godavarikhani Colony',count:28,pct:49},
+    {name:'Govt Hospital',count:22,pct:39},
+  ];
+  document.getElementById('pickupList').innerHTML = spots.map(s=>`
+    <div style="margin-bottom:.75rem">
+      <div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:.3rem">
+        <span>${s.name}</span>
+        <span class="cell-mono">${s.count} rides</span>
+      </div>
+      <div style="height:5px;background:var(--surf2);border-radius:3px;overflow:hidden">
+        <div style="height:100%;width:${s.pct}%;background:var(--accent);border-radius:3px"></div>
+      </div>
+    </div>`).join('');
+}
+
+/* Live Admin Map */
+function drawLiveMap() {
+  const cv = document.getElementById('liveMapCanvas');
+  if (!cv) return;
+  const W = cv.parentElement.offsetWidth||600;
+  const H = 320;
+  const dpr = window.devicePixelRatio||1;
+  cv.width = W*dpr; cv.height = H*dpr;
+  const c = cv.getContext('2d'); c.scale(dpr,dpr);
+  const bounds = {lat0:18.590,lat1:18.720,lon0:79.330,lon1:79.530};
+  function proj(lat,lon){
+    return [
+      (lon-bounds.lon0)/(bounds.lon1-bounds.lon0)*W,
+      (1-(lat-bounds.lat0)/(bounds.lat1-bounds.lat0))*H
+    ];
+  }
+  // Background
+  const bg = c.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,'#081428'); bg.addColorStop(1,'#0A1C35');
+  c.fillStyle=bg; c.fillRect(0,0,W,H);
+  // Urban fill
+  [
+    [[18.608,79.352],[18.626,79.352],[18.630,79.360],[18.630,79.378],[18.628,79.392],[18.622,79.396],[18.610,79.394],[18.605,79.382],[18.604,79.365]],
+    [[18.668,79.453],[18.692,79.455],[18.698,79.475],[18.695,79.498],[18.680,79.508],[18.663,79.504],[18.656,79.485],[18.660,79.462]],
+  ].forEach(poly=>{
+    c.beginPath();
+    poly.forEach(([lat,lon],i)=>{const [x,y]=proj(lat,lon);i===0?c.moveTo(x,y):c.lineTo(x,y)});
+    c.closePath(); c.fillStyle='rgba(0,50,100,.25)'; c.fill();
+    c.strokeStyle='rgba(0,80,160,.35)'; c.lineWidth=1; c.stroke();
+  });
+  // Roads
+  const roads=[
+    [[18.610,79.355],[18.617,79.372],[18.625,79.385],[18.640,79.405],[18.660,79.435],[18.683,79.483]],
+    [[18.615,79.370],[18.618,79.375],[18.622,79.390],[18.626,79.405]],
+  ];
+  roads.forEach(pts=>{
+    [{w:4,col:'#162840'},{w:2,col:'#2A5080'}].forEach(({w,col})=>{
+      c.beginPath(); pts.forEach(([lat,lon],i)=>{const[x,y]=proj(lat,lon);i===0?c.moveTo(x,y):c.lineTo(x,y)});
+      c.strokeStyle=col; c.lineWidth=w; c.lineJoin='round'; c.lineCap='round'; c.stroke();
+    });
+  });
+  // Drivers
+  const driverPos = [
+    [18.618,79.375,'🚗','Suresh'],[18.660,79.435,'🛺','Raju'],
+    [18.635,79.400,'🚗','Imran'],[18.612,79.380,'🏍','Ramesh'],
+    [18.648,79.418,'🛺','Venkat'],[18.625,79.390,'🚗','Priya'],
+    [18.670,79.450,'🛺','Kiran'],[18.605,79.365,'🏍','Suresh2'],
+  ];
+  driverPos.forEach(([lat,lon,icon,name])=>{
+    const[x,y]=proj(lat,lon);
+    c.beginPath(); c.arc(x,y,16,0,2*Math.PI);
+    c.fillStyle='rgba(0,212,170,.15)'; c.fill();
+    c.strokeStyle='rgba(0,212,170,.6)'; c.lineWidth=1.5; c.stroke();
+    c.font='14px serif'; c.textAlign='center'; c.textBaseline='middle';
+    c.fillText(icon,x,y);
+    c.font='bold 10px DM Sans,sans-serif'; c.fillStyle='#E8EDF7';
+    c.fillText(name,x,y+22);
+  });
+  // Zone labels
+  [['Peddapalli',18.614,79.368],['Godavarikhani',18.683,79.483],['Ramagundam',18.700,79.500]].forEach(([lbl,lat,lon])=>{
+    const[x,y]=proj(lat,lon);
+    c.fillStyle='rgba(0,212,170,.7)'; c.font='bold 9px DM Sans,sans-serif';
+    c.textAlign='center'; c.fillText(lbl,x,y-24);
+  });
+}
+
+function setChartTab(el, mode) {
+  document.querySelectorAll('#sec-dashboard .chtab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  if (mode==='month') {
+    drawBar('revenueChart',MONTH_LABELS,MONTH_REV.map((v,i)=>i<9?v:0),'#00D4AA');
+  } else {
+    drawRevenueChart();
+  }
+}
+
+/* ════ MODALS & ACTIONS ════════════════════════════ */
+function openAddDriverModal() { document.getElementById('addDriverModal').classList.add('open') }
+function openAddRideModal() { document.getElementById('addRideModal').classList.add('open') }
+function closeModal(id) { document.getElementById(id).classList.remove('open') }
+
+function addDriverFromModal() {
+  const name = document.getElementById('dnName').value.trim();
+  const phone = document.getElementById('dnPhone').value.trim();
+  const plate = document.getElementById('dnPlate').value.trim();
+  if (!name || !phone || !plate) { showToast('Please fill all required fields'); return; }
+  DRIVERS.unshift({id:'D-00'+(DRIVERS.length+1),name,avatar:'🧑',vehicle:'Auto Rickshaw',plate,rating:5.0,rides:0,status:'offline',earnings:'₹0',zone:'Peddapalli Town'});
+  renderDriverGrid();
+  closeModal('addDriverModal');
+  showToast(`Driver ${name} registered`);
+}
+function dispatchRide() {
+  closeModal('addRideModal');
+  showToast('Ride dispatched successfully');
+}
+
+/* ════ SEARCH ════════════════════════════════════ */
+function handleSearch(q) {
+  if (!q) return;
+  const found = RIDES.filter(r=>r.user.toLowerCase().includes(q.toLowerCase())||r.id.toLowerCase().includes(q.toLowerCase()));
+  if (found.length) showToast(`${found.length} result(s) found`);
+}
+
+/* ════ TOAST ════════════════════════════════════ */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 3200);
+}
+
+/* ════ THEME ═════════════════════════════════════ */
+function toggleTheme() {
+  const r = document.documentElement;
+  const cur = r.getAttribute('data-theme');
+  r.setAttribute('data-theme', cur==='dark'?'light':'dark');
+  drawRevenueChart(); drawDonut();
+}
+
+/* ════ CLOCK ════════════════════════════════════ */
+function updateClock() {
+  document.title = `QuickRide Admin — ${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}`;
+}
+setInterval(updateClock, 30000);
+
+/* ════ LIVE STAT TICKS ══════════════════════════ */
+let rideCnt = 284;
+setInterval(()=>{
+  if (Math.random()<0.4) {
+    rideCnt++;
+    document.getElementById('sc-rides').textContent = rideCnt.toLocaleString('en-IN');
+  }
+}, 8000);
+
+/* ════ INIT ══════════════════════════════════════ */
+renderRecentRides();
+renderAllRides();
+renderDriverGrid();
+renderUsers();
+renderPayments();
+renderLiveRides();
+drawRevenueChart();
+drawDonut();
+</script>
+</body>
+</html>
